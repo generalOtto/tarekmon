@@ -19,7 +19,7 @@
   { "id": "crispy-edge", "name": "CrispyEdge", "type": "Fried", "power": 55, "accuracy": 95, "pp": 20, "effect": { "kind": "none" }, "text": "{user} attacks with the crispy bit!" },
   { "id": "deep-fry", "name": "DeepFry", "type": "Fried", "power": 75, "accuracy": 85, "pp": 10, "effect": { "kind": "none" }, "text": "{user} deep-fries {foe}. Golden brown." },
   { "id": "oil-splash", "name": "OilSplash", "type": "Fried", "power": 0, "accuracy": 100, "pp": 15, "effect": { "kind": "accDown", "stages": 1 }, "text": "Hot oil in {foe}'s eyes. Ow." },
-  { "id": "chili-oil", "name": "ChiliOil", "type": "Spicy", "power": 50, "accuracy": 100, "pp": 25, "effect": { "kind": "none" }, "text": "{user} drizzles chili oil on {foe}." },
+  { "id": "chili-oil", "name": "ChiliOil", "type": "Spicy", "power": 50, "accuracy": 100, "pp": 25, "effect": { "kind": "none" }, "text": "{user} 'accidentally' knocks over the chili oil." },
   { "id": "hot-sauce", "name": "HotSauce", "type": "Spicy", "power": 60, "accuracy": 95, "pp": 15, "effect": { "kind": "none" }, "text": "{user} empties the whole bottle." },
   { "id": "heartburn", "name": "Heartburn", "type": "Spicy", "power": 80, "accuracy": 80, "pp": 10, "effect": { "kind": "none" }, "text": "{foe} regrets that last rib." },
   { "id": "spice-rack", "name": "SpiceRack", "type": "Spicy", "power": 0, "accuracy": 100, "pp": 15, "effect": { "kind": "atkUp", "stages": 1 }, "text": "{user} raids the spice rack. Attack rose!" },
@@ -27,7 +27,7 @@
   { "id": "dunk", "name": "Dunk", "type": "Soggy", "power": 60, "accuracy": 95, "pp": 15, "effect": { "kind": "none" }, "text": "{user} dunks {foe} in the broth." },
   { "id": "soup-splash", "name": "SoupSplash", "type": "Soggy", "power": 75, "accuracy": 85, "pp": 10, "effect": { "kind": "none" }, "text": "{user} cannonballs into the soup!" },
   { "id": "damp-napkin", "name": "DampNapkin", "type": "Soggy", "power": 0, "accuracy": 100, "pp": 15, "effect": { "kind": "accDown", "stages": 1 }, "text": "A damp napkin lands on {foe}'s face." },
-  { "id": "leftover", "name": "Leftover", "type": "Soggy", "power": 0, "accuracy": 100, "pp": 15, "effect": { "kind": "heal", "fraction": 0.25 }, "text": "{user} eats yesterday's leftovers. Soggy." },
+  { "id": "leftover", "name": "Leftover", "type": "Soggy", "power": 0, "accuracy": 100, "pp": 15, "effect": { "kind": "heal", "fraction": 0.25 }, "text": "{user} finds yesterday's order in the back of the fridge." },
   { "id": "ice-cube", "name": "IceCube", "type": "Frozen", "power": 50, "accuracy": 100, "pp": 25, "effect": { "kind": "none" }, "text": "{user} drops an ice cube down {foe}'s back." },
   { "id": "freezer-burn", "name": "FreezrBurn", "type": "Frozen", "power": 75, "accuracy": 85, "pp": 10, "effect": { "kind": "none" }, "text": "{user} has been in the freezer since 2019!" },
   { "id": "cold-shoulder", "name": "ColdShoulr", "type": "Frozen", "power": 0, "accuracy": 100, "pp": 15, "effect": { "kind": "defUp", "stages": 1 }, "text": "{user} ignores {foe}. Defense rose!" },
@@ -37,6 +37,6 @@
   { "id": "jet-lag", "name": "JetLag", "type": "Imported", "power": 0, "accuracy": 70, "pp": 10, "effect": { "kind": "accDown", "stages": 2 }, "text": "{foe} doesn't know what day it is." },
   { "id": "duty-free", "name": "DutyFree", "type": "Imported", "power": 0, "accuracy": 75, "pp": 10, "effect": { "kind": "heal", "fraction": 0.5 }, "text": "{user} snacks on duty-free chocolate." },
   { "id": "squish", "name": "Squish", "type": null, "power": 50, "accuracy": 95, "pp": 25, "effect": { "kind": "none" }, "text": "{user} squishes {foe} into a dumpling." },
-  { "id": "stare", "name": "Stare", "type": null, "power": 0, "accuracy": 100, "pp": 20, "effect": { "kind": "accDown", "stages": 1 }, "text": "{user} stares. {foe} feels weird about it." },
+  { "id": "stare", "name": "Stare", "type": null, "power": 0, "accuracy": 100, "pp": 20, "effect": { "kind": "accDown", "stages": 1 }, "text": "{user} holds eye contact one beat too long." },
   { "id": "nap", "name": "Nap", "type": null, "power": 0, "accuracy": 100, "pp": 10, "effect": { "kind": "heal", "fraction": 0.5 }, "text": "{user} naps on the lounge couch." }
 ]

@@ -14,5 +14,6 @@ test('every type has at least 4 attacking moves', () => {
   for (const t of types.types) {
     const n = moves.filter(m => m.type === t && m.power > 0).length;
     assert.ok(n >= 4, `${t} has ${n}`);
+    assert.ok(moves.filter(m => m.type === t && m.power === 0).length >= 1, `${t} has no status move`);
   }
 });

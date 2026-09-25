@@ -2,6 +2,7 @@ import { loadDb } from './data/load.js';
 import { createScreen } from './engine/canvas.js';
 import { SceneStack, startLoop } from './engine/loop.js';
 import { ButtonState, attachInput } from './engine/input.js';
+import { createSave } from './engine/save.js';
 import { TextBox } from './ui/textbox.js';
 import { buildTileset } from './world/tileset.js';
 import { LEGEND } from './world/tiles.js';
@@ -12,6 +13,7 @@ const screen = createScreen(document.getElementById('screen'));
 const scenes = new SceneStack();
 const input = new ButtonState();
 attachInput(document.body, input);
+const save = createSave(localStorage);
 const tileset = buildTileset();
 const TILE_CHARS = [...LEGEND];
 

@@ -9,11 +9,13 @@ import items from '../../data/items.json' with { type: 'json' };
 const movesById = {
   hit: { id: 'hit', name: 'HIT', type: 'Fried', power: 50, accuracy: 100, pp: 10, effect: { kind: 'none' }, text: '{user} hits.' },
   skip: { id: 'skip', name: 'SKIP', type: 'Imported', power: 0, accuracy: 100, pp: 5, effect: { kind: 'skip' }, text: '{foe} waits.' },
+  exhale: { id: 'exhale', name: 'EXHALE', type: 'Fried', power: 120, accuracy: 100, pp: 5, effect: { kind: 'accDown', stages: 1 }, text: '{user} exhales.' },
   big: { id: 'big', name: 'BIG', type: 'Fried', power: 120, accuracy: 100, pp: 5, effect: { kind: 'none' }, text: '{user} bigs.' },
 };
 const speciesById = {
   pA: { id: 'pA', name: 'PLAYERMON', type: 'Fried', base: { hp: 60, atk: 70, def: 50, spd: 80 }, xpYield: 60, catchRate: 190, moves: [{ level: 1, id: 'hit' }, { level: 1, id: 'skip' }], who: 'tarek' },
   fW: { id: 'fW', name: 'WILDY', type: 'Steamed', base: { hp: 40, atk: 40, def: 40, spd: 30 }, xpYield: 60, catchRate: 190, moves: [{ level: 1, id: 'hit' }], who: 'otto' },
+  fK: { id: 'fK', name: 'SKIPPER', type: 'Steamed', base: { hp: 60, atk: 40, def: 60, spd: 10 }, xpYield: 60, catchRate: 190, moves: [{ level: 1, id: 'skip' }], who: 'otto' },
   fS: { id: 'fS', name: 'SUHAIBRO', type: 'Imported', base: { hp: 60, atk: 60, def: 80, spd: 20 }, xpYield: 100, catchRate: 45, moves: [{ level: 1, id: 'hit' }], who: 'suhaib' },
 };
 const db = { types, movesById, speciesById, itemsById: Object.fromEntries(items.map(i => [i.id, i])) };
@@ -46,7 +48,7 @@ test('wild battle: a big hit KOs the foe, grants xp and ends in a win', () => {
   assert.equal(t[0], 'A WILD WILDY APPEARED!');
   assert.equal(t[1], 'GO! PLAYERMON!');
   assert.ok(t.includes('PLAYERMON USED BIG!'));
-  assert.ok(t.includes('PLAYERMON bigs.'));
+  assert.ok(t.includes('PLAYERMON BIGS.'));
   assert.ok(t.includes('WILD WILDY FAINTED!'));
   assert.ok(ev.some(e => e.type === 'hp' && e.side === 'foe' && e.to === 0));
   assert.ok(ev.some(e => e.type === 'faint' && e.side === 'foe'));
@@ -172,7 +174,7 @@ test('skip effect: the target loses its next action', () => {
   let ev = b.drain();
   const t = texts(ev);
   assert.ok(t.includes('PLAYERMON USED SKIP!'));
-  assert.ok(t.includes('WILD WILDY waits.'));
+  assert.ok(t.includes('WILD WILDY WAITS.'));
   assert.ok(t.includes('WILD WILDY IS STUCK IN LINE!'));
   assert.equal(t.at(-1), 'WILD WILDY IS HELD AT THE BORDER!');
   assert.ok(!ev.some(e => e.type === 'hp'));
@@ -219,4 +221,110 @@ test('every method is a no-op once the battle is over', () => {
   assert.equal(b.phase, 'over');
   b.chooseMove(0); b.useItem('wet-wipe'); b.switchTo(0); b.run();
   assert.deepEqual(b.drain(), []);
+});
+
+test('mutual KO on Struggle recoil against the last foe is a win with no xp', () => {
+  const p = mon('pA', 10); p.hp = 1; p.moves.forEach(m => { m.pp = 0; });
+  const f = mon('fW', 10); f.hp = 1;
+  const { b } = setup({ party: [p], foes: [f] });
+  b.drain();
+  b.chooseMove('struggle'); // player faster: deals 1, recoil ceil(1/4) = 1 → both at 0
+  const ev = b.drain();
+  assert.equal(p.hp, 0); assert.equal(f.hp, 0);
+  assert.ok(!ev.some(e => e.type === 'xp'));
+  assert.deepEqual(ev.at(-1), { type: 'end', result: 'win' });
+  assert.equal(b.result, 'win');
+});
+
+test('voluntary switch: COME BACK, switch event, then the foe acts', () => {
+  const { b } = setup({ party: [mon('pA', 5), mon('pA', 5)], foes: [mon('fW', 3)] });
+  b.drain();
+  b.switchTo(1);
+  const ev = b.drain();
+  const t = texts(ev);
+  assert.deepEqual(t.slice(0, 2), ['PLAYERMON, COME BACK!', 'GO! PLAYERMON!']);
+  assert.ok(t.includes('WILD WILDY USED HIT!'));
+  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'player', index: 1 });
+  const sw = ev.findIndex(e => e.type === 'switch');
+  assert.ok(ev.slice(sw).some(e => e.type === 'hp' && e.side === 'player'));
+  assert.equal(b.player, b.state.party[1]);
+});
+
+test('heal item: hp event for the active monster, text only for a benched one', () => {
+  const a = mon('pA', 10), c = mon('pA', 10); a.hp = 5; c.hp = 5;
+  const { b, state } = setup({ party: [a, c], foes: [mon('fW', 3)] });
+  b.drain();
+  b.useItem('wet-wipe');
+  let ev = b.drain();
+  assert.deepEqual(ev[0], { type: 'hp', side: 'player', from: 5, to: 32, max: 32 });
+  assert.equal(texts(ev)[0], 'PLAYERMON RECOVERED 27 HP!');
+  assert.equal(state.bag['wet-wipe'], 1);
+  b.useItem('wet-wipe', 1);
+  ev = b.drain();
+  const r = ev.findIndex(e => e.type === 'text' && e.text === 'PLAYERMON RECOVERED 27 HP!');
+  assert.ok(r >= 0);
+  assert.ok(!ev.slice(0, r + 1).some(e => e.type === 'hp'));
+  assert.equal(c.hp, 32);
+  assert.equal(state.bag['wet-wipe'], 0);
+});
+
+test('atkUp item: stat event, then the foe acts', () => {
+  const { b, state } = setup({ party: [mon('pA', 10)], foes: [mon('fW', 3)] });
+  state.bag['extra-sauce'] = 1;
+  b.drain();
+  b.useItem('extra-sauce');
+  const ev = b.drain();
+  assert.equal(texts(ev)[0], "PLAYERMON'S ATTACK ROSE!");
+  assert.deepEqual(ev.find(e => e.type === 'stat'), { type: 'stat', side: 'player', stat: 'atk', stages: 1 });
+  assert.ok(texts(ev).includes('WILD WILDY USED HIT!'));
+  assert.equal(state.bag['extra-sauce'], 0);
+});
+
+test('a KO with an accDown move skips the accuracy drop', () => {
+  const p = mon('pA', 15); p.moves.push({ id: 'exhale', pp: 5, maxPp: 5 });
+  const { b } = setup({ party: [p], foes: [mon('fW', 3)] });
+  b.drain();
+  b.chooseMove(2);
+  const ev = b.drain();
+  assert.ok(texts(ev).includes('WILD WILDY FAINTED!'));
+  assert.ok(!texts(ev).some(x => x.includes('ACCURACY FELL')));
+  assert.ok(!ev.some(e => e.type === 'stat'));
+});
+
+test('level-up: xp event reports the new level, then levelup, then the hp bar update', () => {
+  const p = mon('pA', 5); p.moves.push({ id: 'big', pp: 5, maxPp: 5 });
+  p.xp = 215; // one short of L6 (6^3 = 216); the L3 WILDY gives 25
+  const { b } = setup({ party: [p], foes: [mon('fW', 3)] });
+  b.drain();
+  b.chooseMove(2);
+  const ev = b.drain();
+  const xi = ev.findIndex(e => e.type === 'xp'), x = ev[xi];
+  assert.equal(x.level, 6); assert.equal(p.level, 6);
+  assert.equal(x.xp, 240);
+  assert.ok(x.xp <= x.xpForNext && x.xp >= x.xpForLevel);
+  assert.deepEqual([x.xpForLevel, x.xpForNext], [216, 343]);
+  assert.equal(ev[xi + 1].type, 'levelup'); assert.equal(ev[xi + 1].side, 'player');
+  assert.deepEqual(ev[xi + 2], { type: 'hp', side: 'player', from: 21, to: p.hp, max: p.maxHp });
+  assert.equal(p.maxHp, 23);
+});
+
+test('a held player loses an item turn too: HELD once, item kept, foe still acts', () => {
+  const p = mon('pA', 10); p.hp = 10;
+  const { b, state } = setup({ party: [p], foes: [mon('fK', 10)] });
+  b.drain();
+  b.chooseMove(0); // player first (spd 21 > 7); the slower SKIPPER then holds the player for next turn
+  b.drain();
+  assert.equal(p.skipNext, true);
+  b.useItem('wet-wipe');
+  const ev = b.drain();
+  const t = texts(ev);
+  assert.equal(t.filter(x => x === 'PLAYERMON IS HELD AT THE BORDER!').length, 1);
+  assert.equal(t[0], 'PLAYERMON IS HELD AT THE BORDER!');
+  assert.ok(t.includes('WILD SKIPPER USED SKIP!'));
+  assert.ok(!t.some(x => x.includes('RECOVERED')));
+  assert.equal(state.bag['wet-wipe'], 2);
+});
+
+test('a wild battle must have exactly one foe', () => {
+  assert.throws(() => setup({ party: [mon('pA', 5)], foes: [mon('fW', 3), mon('fW', 3)] }), /exactly one foe/);
 });

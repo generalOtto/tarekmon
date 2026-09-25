@@ -1,4 +1,4 @@
-import { drawText } from '../engine/font.js';
+import { drawText, LINE_H } from '../engine/font.js';
 import { W } from '../engine/canvas.js';
 
 export const PAPER = '#f8f8f0';
@@ -37,7 +37,9 @@ export function paginate(text, cols, rows) {
     }
     for (let i = 0; i < lines.length; i += rows) pages.push(lines.slice(i, i + rows));
   }
-  return pages;
+  // Drop pages that are entirely blank (e.g. a trailing \f, or \f\f) — nothing
+  // for the reader to see and nothing for the typewriter to reveal.
+  return pages.filter(page => page.some(line => line.length > 0));
 }
 
 /** Reveals a page's lines `charsPerTick` characters at a time, in reading order. */
@@ -53,6 +55,7 @@ export class Typewriter {
 
   tick() { this.revealed = Math.min(this.total, this.revealed + this.charsPerTick); }
 
+  // Used by battle text auto-advance in a later task.
   skip() { this.revealed = this.total; }
 
   visibleLines() {
@@ -72,6 +75,7 @@ const FAST_SPEED = 4;
 const BLINK_FRAMES = 30;
 const BOX_Y = 96;
 const BOX_H = 48;
+const PAD = 8;
 
 /** A Gen-1-style dialog box: paginates text, types it out, and waits for A to advance/dismiss. */
 export class TextBox {
@@ -82,10 +86,18 @@ export class TextBox {
     this.typewriter = null;
     this.blinkTimer = 0;
     this._resolve = null;
+    this._openedThisTick = false;
   }
 
   say(text) {
     return new Promise(resolve => {
+      // Resolve-and-replace: say() while a box is already open would otherwise
+      // orphan the previous caller's promise, leaving any `await` hanging forever.
+      if (this._resolve) {
+        const prevResolve = this._resolve;
+        this._resolve = null;
+        prevResolve();
+      }
       this.pages = paginate(text, COLS, ROWS);
       this.pageIndex = 0;
       this._resolve = resolve;
@@ -97,27 +109,36 @@ export class TextBox {
   _startPage() {
     this.typewriter = new Typewriter(this.pages[this.pageIndex] ?? [], BASE_SPEED);
     this.blinkTimer = 0;
+    // Guards against the very justPressed('a') that opened/advanced the box
+    // also dismissing/advancing it on this same tick, when the new page is
+    // already fully revealed (empty text, or a page with only blank lines).
+    this._openedThisTick = true;
   }
 
   update(input) {
     if (!this.open || !this.typewriter) return;
+    const skipDismiss = this._openedThisTick;
+    this._openedThisTick = false;
+
     if (!this.typewriter.done) {
       const fast = input.isDown('a') || input.isDown('b');
       this.typewriter.charsPerTick = fast ? FAST_SPEED : BASE_SPEED;
       this.typewriter.tick();
-    } else {
-      this.blinkTimer = (this.blinkTimer + 1) % (BLINK_FRAMES * 2);
-      if (input.justPressed('a')) {
-        if (this.pageIndex < this.pages.length - 1) {
-          this.pageIndex += 1;
-          this._startPage();
-        } else {
-          this.open = false;
-          this.typewriter = null;
-          const resolve = this._resolve;
-          this._resolve = null;
-          resolve?.();
-        }
+      return;
+    }
+
+    this.blinkTimer = (this.blinkTimer + 1) % (BLINK_FRAMES * 2);
+    if (skipDismiss) return;
+    if (input.justPressed('a')) {
+      if (this.pageIndex < this.pages.length - 1) {
+        this.pageIndex += 1;
+        this._startPage();
+      } else {
+        this.open = false;
+        this.typewriter = null;
+        const resolve = this._resolve;
+        this._resolve = null;
+        resolve?.();
       }
     }
   }
@@ -132,12 +153,12 @@ export class TextBox {
     ctx.fillRect(0, BOX_Y, 2, BOX_H);
     ctx.fillRect(W - 2, BOX_Y, 2, BOX_H);
 
-    const [line1 = '', line2 = ''] = this.typewriter.visibleLines();
-    drawText(ctx, line1, 8, 104, INK);
-    drawText(ctx, line2, 8, 120, INK);
+    this.typewriter.visibleLines().forEach((line, i) => {
+      drawText(ctx, line, PAD, BOX_Y + PAD + i * (LINE_H * 2), INK);
+    });
 
     if (this.typewriter.done && this.blinkTimer < BLINK_FRAMES) {
-      drawText(ctx, '▶', 148, 132, INK);
+      drawText(ctx, '▶', W - 12, BOX_Y + BOX_H - 12, INK);
     }
   }
 }

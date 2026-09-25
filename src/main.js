@@ -44,6 +44,7 @@ const placeholderScene = {
     this.flash ||= input.justPressed('a');
   },
   draw(ctx) {
+    // TEMP: tileset preview grid — removed when OverworldScene renders the real map (Task 14)
     // Tileset preview: every legend tile in a 10-column grid; water flips every 32 ticks
     const frame = (this.ticks >> 5) & 1;
     TILE_CHARS.forEach((ch, i) => tileset.draw(ctx, ch, (i % 10) * 16, Math.floor(i / 10) * 16, frame));

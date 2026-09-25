@@ -96,8 +96,7 @@ export class PartyScreen {
       if (!m) { drawText(ctx, '-----', 32, y + 6, INK); continue; }
       if (s === this.swapFrom) { ctx.fillStyle = SWAP_BG; ctx.fillRect(3, y, W - 6, ROW_H - 1); }
       if (s === this.menu.index) drawText(ctx, '▶', 4, y + 6, INK);
-      drawThumb(ctx, this.db?.images?.[m.speciesId], 12, y + 2, 16);
-      drawText(ctx, m.nickname.slice(0, 10), 32, y + 2, m.hp > 0 ? INK : FAINTED);
+      drawMonTag(ctx, this.db, m, 12, y + 2);
       drawRight(ctx, `L${m.level}`, W - 6, y + 2);
       drawHpBar(ctx, 33, y + 13, 48, 4, m.hp / m.maxHp);
       drawText(ctx, `HP ${m.hp}/${m.maxHp}`, 86, y + 11, INK);
@@ -130,6 +129,12 @@ export class PartyScreen {
     const next = m.level >= MAX_LEVEL ? '-' : xpForLevel(m.level + 1);
     drawText(ctx, `XP ${m.xp}/${next}`, 8, 126, INK);
   }
+}
+
+/** A party/fridge row's head: 16×16 thumbnail at (x, y), nickname (red if fainted) 20px right of it. */
+export function drawMonTag(ctx, db, m, x, y, chars = 10) {
+  drawThumb(ctx, db?.images?.[m.speciesId], x, y, 16);
+  drawText(ctx, m.nickname.slice(0, chars), x + 20, y, m.hp > 0 ? INK : FAINTED);
 }
 
 /** A sticker scaled into a size×size square (smooth, it's a photo), or a grey placeholder. */

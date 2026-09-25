@@ -13,6 +13,7 @@ import { dialogueFor } from '../../src/world/npc.js';
 import itemsList from '../../data/items.json' with { type: 'json' };
 import { ShopScreen } from '../../src/ui/shop.js';
 import { BagScreen } from '../../src/ui/bag.js';
+import { FridgeScreen } from '../../src/ui/fridge.js';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 /** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */
@@ -87,6 +88,18 @@ test('A on a sign reads its dialogue; A on the fridge/pedestal/gate reads theirs
   await t.pressA(); assert.deepEqual(t.ctl.said, [dialogue['gate-closed']]);
   t = talker({ map: 'town', x: 25, y: 5, facing: 'up' }); t.state.badges.push('haze');
   await t.pressA(); assert.deepEqual(t.ctl.said, [], 'open gate says nothing');
+});
+
+test('A facing the Haze Lounge fridge opens the Fridge overlay; closing it autosaves', async () => {
+  const t = talker({ map: 'haze', x: 1, y: 1, facing: 'left' });
+  const saves = []; t.scene.save = { autosave: s => saves.push(s) };
+  await t.pressA();
+  assert.ok(t.scene.overlay instanceof FridgeScreen);
+  assert.deepEqual(t.ctl.said, [dialogue['fridge-open']]);
+  assert.equal(saves.length, 0);
+  t.scene.overlay.close();
+  assert.equal(t.scene.overlay, null);
+  assert.deepEqual(saves, [t.state]);
 });
 
 test('talking to an npc turns it to face the player; the flag picks the second line', async () => {

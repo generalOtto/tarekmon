@@ -13,6 +13,7 @@ import { healParty } from '../engine/state.js';
 import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
 import { ShopScreen } from '../ui/shop.js';
+import { FridgeScreen } from '../ui/fridge.js';
 import { napkinWarp } from './items.js';
 import { attachBattleFlow } from './battleflow.js';
 import { TrainerFlow } from './trainers.js';
@@ -27,7 +28,7 @@ export class OverworldScene {
     this.ticks = 0;
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
-    this.overlay = null; // one full-input screen at a time (the shop); drawn above the map, below the fade
+    this.overlay = null; // one full-input screen at a time (shop, fridge); drawn above the map, below the fade
     this.afterFade = null; // run once the current warp fade has finished (the napkin's arrival line)
     this.startMenu = new StartMenu({ state, save, textbox, audio, db, onNapkin: () => this.useNapkin() });
     this.flow = attachBattleFlow(this);
@@ -110,7 +111,7 @@ export class OverworldScene {
     const sign = signAt(map, fx, fy);
     if (sign) return this.run(() => this.say(sign.dialogue));
     switch (tileAt(map, fx, fy)) {
-      case 'F': return this.run(() => this.say('fridge-open')); // Fridge screen: Task 31
+      case 'F': return this.openOverlay(FridgeScreen, () => this.save.autosave(state)); // says fridge-open itself
       case 'K': return this.run(() => this.say(rollWeather() ? 'rack-nice' : 'rack-bad'));
       case 'E': return this.run(() => this.say('pedestal'));
       case 'G': return !state.badges.includes('haze') && this.run(() => this.say('gate-closed'));
@@ -132,17 +133,19 @@ export class OverworldScene {
     npc.facing = faceToward(npc, player.x, player.y);
     const fight = this.trainerFlow.talk(npc);
     if (fight) return fight;
-    if (npc.kind === 'shop') return this.openShop();
+    if (npc.kind === 'shop') return this.openOverlay(ShopScreen);
     if (npc.kind === 'weather') state.flags.weatherNice = rollWeather();
     await this.textbox.say(dialogueFor(npc, state, this.db.dialogue ?? {}));
     if (npc.kind === 'healer') { healParty(state); await this.say('haze-heal-2'); }
     await this.trainerFlow.officerGift(npc);
   }
 
-  openShop() {
-    const shop = new ShopScreen({ state: this.state, db: this.db, textbox: this.textbox,
-      onClose: () => { if (this.overlay === shop) this.overlay = null; } });
-    this.overlay = shop;
+  /** Puts a full-input screen (shop, fridge) in the overlay slot; `after` runs once it closes. */
+  openOverlay(Screen, after) {
+    const s = new Screen({ state: this.state, db: this.db, textbox: this.textbox,
+      onClose: () => { if (this.overlay === s) this.overlay = null; after?.(); } });
+    this.overlay = s;
+    return true;
   }
 
   /** A napkin from the BAG: fade to the Haze Lounge entrance mat (autosaves), then say so. */

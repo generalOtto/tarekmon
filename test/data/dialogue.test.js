@@ -5,6 +5,8 @@ import { paginate } from '../../src/ui/textbox.js';
 import { GLYPHS } from '../../src/engine/font.js';
 import mapData from '../../data/map.json' with { type: 'json' };
 
+/** Templates fill `{nick}` with a nickname (species names are ≤ 10 chars): check the widest case. */
+const fill = t => t.replaceAll('{nick}', 'WWWWWWWWWW');
 const nonEmpty = s => typeof s === 'string' && s.trim().length > 0;
 
 test('every dialogue value is a non-empty string or a pair of non-empty strings', () => {
@@ -24,12 +26,12 @@ test('required dialogue ids exist', () => {
     'weather-guy-nice', 'weather-guy-bad', 'haze-heal-1', 'haze-heal-2', 'ribs-shop',
     'booth-officer-locked', 'booth-officer-open', 'suhaib-pre', 'suhaib-mid', 'suhaib-lost', 'suhaib-rematch',
     'otto-lab-intro', 'otto-lab-after', 'otto-lab-block', 'regular-1', 'regular-2', 'regular-3', 'regular-4',
-    'townie-1', 'townie-2', 'townie-3', 'fridge-open', 'rack-nice', 'rack-bad', 'pedestal', 'gate-closed'];
+    'townie-1', 'townie-2', 'townie-3', 'fridge-open', 'fridge-last', 'fridge-full', 'fridge-deposit', 'fridge-withdraw', 'rack-nice', 'rack-bad', 'pedestal', 'gate-closed'];
   for (const id of required) assert.ok(id in dialogue, `missing ${id}`);
 });
 
 test('every form-feed page fits one 18x2 textbox page, and every character has a font glyph', () => {
-  for (const [id, v] of Object.entries(dialogue)) for (const text of [v].flat()) {
+  for (const [id, v] of Object.entries(dialogue)) for (const text of [v].flat().map(fill)) {
     for (const page of text.split('\f')) assert.equal(paginate(page, 18, 2).length, 1, `${id}: page overflows: ${JSON.stringify(page)}`);
     for (const ch of text.toUpperCase()) assert.ok(ch === '\n' || ch === '\f' || ch in GLYPHS, `${id}: no glyph for ${JSON.stringify(ch)}`);
   }

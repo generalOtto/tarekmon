@@ -92,8 +92,9 @@ test('addXp levels up (possibly several times), recomputes stats keeping hp rati
   assert.equal(m.moves.length, 3); assert.ok(m.hp > 0 && m.hp <= m.maxHp);
 });
 test('learning a 5th move replaces the oldest', () => {
-  const m = makeMonster(species, 14, moves, mulberry32(1)); m.moves.push({ id: 'm3', pp: 10, maxPp: 10 }); m.moves.push({ id: 'extra', pp: 5, maxPp: 5 });
-  addXp(m, species, moves, xpForLevelHelper(15) - m.xp);
+  const m = makeMonster(species, 14, moves, mulberry32(1)); // knows m1, m2, m3 (m3 learned at 8)
+  m.moves.push({ id: 'extra', pp: 5, maxPp: 5 });            // now 4 moves: m1, m2, m3, extra
+  addXp(m, species, moves, xpForLevelHelper(15) - m.xp);      // learns m4 at 15 → forgets m1
   assert.deepEqual(m.moves.map(x => x.id), ['m2', 'm3', 'extra', 'm4']);
 });
 test('resetBattleState clears stages and skip', () => { const m = makeMonster(species, 5, moves); m.stages.atk = 2; m.skipNext = true; resetBattleState(m); assert.deepEqual(m.stages, { atk: 0, def: 0, acc: 0 }); assert.equal(m.skipNext, false); });
@@ -288,7 +289,8 @@ export function throwBall(monster, catchRate, rng = defaultRng) {
 ]
 ```
 
-- [ ] Commit `content: items`.
+- [ ] **Step 1: Test** — `test/data/items.test.js`: `assert.deepEqual(items.map(i => [i.id, i.price]), [['dumpling-ball', 100], ['wet-wipe', 150], ['extra-sauce', 300], ['napkin', 250]])` and every item has `name`, `text`, and `battle`/`field` values from the set `catch | heal | atkUp | escape | null`.
+- [ ] **Step 2: Run, commit** `content: items`.
 
 ### Task 26: The headless Battle state machine
 
@@ -329,7 +331,7 @@ Turn: player action + foe action (foe uses `chooseFoeMove`), ordered by `stats.s
 - [ ] **Step 2: Action menu** 2×2: FIGHT / BAG / DUMPLINGS / RUN. FIGHT opens the 2×2 move menu with the move names and `PP 12/20` + type for the highlighted move. BAG opens the bag (Task 30) filtered to battle-usable items. DUMPLINGS opens the party screen (Task 30) for switching. B cancels back.
 - [ ] **Step 3: Event playback**: the scene drains `battle.events` into a queue and plays one at a time with timing: `text` → textbox page (A to continue, or auto-advance after 1.2 s for battle text); `hp` → animate the bar from → to over 400 ms with a tick sound; `faint` → the sticker slides down and off (300 ms); `ball` → a 12 px ball sprite arcs to the foe, the sticker shrinks into it, then `wobbles` rocks (each 500 ms, sound) and either a click (success, sticker stays inside) or a pop (fail, sticker reappears); `switch` → slide out/in; `levelup` → fanfare + text; `learn` → text; `money` → text; `flee` → the foe sticker slides right off the screen fast; `end` → after the last text, `exit` the scene (pop) and hand the result to the overworld (`onEnd(result)`).
 - [ ] **Step 4: Encounter transition** (used by Task 28): `flashWipe(ctx, t)` — 3 white flashes (80 ms each) then a diagonal wipe to black over 400 ms; the BattleScene is pushed when the wipe completes and the foe sticker slides in from the right while the player's slides in from the left.
-- [ ] **Step 5: Play** a debug battle end-to-end: attack, get hit, use a Wet Wipe, throw a ball, run. Phone viewport check. **Step 6: Commit** `feat: battle scene with animated events`.
+- [ ] **Step 5: Play** a debug battle end-to-end: attack, get hit, throw a ball (the debug battle gives the player 5 Dumpling Balls and calls `battle.useItem('dumpling-ball')` from a temporary BAG placeholder — the real bag screen is Task 30), run. Phone viewport check. **Step 6: Commit** `feat: battle scene with animated events`.
 
 ### Task 28: Wild encounters from tall grass
 
@@ -366,6 +368,7 @@ test('returns null when the rate roll fails; otherwise a weighted species at a l
 `trainers.json` entries: `{ id, name, sprite, kind: 'route'|'regular'|'leader'|'champion', team: [{ species, level }], pre, post, speechAfterFaints?: 3 }`. Content: 6 route trainers (levels 4–12, 1–3 dumplings, lines like "I'VE BEEN STANDING HERE SINCE 2019." / "NOT BAD. NOT GOOD EITHER."), 4 Haze regulars ("I'M NOT LEAVING. THE COALS ARE FRESH." levels 12–15, 2 dumplings each), the leader **HAZE GUY** (5 dumplings, L16–18, mixed Steamed/Fried, pre: "YOU WANT THE BADGE? FIRST YOU WAIT FOR A TABLE.", post: "TAKE THE BADGE. AND A COAL. NO, NOT THAT ONE."), Champion **SUHAIB** (6 Imported, L20–24; `pre: suhaib-pre`, `speechAfterFaints: 3 → suhaib-mid`, `post: suhaib-lost`).
 
 - [ ] **Step 1: Failing test** — all trainer species/dialogue ids exist; every trainer placed in `map.json` exists in `trainers.json`; Champion team is all Imported; exactly one leader and one champion.
+- [ ] **Step 2a: The shisha guy is one NPC** (healer and gym leader, per the spec). Talking to him branches: if `state.badges.includes('haze')` → heal as in Task 16. Else if all four regulars are in `state.defeatedTrainers` → `pre` line ("YOU WANT THE BADGE? FIRST YOU WAIT FOR A TABLE." → "...OK. TABLE'S READY.") → gym battle. Else → "YOU WANT THE BADGE? FIRST YOU WAIT FOR A TABLE. TALK TO THE REGULARS." → heal. To make this work, the Haze `npcs` entry from Task 16 gets `"trainer": "haze-guy"` and the overworld checks that field before the plain-dialogue path.
 - [ ] **Step 2: Implement** in the overworld: each frame, for each undefeated trainer on the current map, `inLineOfSight(trainer, player)` → `!` bubble for 500 ms, trainer walks to the tile adjacent to the player, `pre` dialogue, push `BattleScene({kind:'trainer'})`. Talking to a trainer directly also starts it. On win: `post` dialogue, `state.defeatedTrainers.push(id)`; leader → `state.badges.push('haze')`, textbox "TAREK RECEIVED THE HAZE BADGE!" and jingle; the town's `G` gate tile becomes `g` when `state.badges.includes('haze')` (rendered and walkable), the booth officer switches to `booth-officer-open`. Defeated trainers stay as NPCs with their `post` line. Champion trigger: when the badge is held and the player steps north of the gate, Suhaib walks in from the top edge (suitcase sprite), `suhaib-pre`, battle; the `speechAfterFaints` hook makes the BattleScene show `suhaib-mid` after his third dumpling faints.
 - [ ] **Step 3: Play** — fight a route trainer via LOS, beat the gym, watch the gate open. **Step 4: Run tests, commit** `feat: trainers, gym, badge, border gate, champion trigger`.
 
@@ -418,7 +421,7 @@ test('returns null when the rate roll fails; otherwise a weighted species at a l
 - Create: `src/ui/title.js`, `src/ui/intro.js`
 - Modify: `src/main.js` (boot into TitleScene)
 
-- [ ] **Step 1: Title** — dark background, the word TAREKMON in 3× pixel font with a 1 px drop shadow in Frozen blue and a bouncing dumpling (a random species sticker, 48 px, sine float); menu NEW GAME / CONTINUE (CONTINUE only if `save.load()` returns a state); `title` music. NEW GAME with an existing save asks "OVERWRITE THE OLD GAME? Y/N".
+- [ ] **Step 1: Title** — dark background, the word TAREKMON in 3× pixel font with a 1 px drop shadow in Frozen blue and a bouncing dumpling (a random species sticker, 48 px, sine float); menu NEW GAME / CONTINUE / LOAD CODE (CONTINUE only if `save.load()` returns a state); `title` music. NEW GAME with an existing save asks "OVERWRITE THE OLD GAME? Y/N". LOAD CODE reads a save code (`navigator.clipboard.readText()` when available, else `window.prompt('PASTE YOUR SAVE CODE')`) → `fromSaveCode` → on success "LOAD THIS SAVE? TAREK · 3 DUMPLINGS · 1 BADGE  Y/N" → `save.save(state)` and continue; on failure "THAT'S NOT A SAVE CODE. THAT'S JUST WORDS." This is the import half of the spec's save-code safety net (export is on SAVE in the Start menu, Task 18).
 - [ ] **Step 2: Intro** — Prof. Otto sprite large (procedural 32×32 portrait: lab coat, moustache), lines: "WELCOME TO THE WORLD OF TAREKMON!\fMY NAME IS OTTO. PEOPLE CALL ME THE DUMPLING PROFESSOR.\fTHIS WORLD IS INHABITED BY CREATURES WITH VERY SQUISHED FACES.\fSOME PEOPLE KEEP THEM AS PETS. I STUDY THEM. IT'S A LIVING.\fFIRST, WHAT'S YOUR NAME?" → name entry: an A–Z grid plus `DEL` and `END`, 7 chars max, pre-filled `TAREK`; then "RIGHT. TAREK. OBVIOUSLY.\fYOUR VERY OWN DUMPLING LEGEND IS ABOUT TO UNFOLD!" → fade into the lab at `map.start`.
 - [ ] **Step 3: Starter pick** in the lab: three `K`-like pedestal tiles each holding a ball; interacting shows the starter's sticker + "SO! YOU WANT THE (STEAMED) ONE? IT'S OTTO. THAT'S A LOT OF OTTO." / "...TAREK? PICKING YOURSELF. BOLD." / "THAT ONE'S IMPORTED. IT TAKES 3 HOURS TO GET HERE." → Y/N → `makeMonster(starter, 5)`, party push, `markCaught`, the other two pedestals empty, flag `starterPicked`, Prof. Otto's lab line changes to "GO ON. THE GRASS ISN'T GOING TO SQUISH ITSELF." Leaving the lab without a starter is blocked by Otto stepping in front of the door: "NOT WITHOUT A DUMPLING. THAT GRASS IS FULL OF FACES."
 - [ ] **Step 4: Play the whole opening, commit** `feat: title, intro, name entry, starters`.

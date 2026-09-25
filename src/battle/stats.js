@@ -1,5 +1,6 @@
 /** Gen 1 style stats, medium-fast XP curve, and battle stat stages. */
 
+/** Level cap; addXp never levels a monster past this. */
 export const MAX_LEVEL = 50;
 
 /** Clamps a stat stage to the legal [-3, 3] range. */

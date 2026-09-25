@@ -27,11 +27,16 @@ function pickMoves(type, id) {
   };
   const slot = n => hash(`${id}:m${n}`);
   const weaker = attacks.slice(0, Math.ceil(attacks.length / 2));
+  const stronger = attacks.slice(Math.ceil(attacks.length / 2));
   const first = take(weaker, slot(0) % weaker.length);                   // L1: a weaker attack of its own type
   const second = take(typeless, slot(1) % typeless.length);              // L1: a typeless move
-  const third = status.length ? take(status, slot(2) % status.length)    // L10: the type's status move
-    : take(attacks, slot(2) % attacks.length);
-  const fourth = [...attacks].reverse().find(m => !used.has(m.id));      // L20: strongest unused attack
+  const thirdHash = hash(`${id}:status`);                                // own salt: `m2` collided too often on 4-char ids
+  const third = status.length ? take(status, thirdHash % status.length)  // L10: the type's status move
+    : take(attacks, thirdHash % attacks.length);
+  // L20: Imported keeps long-drive pinned (every Imported species must learn it); every other
+  // type picks by hash from the stronger half, so more than just the single strongest gets used.
+  const fourth = type === 'Imported' ? attacks.find(m => m.id === 'long-drive')
+    : take(stronger, slot(3) % stronger.length);
   if (!fourth) throw new Error(`${id}: no attack left for the final slot`);
   return [first, second, third, fourth].map((m, i) => ({ level: LEVELS[i], id: m.id }));
 }

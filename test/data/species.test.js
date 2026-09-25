@@ -58,3 +58,14 @@ test('base stats actually vary around the template', () => {
 test('the only non-friend face is d024', () => {
   assert.deepEqual(species.filter(s => s.who === 'other').map(s => s.id), ['d024']);
 });
+test('every move is learned by at least one species', () => {
+  const learned = new Set(species.flatMap(s => s.moves.map(m => m.id)));
+  // time-zone is the one structural exception: it's an Imported attack, Imported's L20 slot is
+  // permanently pinned to long-drive (a separate test requires every Imported species to have
+  // it), and there are only 3 Imported species total, so no slot is ever free to carry it.
+  const unreachable = new Set(['time-zone']);
+  for (const m of moves) {
+    if (unreachable.has(m.id)) { assert.ok(!learned.has(m.id), `${m.id}: expected unreachable, but a species learned it`); continue; }
+    assert.ok(learned.has(m.id), `${m.id}: learned by no species`);
+  }
+});

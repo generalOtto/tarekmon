@@ -229,7 +229,7 @@ const encounterDb = { speciesById, movesById };
 const ROUTE_1_START = { map: 'town', x: 10, y: 22, facing: 'right' }; // one tile west of a Route 1 grass tile (11,22)
 
 /** Headless scene one step from Route 1 tall grass, with a scripted rng and an onEncounter spy. */
-function encounterHarness({ rng, party = [makeMonster(speciesById['d002'], 5, movesById)] } = {}) {
+function encounterHarness({ rng, party = [makeMonster(speciesById['d002'], 5, movesById)], audio } = {}) {
   const ctl = { dir: null, encounters: [], saveCalls: [] };
   const state = newGameState('T', ROUTE_1_START);
   state.party = party;
@@ -239,6 +239,7 @@ function encounterHarness({ rng, party = [makeMonster(speciesById['d002'], 5, mo
     textbox: { open: false, update() {}, draw() {} },
     save: { autosave: s => ctl.saveCalls.push(structuredClone(s.pos)) },
     rng,
+    audio,
     onEncounter: foe => ctl.encounters.push(foe),
   });
   scene.enter();
@@ -264,6 +265,15 @@ test('walking into Route 1 tall grass with a forced-hit rng fires onEncounter on
   const zone = zoneAt(scene.map, 11, 22);
   assert.equal(zone.id, 'route-1');
   assert.ok(zone.table.some(t => t.species === foe.speciesId), 'foe species comes from the zone table');
+});
+
+test('a forced-hit encounter plays the jingle through the audio the scene was constructed with', () => {
+  const calls = [];
+  const audio = { playJingle: name => calls.push(name) };
+  const { scene } = encounterHarness({ rng: () => 0.01, audio });
+  scene.player.tryMove('right', scene.map, {}); // one step onto the Route 1 grass tile (11,22)
+  for (let i = 0; i < 20 && scene.player.moving; i++) scene.player.update(1 / 60);
+  assert.deepEqual(calls, ['encounter']);
 });
 
 test('a forced-miss rng never fires onEncounter', () => {

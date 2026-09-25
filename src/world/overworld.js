@@ -19,7 +19,7 @@ const S = TILE_SIZE;
 
 export class OverworldScene {
   constructor({ db, maps, state, tileset, input, textbox, save, audio, rng = defaultRng, onEncounter = null }) {
-    Object.assign(this, { db, maps, state, tileset, input, textbox, save, rng, onEncounter });
+    Object.assign(this, { db, maps, state, tileset, input, textbox, save, audio, rng, onEncounter });
     this.transition = new FlashWipe(); // owned/drawn here: the wild-encounter flash + wipe
     this.ticks = 0;
     this.fader = new Fader();

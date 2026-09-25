@@ -1,0 +1,9 @@
+{
+  "name": "tarekmon",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "serve": "npx serve . -l 3000"
+  }
+}

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BagScreen, CRUMBS } from '../../src/ui/bag.js';
 import { PartyScreen } from '../../src/ui/party.js';
-import { applyFieldItem, napkinWarp, NO_EFFECT } from '../../src/world/items.js';
+import { applyFieldItem, hazeEntrance, NO_EFFECT } from '../../src/world/items.js';
 import { newGameState } from '../../src/engine/state.js';
 import { loadMaps } from '../../src/world/map.js';
 import items from '../../data/items.json' with { type: 'json' };
@@ -115,7 +115,7 @@ test('applyFieldItem heal: caps at max, decrements the bag, reports the amount',
   assert.equal(state.bag['wet-wipe'], 1, 'no decrement on failure');
 });
 
-test('applyFieldItem napkin: decrements and asks for the warp; napkinWarp lands inside Haze Lounge', () => {
+test('applyFieldItem napkin: decrements and asks for the warp; hazeEntrance lands inside Haze Lounge', () => {
   const state = newGameState();
   state.bag.napkin = 2;
   assert.deepEqual(applyFieldItem(state, 'napkin', undefined, { db }), { ok: true, warp: true });
@@ -123,5 +123,5 @@ test('applyFieldItem napkin: decrements and asks for the warp; napkinWarp lands 
   state.bag.napkin = 0;
   assert.equal(applyFieldItem(state, 'napkin', undefined, { db }).ok, false);
   const door = mapData.maps.town.warps.find(w => w.to === 'haze');
-  assert.deepEqual(napkinWarp(loadMaps(mapData)), { map: 'haze', x: door.tx, y: door.ty, facing: 'up' });
+  assert.deepEqual(hazeEntrance(loadMaps(mapData)), { map: 'haze', x: door.tx, y: door.ty, facing: 'up' });
 });

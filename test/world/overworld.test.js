@@ -13,6 +13,7 @@ import { dialogueFor } from '../../src/world/npc.js';
 import itemsList from '../../data/items.json' with { type: 'json' };
 import { ShopScreen } from '../../src/ui/shop.js';
 import { BagScreen } from '../../src/ui/bag.js';
+import { hazeEntrance } from '../../src/world/items.js';
 import { FridgeScreen } from '../../src/ui/fridge.js';
 
 const DIRS = ['up', 'down', 'left', 'right'];
@@ -423,6 +424,51 @@ test('a trainer loss blacks out and leaves the trainer undefeated', async () => 
   assert.equal(blackouts, 1);
   assert.deepEqual(h.state.defeatedTrainers, []);
   assert.deepEqual(h.ctl.said, []);
+});
+
+/** Loses a battle on Route 1 with a hurt party and `money`, then plays the blackout to the end. */
+async function blackoutRun(money, result = { kind: 'wild' }) {
+  const h = trainerHarness({ map: 'town', x: 12, y: 22, facing: 'down' });
+  const saves = []; h.scene.save = { autosave: st => saves.push(structuredClone(st)) };
+  const mon = h.state.party[0]; mon.hp = 0; mon.moves[0].pp = 0;
+  h.state.money = money;
+  h.scene.onBattleEnd('lose', result);
+  await h.flush();
+  const saidBeforeFade = [...h.ctl.said], fading = h.scene.fader.active, posBefore = { ...h.state.pos };
+  for (let i = 0; i < 60 && h.scene.fader.active; i++) await h.tick();
+  await h.flush();
+  return { ...h, saves, mon, saidBeforeFade, fading, posBefore };
+}
+
+test('blackout: text on the spot, fade to the Haze Lounge mat (healed, money halved, autosaved), then heal-2 and the drop line', async () => {
+  const b = await blackoutRun(501);
+  assert.deepEqual(b.saidBeforeFade, ['T BLACKED OUT!']);
+  assert.equal(b.fading, true, 'fade starts after the blackout line');
+  assert.equal(b.posBefore.map, 'town', 'still on the battle spot while the line shows');
+  assert.equal(b.scene.fader.active, false);
+  const mat = hazeEntrance(loadMaps(mapData));
+  assert.deepEqual(b.state.pos, mat);
+  assert.equal(b.state.pos.map, 'haze'); assert.equal(b.state.pos.facing, 'up');
+  assert.equal(b.scene.map.id, 'haze');
+  assert.deepEqual([b.scene.player.x, b.scene.player.y], [mat.x, mat.y]);
+  assert.equal(b.mon.hp, b.mon.maxHp); assert.equal(b.mon.moves[0].pp, b.mon.moves[0].maxPp);
+  assert.equal(b.state.money, 250, 'odd money floors');
+  const last = b.saves.at(-1);
+  assert.deepEqual(last.pos, mat); assert.equal(last.money, 250); assert.equal(last.party[0].hp, b.mon.maxHp);
+  assert.deepEqual(b.ctl.said, ['T BLACKED OUT!', dialogue['haze-heal-2'], 'T DROPPED $251\nON THE WAY.']);
+});
+
+test('blackout with no money: no drop line', async () => {
+  const b = await blackoutRun(0);
+  assert.equal(b.state.money, 0);
+  assert.deepEqual(b.ctl.said, ['T BLACKED OUT!', dialogue['haze-heal-2']]);
+});
+
+test('blackout after a trainer loss leaves the trainer undefeated', async () => {
+  const b = await blackoutRun(100, { kind: 'trainer', trainer: { id: 'napkin-nic', name: 'NAPKIN NIC' } });
+  assert.deepEqual(b.state.defeatedTrainers, []);
+  assert.equal(b.state.pos.map, 'haze'); assert.equal(b.state.money, 50);
+  assert.equal(b.ctl.said.at(-1), 'T DROPPED $50\nON THE WAY.');
 });
 
 test('shisha guy: waits (and heals) until the regulars are beaten, then fights; with the badge he just heals', async () => {

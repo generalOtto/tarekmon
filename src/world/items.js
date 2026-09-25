@@ -24,8 +24,8 @@ export function applyFieldItem(state, itemId, partyIndex, { db }) {
   return { ok: false, text: "THAT CAN'T BE USED HERE." };
 }
 
-/** Where a napkin lands: the Haze Lounge side of the town→haze door (its tx/ty), facing up. */
-export function napkinWarp(maps) {
+/** Where a napkin (or a blackout) lands: the Haze Lounge side of the town→haze door (its tx/ty), facing up. */
+export function hazeEntrance(maps) {
   for (const m of Object.values(maps)) {
     if (m.id === 'haze') continue;
     const w = (m.warps ?? []).find(w => w.to === 'haze');

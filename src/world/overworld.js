@@ -14,7 +14,7 @@ import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
 import { ShopScreen } from '../ui/shop.js';
 import { FridgeScreen } from '../ui/fridge.js';
-import { napkinWarp } from './items.js';
+import { hazeEntrance } from './items.js';
 import { attachBattleFlow } from './battleflow.js';
 import { TrainerFlow } from './trainers.js';
 import { FlashWipe } from '../battle/transition.js';
@@ -29,7 +29,7 @@ export class OverworldScene {
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
     this.overlay = null; // one full-input screen at a time (shop, fridge); drawn above the map, below the fade
-    this.afterFade = null; // run once the current warp fade has finished (the napkin's arrival line)
+    this.afterFade = null; // run once the current warp fade has finished (napkin/blackout arrival lines)
     this.startMenu = new StartMenu({ state, save, textbox, audio, db, onNapkin: () => this.useNapkin() });
     this.flow = attachBattleFlow(this);
     this.trainerFlow = new TrainerFlow(this);
@@ -55,13 +55,14 @@ export class OverworldScene {
     return player;
   }
 
-  /** Fade out, swap map/player/state at full black, autosave, then fade back in. */
-  beginWarp(w) {
+  /** Fade out, swap map/player/state at full black, run `onDark` (blackout), autosave, then fade back in. */
+  beginWarp(w, onDark) {
     this.fader.start(() => {
       this.map = this.maps[w.map];
       this.player = this.makePlayer(w.x, w.y, w.facing);
       this.state.pos = { map: w.map, x: w.x, y: w.y, facing: w.facing };
       this.trainerFlow.placeChampion();
+      onDark?.();
       this.save.autosave(this.state);
     });
   }
@@ -150,7 +151,7 @@ export class OverworldScene {
 
   /** A napkin from the BAG: fade to the Haze Lounge entrance mat (autosaves), then say so. */
   useNapkin() {
-    const w = napkinWarp(this.maps);
+    const w = hazeEntrance(this.maps);
     if (!w) return;
     this.afterFade = () => this.textbox.say(`${this.state.playerName} WIPED HIS WAY\nBACK TO HAZE LOUNGE.`);
     this.beginWarp(w);

@@ -5,8 +5,8 @@ import { paginate } from '../../src/ui/textbox.js';
 import { GLYPHS } from '../../src/engine/font.js';
 import mapData from '../../data/map.json' with { type: 'json' };
 
-/** Templates fill `{nick}` with a nickname (species names are ≤ 10 chars): check the widest case. */
-const fill = t => t.replaceAll('{nick}', 'WWWWWWWWWW');
+/** Templates fill `{nick}` (species names are ≤ 10 chars) and `{name}` (the player, ≤ 7): check the widest case. */
+const fill = t => t.replaceAll('{nick}', 'WWWWWWWWWW').replaceAll('{name}', 'WWWWWWW');
 const nonEmpty = s => typeof s === 'string' && s.trim().length > 0;
 
 test('every dialogue value is a non-empty string or a pair of non-empty strings', () => {
@@ -26,7 +26,7 @@ test('required dialogue ids exist', () => {
     'weather-guy-nice', 'weather-guy-bad', 'haze-heal-1', 'haze-heal-2', 'ribs-shop',
     'booth-officer-locked', 'booth-officer-open', 'suhaib-pre', 'suhaib-mid', 'suhaib-lost', 'suhaib-rematch',
     'otto-lab-intro', 'otto-lab-after', 'otto-lab-block', 'regular-1', 'regular-2', 'regular-3', 'regular-4',
-    'townie-1', 'townie-2', 'townie-3', 'fridge-open', 'fridge-last', 'fridge-full', 'fridge-deposit', 'fridge-withdraw', 'rack-nice', 'rack-bad', 'pedestal', 'gate-closed'];
+    'townie-1', 'townie-2', 'townie-3', 'fridge-open', 'fridge-last', 'fridge-full', 'fridge-deposit', 'fridge-withdraw', 'blackout', 'rack-nice', 'rack-bad', 'pedestal', 'gate-closed'];
   for (const id of required) assert.ok(id in dialogue, `missing ${id}`);
 });
 

@@ -1,10 +1,11 @@
 // Battle flow for the overworld: tall-grass encounter rolls, the jingle + flash/wipe into a
-// battle, the post-battle cleanup, and the (stub) blackout. attachBattleFlow(scene) returns
+// battle, the post-battle cleanup, and the blackout. attachBattleFlow(scene) returns
 // methods closed over the scene; OverworldScene keeps thin methods that delegate here.
 import { isEncounterTile, zoneAt } from './map.js';
 import { healParty } from '../engine/state.js';
 import { rollEncounter } from './encounters.js';
 import { makeMonster, resetBattleState } from '../battle/monster.js';
+import { hazeEntrance } from './items.js';
 
 export function attachBattleFlow(scene) {
   return {
@@ -44,12 +45,24 @@ export function attachBattleFlow(scene) {
       if (outro) scene.run(outro);
     },
 
-    // TODO Task 32: replace this stub with the real blackout sequence (fade/text/carry to the
-    // last healer). For now it just heals up and sends the player back to the game's start so a
-    // loss doesn't strand them.
+    /** A lost battle: "<NAME> BLACKED OUT!" on the spot, fade out; at full dark halve the money,
+     *  heal, land on the Haze Lounge mat (autosaved); fade in to the shisha guy's heal-2 line and,
+     *  if anything was dropped, how much. */
     blackout() {
-      healParty(scene.state);
-      scene.beginWarp(scene.db.mapData.start);
+      const { state, textbox } = scene;
+      scene.run(async () => {
+        await textbox.say((scene.db.dialogue?.blackout ?? '{name} BLACKED OUT!').replaceAll('{name}', state.playerName));
+        let lost = 0;
+        scene.afterFade = async () => {
+          await scene.say('haze-heal-2');
+          if (lost > 0) await textbox.say(`${state.playerName} DROPPED $${lost}\nON THE WAY.`);
+        };
+        scene.beginWarp(hazeEntrance(scene.maps), () => {
+          lost = state.money - Math.floor(state.money / 2);
+          state.money -= lost;
+          healParty(state);
+        });
+      });
     },
   };
 }

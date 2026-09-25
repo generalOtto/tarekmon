@@ -1,10 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { OverworldScene } from '../../src/world/overworld.js';
-import { loadMaps } from '../../src/world/map.js';
+import { loadMaps, zoneAt } from '../../src/world/map.js';
 import { newGameState } from '../../src/engine/state.js';
+import { makeMonster } from '../../src/battle/monster.js';
 import mapData from '../../data/map.json' with { type: 'json' };
 import dialogue from '../../data/dialogue.json' with { type: 'json' };
+import speciesList from '../../data/species.json' with { type: 'json' };
+import movesList from '../../data/moves.json' with { type: 'json' };
 
 const DIRS = ['up', 'down', 'left', 'right'];
 /** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */
@@ -215,4 +218,77 @@ test('SAVE re-entrancy guard: Start/A land in the gap between say()s without clo
 
   h.press('start');
   assert.equal(h.scene.startMenu.open, false, 'Start works again after the flow finishes');
+});
+
+// ---------------------------------------------------------------- wild encounters (Task 28)
+
+const byId = arr => Object.fromEntries(arr.map(x => [x.id, x]));
+const speciesById = byId(speciesList);
+const movesById = byId(movesList);
+const encounterDb = { speciesById, movesById };
+const ROUTE_1_START = { map: 'town', x: 10, y: 22, facing: 'right' }; // one tile west of a Route 1 grass tile (11,22)
+
+/** Headless scene one step from Route 1 tall grass, with a scripted rng and an onEncounter spy. */
+function encounterHarness({ rng, party = [makeMonster(speciesById['d002'], 5, movesById)] } = {}) {
+  const ctl = { dir: null, encounters: [], saveCalls: [] };
+  const state = newGameState('T', ROUTE_1_START);
+  state.party = party;
+  const scene = new OverworldScene({
+    db: encounterDb, maps: loadMaps(mapData), state, tileset: { draw() {} },
+    input: makeInput({ direction: () => ctl.dir, justPressed: () => false }),
+    textbox: { open: false, update() {}, draw() {} },
+    save: { autosave: s => ctl.saveCalls.push(structuredClone(s.pos)) },
+    rng,
+    onEncounter: foe => ctl.encounters.push(foe),
+  });
+  scene.enter();
+  return { scene, state, ctl };
+}
+
+test('walking into Route 1 tall grass with a forced-hit rng fires onEncounter once, after the transition, with a foe from the zone table; input is ignored throughout', () => {
+  const { scene, ctl } = encounterHarness({ rng: () => 0.01 }); // always low: rate roll hits, picks the first table entry
+  ctl.dir = 'right';
+  for (let i = 0; i < 20 && !scene.transition.active; i++) scene.update(1 / 60);
+  assert.equal(scene.transition.active, true, 'arriving on the grass tile starts the real FlashWipe transition');
+  assert.equal(ctl.encounters.length, 0, 'onEncounter has not fired mid-transition');
+
+  for (let i = 0; i < 90 && scene.transition.active; i++) {
+    ctl.dir = 'left'; // held throughout: proves input is ignored while the transition plays
+    scene.update(1 / 60);
+    assert.equal(scene.player.moving, false, `tick ${i}: player moved during the transition`);
+  }
+  assert.equal(scene.transition.active, false, 'transition completed (~72 ticks)');
+  assert.equal(ctl.encounters.length, 1, 'onEncounter fired exactly once');
+
+  const foe = ctl.encounters[0];
+  const zone = zoneAt(scene.map, 11, 22);
+  assert.equal(zone.id, 'route-1');
+  assert.ok(zone.table.some(t => t.species === foe.speciesId), 'foe species comes from the zone table');
+});
+
+test('a forced-miss rng never fires onEncounter', () => {
+  const { scene, ctl } = encounterHarness({ rng: () => 0.99 }); // always high: rate roll always fails
+  ctl.dir = 'right';
+  for (let i = 0; i < 100; i++) scene.update(1 / 60);
+  assert.equal(scene.transition.active, false);
+  assert.equal(ctl.encounters.length, 0);
+});
+
+test('an empty party never triggers an encounter, even on a forced-hit rng', () => {
+  const { scene, ctl } = encounterHarness({ rng: () => 0.01, party: [] });
+  ctl.dir = 'right';
+  for (let i = 0; i < 100; i++) scene.update(1 / 60);
+  assert.equal(scene.transition.active, false);
+  assert.equal(ctl.encounters.length, 0);
+});
+
+test('onBattleEnd("win") autosaves once and resets every party member\'s battle-transient state', () => {
+  const { scene, state, ctl } = encounterHarness({ rng: () => 0.5 });
+  for (const m of state.party) { m.stages = { atk: 2, def: -1, acc: 1 }; m.skipNext = true; }
+
+  scene.onBattleEnd('win');
+
+  assert.equal(ctl.saveCalls.length, 1, 'save.autosave called exactly once');
+  for (const m of state.party) assert.deepEqual(m.stages, { atk: 0, def: 0, acc: 0 });
+  for (const m of state.party) assert.equal(m.skipNext, false);
 });

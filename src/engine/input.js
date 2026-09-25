@@ -1,6 +1,6 @@
 export const BUTTONS = ['up', 'down', 'left', 'right', 'a', 'b', 'start'];
 const DIRS = ['up', 'down', 'left', 'right'];
-const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', z: 'a', Z: 'a', x: 'b', X: 'b', Enter: 'start', ' ': 'a', Escape: 'b', '1': 'debug1' };
+const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', z: 'a', Z: 'a', x: 'b', X: 'b', Enter: 'start', ' ': 'a', Escape: 'b' };
 
 /**
  * Tracks per-button down/pressed state.
@@ -47,5 +47,5 @@ export function attachInput(root, state, { onAnyPress } = {}) {
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('pointerleave', up);
     el.addEventListener('contextmenu', e => e.preventDefault());
   }
-  window.addEventListener('blur', () => { for (const b of [...BUTTONS, 'debug1']) state.set(b, false); });
+  window.addEventListener('blur', () => { for (const b of BUTTONS) state.set(b, false); });
 }

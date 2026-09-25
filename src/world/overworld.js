@@ -2,22 +2,25 @@
 // and handles A-button interaction (NPCs, signs, fridge, rack, pedestals, gate).
 import { Player, drawPlayer } from './player.js';
 import { cameraFor } from './camera.js';
-import { tileAt, npcAt, signAt, step } from './map.js';
+import { tileAt, npcAt, signAt, step, isEncounterTile, zoneAt } from './map.js';
 import { drawNpc, faceToward, dialogueFor } from './npc.js';
 import { resolveWarp, Fader, drawFade } from './doors.js';
 import { TILE_SIZE } from './tiles.js';
 import { W, H } from '../engine/canvas.js';
 import { INK } from './palette.js';
 import { healParty } from '../engine/state.js';
-import { rollWeather } from '../engine/rng.js';
+import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
+import { rollEncounter } from './encounters.js';
+import { makeMonster, resetBattleState } from '../battle/monster.js';
+import { FlashWipe } from '../battle/transition.js';
 
 const S = TILE_SIZE;
 
 export class OverworldScene {
-  constructor({ db, maps, state, tileset, input, textbox, save, audio, onDebug1 = null }) {
-    Object.assign(this, { db, maps, state, tileset, input, textbox, save, onDebug1 });
-    this.transition = null; // e.g. a battle FlashWipe: drawn over the map, input locked while active
+  constructor({ db, maps, state, tileset, input, textbox, save, audio, rng = defaultRng, onEncounter = null }) {
+    Object.assign(this, { db, maps, state, tileset, input, textbox, save, rng, onEncounter });
+    this.transition = new FlashWipe(); // owned/drawn here: the wild-encounter flash + wipe
     this.ticks = 0;
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
@@ -30,13 +33,15 @@ export class OverworldScene {
     this.player = this.makePlayer(state.pos.x, state.pos.y, state.pos.facing);
   }
 
-  /** Build a Player wired for this scene: onArrive syncs state.pos and checks for a warp underfoot. */
+  /** Build a Player wired for this scene: onArrive syncs state.pos, checks for a warp underfoot,
+   *  and — only when there's no warp — rolls for a tall-grass encounter. */
   makePlayer(x, y, facing) {
     const player = new Player(x, y, facing);
     player.onArrive = (nx, ny) => {
       this.state.pos.x = nx; this.state.pos.y = ny;
       const w = resolveWarp(this.map, nx, ny);
-      if (w) this.beginWarp(w);
+      if (w) { this.beginWarp(w); return; }
+      this.checkEncounter(nx, ny);
     };
     return player;
   }
@@ -51,6 +56,43 @@ export class OverworldScene {
     });
   }
 
+  /** Rolls for a wild encounter on the tile just arrived at, if it's grass with a zone and the
+   *  party has a fighting-fit member (an empty/wiped party never triggers one). */
+  checkEncounter(x, y) {
+    const { map, state, player, rng } = this;
+    if (!isEncounterTile(map, x, y)) return;
+    const zone = zoneAt(map, x, y);
+    if (!zone) return;
+    if (!state.party.some(m => m.hp > 0)) return;
+    const hit = rollEncounter(zone, rng, player.skating ? 0.5 : 1);
+    if (hit) this.startWildBattle(hit.species, hit.level);
+  }
+
+  /** Jingle + flash/wipe, then hand the foe to whoever owns the scene stack (main.js). */
+  startWildBattle(species, level) {
+    const { db, rng, audio } = this;
+    const foeMonster = makeMonster(db.speciesById[species], level, db.movesById, rng);
+    audio?.playJingle('encounter');
+    this.player.moving = false;
+    this.transition.start(() => this.onEncounter?.(foeMonster));
+  }
+
+  /** Called by main.js's BattleScene onEnd once a wild battle is over: reset transient battle
+   *  state, autosave, and — on a loss — get the player back into play. */
+  onBattleEnd(result) {
+    for (const m of this.state.party) resetBattleState(m);
+    this.save.autosave(this.state);
+    if (result === 'lose') this.blackout?.();
+  }
+
+  // TODO Task 32: replace this stub with the real blackout sequence (fade/text/carry to the
+  // last healer). For now it just heals up and sends the player back to the game's start so a
+  // loss doesn't strand them.
+  blackout() {
+    healParty(this.state);
+    this.beginWarp(this.db.mapData.start);
+  }
+
   update(dt) {
     const { input, textbox, player, state, fader, startMenu } = this;
     if (fader.active) { fader.update(); return; } // no input while warping
@@ -59,7 +101,6 @@ export class OverworldScene {
     if (textbox.open) { textbox.update(input); return; }
     if (this.busy) return; // between two lines of a multi-say interaction
     if (!player.moving && input.justPressed('start')) { startMenu.start(); return; }
-    if (!player.moving && this.onDebug1 && input.justPressed('debug1')) { this.onDebug1(); return; } // TEMP (Task 28)
     if (!player.moving && input.justPressed('a') && this.interact()) return;
     if (!player.moving) {
       const d = input.pressedDirection();

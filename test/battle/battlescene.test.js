@@ -83,7 +83,7 @@ test('multi-page text with a real TextBox auto-advances page by page', () => {
   const textbox = new TextBox();
   const { scene, tick, clearTexts } = setup({ textbox });
   clearTexts();
-  scene.play({ type: 'text', text: 'ONETWO' });
+  scene.play({ type: 'text', text: 'ONE\fTWO' });
   assert.equal(textbox.pageIndex, 0);
   // A page stays up TEXT_HOLD ticks after the tick it finishes typing.
   const holdPage = () => {

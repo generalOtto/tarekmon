@@ -19,10 +19,11 @@ export class Player {
     this.onArrive = null;
   }
 
-  /** Face `dir` always; start a one-tile step if idle and the target is walkable and not blocked. */
+  /** No-op while moving. Otherwise face `dir`, then start a one-tile step if the target is walkable and not blocked. */
   tryMove(dir, map, { blocked } = {}) {
-    this.facing = dir;
+    // Guard first: pixelPos() and the arrival in update() read this.facing, so it must not change mid-step.
     if (this.moving) return false;
+    this.facing = dir;
     const [nx, ny] = step(this.x, this.y, dir);
     if (!isWalkable(map, nx, ny) || blocked?.(nx, ny)) return false;
     this.moving = true; this.progress = 0;

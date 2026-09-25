@@ -31,3 +31,11 @@ test('pixel position interpolates during a step', () => {
   for (let i = 0; i < 8; i++) p.update(1 / 60);
   const { px, py } = p.pixelPos(); assert.equal(py, 16); assert.ok(px > 16 && px < 32);
 });
+test('tryMove while a step is in flight is rejected and keeps facing; the step still lands on its own target', () => {
+  const p = new Player(2, 2, 'down');
+  assert.equal(p.tryMove('up', open, { blocked: () => false }), true);
+  p.update(1 / 60);
+  assert.equal(p.tryMove('down', open, { blocked: () => false }), false); assert.equal(p.facing, 'up');
+  for (let i = 0; i < 15; i++) p.update(1 / 60);
+  assert.equal(p.moving, false); assert.deepEqual([p.x, p.y], [2, 1]);
+});

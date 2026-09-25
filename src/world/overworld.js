@@ -11,7 +11,7 @@ const DIRS = ['up', 'down', 'left', 'right'];
 
 export class OverworldScene {
   constructor({ db, maps, state, tileset, input, textbox, save }) {
-    Object.assign(this, { db, maps, state, tileset, input, textbox, save });
+    Object.assign(this, { db, maps, state, tileset, input, textbox, save }); // save: used by the warp handler (Task 15) for autosave
     this.ticks = 0;
   }
 

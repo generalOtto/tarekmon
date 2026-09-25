@@ -39,12 +39,16 @@ function debugStart() {
   if (!ok) { console.warn(`ignoring bad ?start=${raw}`); return null; }
   return start;
 }
+/** Build a Battle and push its scene; on end, pop back to the overworld with the battle's context. */
+function startBattle({ kind, foeParty, trainer = null }) {
+  scenes.push(new BattleScene({
+    db, state, battle: new Battle({ db, state, kind, foeParty, trainer }), input, textbox, images: db.images,
+    onEnd: result => { scenes.pop(); overworld.onBattleEnd(result, { kind, trainer }); },
+  }));
+}
 const overworld = new OverworldScene({
   db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save,
-  onEncounter: foe => scenes.push(new BattleScene({
-    db, state, battle: new Battle({ db, state, kind: 'wild', foeParty: [foe] }), input, textbox, images: db.images,
-    onEnd: result => { scenes.pop(); overworld.onBattleEnd(result); },
-  })),
+  onEncounter: foe => startBattle({ kind: 'wild', foeParty: [foe] }),
 });
 scenes.push(overworld);
 

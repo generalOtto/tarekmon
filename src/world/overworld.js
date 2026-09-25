@@ -2,7 +2,7 @@
 // and handles A-button interaction (NPCs, signs, fridge, rack, pedestals, gate).
 import { Player, drawPlayer } from './player.js';
 import { cameraFor } from './camera.js';
-import { tileAt, npcAt, signAt, step, isEncounterTile, zoneAt } from './map.js';
+import { tileAt, npcAt, signAt, step } from './map.js';
 import { drawNpc, faceToward, dialogueFor } from './npc.js';
 import { resolveWarp, Fader, drawFade } from './doors.js';
 import { TILE_SIZE } from './tiles.js';
@@ -11,8 +11,7 @@ import { INK } from './palette.js';
 import { healParty } from '../engine/state.js';
 import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
-import { rollEncounter } from './encounters.js';
-import { makeMonster, resetBattleState } from '../battle/monster.js';
+import { attachBattleFlow } from './battleflow.js';
 import { FlashWipe } from '../battle/transition.js';
 
 const S = TILE_SIZE;
@@ -25,6 +24,7 @@ export class OverworldScene {
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
     this.startMenu = new StartMenu({ state, save, textbox, audio });
+    this.flow = attachBattleFlow(this);
   }
 
   enter() {
@@ -56,42 +56,11 @@ export class OverworldScene {
     });
   }
 
-  /** Rolls for a wild encounter on the tile just arrived at, if it's grass with a zone and the
-   *  party has a fighting-fit member (an empty/wiped party never triggers one). */
-  checkEncounter(x, y) {
-    const { map, state, player, rng } = this;
-    if (!isEncounterTile(map, x, y)) return;
-    const zone = zoneAt(map, x, y);
-    if (!zone) return;
-    if (!state.party.some(m => m.hp > 0)) return;
-    const hit = rollEncounter(zone, rng, player.skating ? 0.5 : 1);
-    if (hit) this.startWildBattle(hit.species, hit.level);
-  }
-
-  /** Jingle + flash/wipe, then hand the foe to whoever owns the scene stack (main.js). */
-  startWildBattle(species, level) {
-    const { db, rng, audio } = this;
-    const foeMonster = makeMonster(db.speciesById[species], level, db.movesById, rng);
-    audio?.playJingle('encounter');
-    this.player.moving = false;
-    this.transition.start(() => this.onEncounter?.(foeMonster));
-  }
-
-  /** Called by main.js's BattleScene onEnd once a wild battle is over: reset transient battle
-   *  state, autosave, and — on a loss — get the player back into play. */
-  onBattleEnd(result) {
-    for (const m of this.state.party) resetBattleState(m);
-    this.save.autosave(this.state);
-    if (result === 'lose') this.blackout?.();
-  }
-
-  // TODO Task 32: replace this stub with the real blackout sequence (fade/text/carry to the
-  // last healer). For now it just heals up and sends the player back to the game's start so a
-  // loss doesn't strand them.
-  blackout() {
-    healParty(this.state);
-    this.beginWarp(this.db.mapData.start);
-  }
+  // Encounter/battle plumbing lives in battleflow.js; these stay as the scene's public surface.
+  checkEncounter(x, y) { this.flow.checkEncounter(x, y); }
+  startWildBattle(species, level) { this.flow.startWildBattle(species, level); }
+  onBattleEnd(result, ctx) { this.flow.onBattleEnd(result, ctx); }
+  blackout() { this.flow.blackout(); }
 
   update(dt) {
     const { input, textbox, player, state, fader, startMenu } = this;

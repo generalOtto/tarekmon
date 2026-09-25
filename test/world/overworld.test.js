@@ -267,6 +267,21 @@ test('walking into Route 1 tall grass with a forced-hit rng fires onEncounter on
   assert.ok(zone.table.some(t => t.species === foe.speciesId), 'foe species comes from the zone table');
 });
 
+test('rng order: rate, weight, level, uid, uid → the foe handed to onEncounter is exactly what that sequence produces', () => {
+  // route-1: rate 0.12, weights total 90 → 0.2*90 = 18 lands in d003 (12..22); level randInt(2,5) with 0.99 → 5.
+  const seq = [0.05, 0.2, 0.99, 0.25, 0.5];
+  const rng = () => { assert.ok(seq.length, 'rng called more times than the sequence allows'); return seq.shift(); };
+  const { scene, ctl } = encounterHarness({ rng });
+  ctl.dir = 'right';
+  for (let i = 0; i < 120 && !ctl.encounters.length; i++) { scene.update(1 / 60); if (scene.transition.active) ctl.dir = null; }
+  assert.equal(seq.length, 0, 'every scripted roll was consumed');
+  const foe = ctl.encounters[0];
+  const expected = makeMonster(speciesById['d003'], 5, movesById, (s => () => s.shift())([0.25, 0.5]));
+  assert.equal(foe.speciesId, 'd003');
+  assert.equal(foe.level, 5);
+  assert.equal(foe.uid, expected.uid, 'the two uid rolls come last');
+});
+
 test('a forced-hit encounter plays the jingle through the audio the scene was constructed with', () => {
   const calls = [];
   const audio = { playJingle: name => calls.push(name) };

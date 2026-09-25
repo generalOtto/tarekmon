@@ -9,6 +9,8 @@ export const STRUGGLE = { id: 'struggle', name: 'Struggle', type: null, power: 2
  * when nothing has PP left. Scores usable moves by expected damage (attacking
  * moves) or a flat 5 (status moves), and 25% of the time picks uniformly among
  * usable moves instead of the best-scoring one.
+ * Consumes rng as [decision, pick?]: the first draw decides random-vs-best (always
+ * consumed); a second draw picks uniformly only when random.
  */
 export function chooseFoeMove(foe, foeSpecies, playerSpecies, movesDb, types, rng = defaultRng) {
   const usable = [];

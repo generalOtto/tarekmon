@@ -8,26 +8,26 @@
     "sticker": "d001",
     "animated": false,
     "base": {
-      "hp": 85,
-      "atk": 61,
-      "def": 83,
+      "hp": 84,
+      "atk": 53,
+      "def": 86,
       "spd": 65
     },
     "moves": [
       {
         "level": 1,
-        "id": "hot-towel"
+        "id": "exhale"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
@@ -45,10 +45,10 @@
     "sticker": "d002",
     "animated": false,
     "base": {
-      "hp": 86,
-      "atk": 56,
-      "def": 68,
-      "spd": 40
+      "hp": 85,
+      "atk": 49,
+      "def": 72,
+      "spd": 41
     },
     "moves": [
       {
@@ -57,15 +57,15 @@
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "nap"
       },
       {
-        "level": 8,
-        "id": "leftover"
+        "level": 10,
+        "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -76,33 +76,33 @@
   {
     "id": "d003",
     "num": 3,
-    "name": "Puppydome",
+    "name": "Pawplease",
     "who": "tarek",
     "type": "Soggy",
     "sticker": "d003",
     "animated": false,
     "base": {
-      "hp": 87,
-      "atk": 56,
-      "def": 68,
-      "spd": 40
+      "hp": 86,
+      "atk": 50,
+      "def": 58,
+      "spd": 42
     },
     "moves": [
       {
         "level": 1,
-        "id": "dunk"
+        "id": "soak"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "leftover"
       },
       {
-        "level": 15,
-        "id": "spill"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -119,32 +119,32 @@
     "sticker": "d004",
     "animated": false,
     "base": {
-      "hp": 48,
-      "atk": 76,
-      "def": 53,
-      "spd": 65
+      "hp": 62,
+      "atk": 71,
+      "def": 44,
+      "spd": 68
     },
     "moves": [
       {
         "level": 1,
-        "id": "deep-fry"
+        "id": "sizzle"
       },
       {
         "level": 1,
         "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "sizzle"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Zips its jacket all the way up when startled, which is always.",
+    "entry": "Zips its jacket to the chin the moment anyone says 'let's walk to the lounge.'",
     "rarity": "common"
   },
   {
@@ -156,27 +156,27 @@
     "sticker": "d005",
     "animated": false,
     "base": {
-      "hp": 64,
-      "atk": 91,
-      "def": 58,
-      "spd": 70
+      "hp": 63,
+      "atk": 87,
+      "def": 50,
+      "spd": 74
     },
     "moves": [
       {
         "level": 1,
-        "id": "rib-slam"
+        "id": "hot-sauce"
       },
       {
         "level": 1,
         "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "spice-rack"
       },
       {
-        "level": 15,
-        "id": "chili-oil"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 120,
@@ -193,10 +193,10 @@
     "sticker": "d006",
     "animated": false,
     "base": {
-      "hp": 75,
-      "atk": 56,
-      "def": 68,
-      "spd": 40
+      "hp": 74,
+      "atk": 53,
+      "def": 61,
+      "spd": 45
     },
     "moves": [
       {
@@ -205,15 +205,15 @@
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "stare"
       },
       {
-        "level": 8,
-        "id": "leftover"
+        "level": 10,
+        "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -230,27 +230,27 @@
     "sticker": "d007",
     "animated": false,
     "base": {
-      "hp": 66,
-      "atk": 51,
-      "def": 73,
-      "spd": 55
+      "hp": 65,
+      "atk": 49,
+      "def": 67,
+      "spd": 61
     },
     "moves": [
       {
         "level": 1,
-        "id": "lid-slam"
+        "id": "exhale"
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
-        "id": "hot-towel"
+        "level": 20,
+        "id": "lid-slam"
       }
     ],
     "catchRate": 190,
@@ -267,27 +267,27 @@
     "sticker": "d008",
     "animated": false,
     "base": {
-      "hp": 87,
-      "atk": 71,
-      "def": 93,
-      "spd": 75
+      "hp": 86,
+      "atk": 70,
+      "def": 88,
+      "spd": 82
     },
     "moves": [
       {
         "level": 1,
-        "id": "sheesha-fog"
+        "id": "hot-towel"
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
-        "id": "hot-towel"
+        "level": 20,
+        "id": "lid-slam"
       }
     ],
     "catchRate": 60,
@@ -304,27 +304,27 @@
     "sticker": "d009",
     "animated": false,
     "base": {
-      "hp": 68,
+      "hp": 67,
       "atk": 91,
-      "def": 58,
-      "spd": 70
+      "def": 54,
+      "spd": 63
     },
     "moves": [
       {
         "level": 1,
-        "id": "rib-slam"
+        "id": "hot-sauce"
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "spice-rack"
       },
       {
-        "level": 15,
-        "id": "chili-oil"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 120,
@@ -335,38 +335,38 @@
   {
     "id": "d010",
     "num": 10,
-    "name": "Beaniblob",
+    "name": "Beaniboo",
     "who": "tarek",
     "type": "Steamed",
     "sticker": "d010",
     "animated": false,
     "base": {
-      "hp": 75,
-      "atk": 53,
-      "def": 73,
+      "hp": 74,
+      "atk": 43,
+      "def": 76,
       "spd": 55
     },
     "moves": [
       {
         "level": 1,
-        "id": "hot-towel"
+        "id": "exhale"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Melts into its hoodie at a rate of two centimetres per hour.",
+    "entry": "Pulls its beanie lower every time someone says 'one more lounge'.",
     "rarity": "common"
   },
   {
@@ -378,32 +378,32 @@
     "sticker": "d011",
     "animated": false,
     "base": {
-      "hp": 96,
-      "atk": 68,
-      "def": 78,
-      "spd": 50
+      "hp": 95,
+      "atk": 59,
+      "def": 82,
+      "spd": 51
     },
     "moves": [
       {
         "level": 1,
-        "id": "soup-splash"
+        "id": "spill"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "nap"
       },
       {
-        "level": 8,
-        "id": "leftover"
+        "level": 10,
+        "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "spill"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 120,
     "xpYield": 90,
-    "entry": "Begs politely in a fez. Nobody has ever said no to the fez.",
+    "entry": "Begs for one more coal in a fez. Nobody has ever said no to the fez.",
     "rarity": "uncommon"
   },
   {
@@ -415,10 +415,10 @@
     "sticker": "d012",
     "animated": false,
     "base": {
-      "hp": 62,
-      "atk": 78,
-      "def": 53,
-      "spd": 65
+      "hp": 61,
+      "atk": 70,
+      "def": 43,
+      "spd": 67
     },
     "moves": [
       {
@@ -430,12 +430,12 @@
         "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "sizzle"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
@@ -452,10 +452,10 @@
     "sticker": "d013",
     "animated": false,
     "base": {
-      "hp": 63,
-      "atk": 93,
-      "def": 68,
-      "spd": 80
+      "hp": 77,
+      "atk": 86,
+      "def": 59,
+      "spd": 83
     },
     "moves": [
       {
@@ -464,15 +464,15 @@
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 45,
@@ -489,27 +489,27 @@
     "sticker": "d014",
     "animated": false,
     "base": {
-      "hp": 64,
-      "atk": 53,
-      "def": 73,
-      "spd": 55
+      "hp": 63,
+      "atk": 47,
+      "def": 65,
+      "spd": 59
     },
     "moves": [
       {
         "level": 1,
-        "id": "steam-burst"
+        "id": "hot-towel"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
-        "id": "hot-towel"
+        "level": 20,
+        "id": "lid-slam"
       }
     ],
     "catchRate": 190,
@@ -526,27 +526,27 @@
     "sticker": "d015",
     "animated": false,
     "base": {
-      "hp": 65,
-      "atk": 73,
-      "def": 73,
-      "spd": 80
+      "hp": 64,
+      "atk": 68,
+      "def": 66,
+      "spd": 85
     },
     "moves": [
       {
         "level": 1,
-        "id": "freezer-burn"
+        "id": "brain-freeze"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "brain-freeze"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 120,
@@ -563,27 +563,27 @@
     "sticker": "d016",
     "animated": false,
     "base": {
-      "hp": 66,
-      "atk": 93,
-      "def": 58,
-      "spd": 70
+      "hp": 65,
+      "atk": 89,
+      "def": 52,
+      "spd": 76
     },
     "moves": [
       {
         "level": 1,
-        "id": "rib-slam"
+        "id": "hot-sauce"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "spice-rack"
       },
       {
-        "level": 15,
-        "id": "chili-oil"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 120,
@@ -600,10 +600,10 @@
     "sticker": "d017",
     "animated": false,
     "base": {
-      "hp": 57,
-      "atk": 83,
-      "def": 48,
-      "spd": 60
+      "hp": 56,
+      "atk": 80,
+      "def": 43,
+      "spd": 67
     },
     "moves": [
       {
@@ -612,15 +612,15 @@
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
-        "id": "spice-rack"
+        "level": 10,
+        "id": "extra-sauce"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 190,
@@ -637,27 +637,27 @@
     "sticker": "d018",
     "animated": false,
     "base": {
-      "hp": 68,
-      "atk": 53,
-      "def": 73,
-      "spd": 55
+      "hp": 67,
+      "atk": 51,
+      "def": 69,
+      "spd": 48
     },
     "moves": [
       {
         "level": 1,
-        "id": "exhale"
+        "id": "sheesha-fog"
       },
       {
         "level": 1,
         "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
-        "id": "hot-towel"
+        "level": 20,
+        "id": "lid-slam"
       }
     ],
     "catchRate": 190,
@@ -674,27 +674,27 @@
     "sticker": "d019",
     "animated": false,
     "base": {
-      "hp": 54,
-      "atk": 78,
-      "def": 53,
-      "spd": 65
+      "hp": 53,
+      "atk": 77,
+      "def": 50,
+      "spd": 59
     },
     "moves": [
       {
         "level": 1,
-        "id": "deep-fry"
+        "id": "sizzle"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "sizzle"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
@@ -711,10 +711,10 @@
     "sticker": "d020",
     "animated": false,
     "base": {
-      "hp": 61,
-      "atk": 80,
-      "def": 54,
-      "spd": 65
+      "hp": 60,
+      "atk": 69,
+      "def": 57,
+      "spd": 66
     },
     "moves": [
       {
@@ -726,17 +726,17 @@
         "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Its glasses magnify its alarm to three times actual size.",
+    "entry": "Its glasses magnify the whole shisha menu. It still orders double apple.",
     "rarity": "common"
   },
   {
@@ -748,10 +748,10 @@
     "sticker": "d021",
     "animated": false,
     "base": {
-      "hp": 87,
-      "atk": 85,
-      "def": 84,
-      "spd": 90
+      "hp": 86,
+      "atk": 75,
+      "def": 73,
+      "spd": 92
     },
     "moves": [
       {
@@ -760,14 +760,14 @@
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "freezer-burn"
       }
     ],
@@ -785,10 +785,10 @@
     "sticker": "d022",
     "animated": false,
     "base": {
-      "hp": 63,
-      "atk": 55,
-      "def": 74,
-      "spd": 55
+      "hp": 77,
+      "atk": 46,
+      "def": 64,
+      "spd": 58
     },
     "moves": [
       {
@@ -797,20 +797,20 @@
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Thinking hard about the ribs place. Still cannot remember its name.",
+    "entry": "Daydreaming about the lounge so hard it forgot the lounge's name halfway through.",
     "rarity": "common"
   },
   {
@@ -822,10 +822,10 @@
     "sticker": "d023",
     "animated": false,
     "base": {
-      "hp": 84,
-      "atk": 70,
-      "def": 79,
-      "spd": 50
+      "hp": 83,
+      "atk": 62,
+      "def": 70,
+      "spd": 54
     },
     "moves": [
       {
@@ -834,15 +834,15 @@
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "squish"
       },
       {
-        "level": 8,
-        "id": "damp-napkin"
+        "level": 10,
+        "id": "leftover"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 120,
@@ -859,10 +859,10 @@
     "sticker": "d024",
     "animated": false,
     "base": {
-      "hp": 85,
-      "atk": 115,
-      "def": 79,
-      "spd": 90
+      "hp": 84,
+      "atk": 108,
+      "def": 71,
+      "spd": 95
     },
     "moves": [
       {
@@ -871,15 +871,15 @@
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "extra-sauce"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 30,
@@ -896,10 +896,10 @@
     "sticker": "d025",
     "animated": false,
     "base": {
-      "hp": 66,
-      "atk": 95,
-      "def": 59,
-      "spd": 70
+      "hp": 65,
+      "atk": 89,
+      "def": 52,
+      "spd": 76
     },
     "moves": [
       {
@@ -911,11 +911,11 @@
         "id": "nap"
       },
       {
-        "level": 8,
-        "id": "extra-sauce"
+        "level": 10,
+        "id": "spice-rack"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "heartburn"
       }
     ],
@@ -933,27 +933,27 @@
     "sticker": "d026",
     "animated": false,
     "base": {
-      "hp": 67,
-      "atk": 95,
-      "def": 59,
-      "spd": 70
+      "hp": 66,
+      "atk": 90,
+      "def": 53,
+      "spd": 77
     },
     "moves": [
       {
         "level": 1,
-        "id": "heartburn"
+        "id": "chili-oil"
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "extra-sauce"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 120,
@@ -970,27 +970,27 @@
     "sticker": "d027",
     "animated": false,
     "base": {
-      "hp": 68,
-      "atk": 75,
-      "def": 74,
-      "spd": 80
+      "hp": 67,
+      "atk": 71,
+      "def": 69,
+      "spd": 73
     },
     "moves": [
       {
         "level": 1,
-        "id": "kickflip"
+        "id": "ice-cube"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 120,
@@ -1007,10 +1007,10 @@
     "sticker": "d028",
     "animated": true,
     "base": {
-      "hp": 99,
-      "atk": 80,
-      "def": 89,
-      "spd": 60
+      "hp": 98,
+      "atk": 77,
+      "def": 85,
+      "spd": 54
     },
     "moves": [
       {
@@ -1019,15 +1019,15 @@
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 60,
@@ -1044,32 +1044,32 @@
     "sticker": "d029",
     "animated": false,
     "base": {
-      "hp": 80,
-      "atk": 60,
-      "def": 69,
-      "spd": 40
+      "hp": 79,
+      "atk": 58,
+      "def": 66,
+      "spd": 35
     },
     "moves": [
       {
         "level": 1,
-        "id": "dunk"
+        "id": "soak"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "stare"
       },
       {
-        "level": 8,
-        "id": "damp-napkin"
+        "level": 10,
+        "id": "leftover"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "soup-splash"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Its lower lip has trembled since 2019. It has not cried yet. It is close.",
+    "entry": "Its lower lip trembles whenever the lounge is out of double apple. It has not cried yet.",
     "rarity": "common"
   },
   {
@@ -1081,27 +1081,27 @@
     "sticker": "d030",
     "animated": false,
     "base": {
-      "hp": 112,
-      "atk": 107,
-      "def": 114,
-      "spd": 60
+      "hp": 111,
+      "atk": 95,
+      "def": 103,
+      "spd": 62
     },
     "moves": [
       {
         "level": 1,
-        "id": "time-zone"
+        "id": "roaming"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
-        "id": "duty-free"
+        "level": 10,
+        "id": "jet-lag"
       },
       {
-        "level": 15,
-        "id": "roaming"
+        "level": 20,
+        "id": "long-drive"
       }
     ],
     "catchRate": 30,
@@ -1118,10 +1118,10 @@
     "sticker": "d031",
     "animated": false,
     "base": {
-      "hp": 48,
-      "atk": 82,
-      "def": 54,
-      "spd": 65
+      "hp": 62,
+      "atk": 71,
+      "def": 44,
+      "spd": 68
     },
     "moves": [
       {
@@ -1130,15 +1130,15 @@
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
@@ -1155,32 +1155,32 @@
     "sticker": "d032",
     "animated": false,
     "base": {
-      "hp": 84,
-      "atk": 72,
-      "def": 79,
-      "spd": 50
+      "hp": 83,
+      "atk": 62,
+      "def": 70,
+      "spd": 54
     },
     "moves": [
       {
         "level": 1,
-        "id": "dunk"
+        "id": "soak"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "squish"
       },
       {
-        "level": 8,
-        "id": "damp-napkin"
+        "level": 10,
+        "id": "leftover"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "soup-splash"
       }
     ],
     "catchRate": 120,
     "xpYield": 90,
-    "entry": "Its head is shaped like a pear. Its outlook is shaped like a Monday.",
+    "entry": "Drove to the lounge. Closed Mondays. It is Monday.",
     "rarity": "uncommon"
   },
   {
@@ -1192,27 +1192,27 @@
     "sticker": "d033",
     "animated": true,
     "base": {
-      "hp": 65,
-      "atk": 77,
-      "def": 74,
-      "spd": 80
+      "hp": 64,
+      "atk": 68,
+      "def": 66,
+      "spd": 85
     },
     "moves": [
       {
         "level": 1,
-        "id": "freezer-burn"
+        "id": "brain-freeze"
       },
       {
         "level": 1,
         "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 120,
@@ -1229,10 +1229,10 @@
     "sticker": "d034",
     "animated": false,
     "base": {
-      "hp": 51,
-      "atk": 82,
-      "def": 54,
-      "spd": 65
+      "hp": 50,
+      "atk": 74,
+      "def": 47,
+      "spd": 71
     },
     "moves": [
       {
@@ -1241,15 +1241,15 @@
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
@@ -1266,10 +1266,10 @@
     "sticker": "d035",
     "animated": false,
     "base": {
-      "hp": 57,
-      "atk": 67,
-      "def": 64,
-      "spd": 70
+      "hp": 56,
+      "atk": 60,
+      "def": 58,
+      "spd": 77
     },
     "moves": [
       {
@@ -1278,20 +1278,20 @@
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Covered in electrodes. Worried the machine will learn it only dreams of ribs.",
+    "entry": "Covered in electrodes. The readings suggest it is thinking about kickflips.",
     "rarity": "common"
   },
   {
@@ -1303,26 +1303,26 @@
     "sticker": "d036",
     "animated": false,
     "base": {
-      "hp": 78,
-      "atk": 62,
-      "def": 69,
-      "spd": 40
+      "hp": 77,
+      "atk": 56,
+      "def": 64,
+      "spd": 33
     },
     "moves": [
       {
         "level": 1,
-        "id": "dunk"
+        "id": "soak"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
-        "id": "damp-napkin"
+        "level": 10,
+        "id": "leftover"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "soup-splash"
       }
     ],
@@ -1340,27 +1340,27 @@
     "sticker": "d037",
     "animated": false,
     "base": {
-      "hp": 79,
-      "atk": 62,
-      "def": 69,
-      "spd": 40
+      "hp": 78,
+      "atk": 57,
+      "def": 65,
+      "spd": 34
     },
     "moves": [
       {
         "level": 1,
-        "id": "soup-splash"
+        "id": "spill"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -1377,27 +1377,27 @@
     "sticker": "d038",
     "animated": false,
     "base": {
-      "hp": 70,
-      "atk": 77,
-      "def": 74,
-      "spd": 80
+      "hp": 69,
+      "atk": 73,
+      "def": 71,
+      "spd": 75
     },
     "moves": [
       {
         "level": 1,
-        "id": "kickflip"
+        "id": "ice-cube"
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 120,
@@ -1414,32 +1414,32 @@
     "sticker": "d039",
     "animated": false,
     "base": {
-      "hp": 91,
-      "atk": 77,
-      "def": 94,
-      "spd": 75
+      "hp": 90,
+      "atk": 74,
+      "def": 92,
+      "spd": 71
     },
     "moves": [
       {
         "level": 1,
-        "id": "lid-slam"
+        "id": "sheesha-fog"
       },
       {
         "level": 1,
         "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
-        "id": "sheesha-fog"
+        "level": 20,
+        "id": "lid-slam"
       }
     ],
     "catchRate": 60,
     "xpYield": 140,
-    "entry": "Claims this is its baby photo. The mustache suggests otherwise.",
+    "entry": "Claims this is its baby photo. Its first word was 'double apple'.",
     "rarity": "rare"
   },
   {
@@ -1451,27 +1451,27 @@
     "sticker": "d040",
     "animated": false,
     "base": {
-      "hp": 73,
-      "atk": 48,
-      "def": 69,
-      "spd": 40
+      "hp": 87,
+      "atk": 51,
+      "def": 59,
+      "spd": 43
     },
     "moves": [
       {
         "level": 1,
-        "id": "soup-splash"
+        "id": "spill"
       },
       {
         "level": 1,
         "id": "wet-wipe"
       },
       {
-        "level": 8,
-        "id": "leftover"
+        "level": 10,
+        "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -1482,38 +1482,38 @@
   {
     "id": "d041",
     "num": 41,
-    "name": "Lipzilla",
+    "name": "Poutlaw",
     "who": "tarek",
     "type": "Spicy",
     "sticker": "d041",
     "animated": true,
     "base": {
-      "hp": 74,
-      "atk": 94,
-      "def": 69,
-      "spd": 80
+      "hp": 73,
+      "atk": 97,
+      "def": 60,
+      "spd": 84
     },
     "moves": [
       {
         "level": 1,
-        "id": "rib-slam"
+        "id": "hot-sauce"
       },
       {
         "level": 1,
         "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "spice-rack"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 60,
     "xpYield": 140,
-    "entry": "Its lips arrive two full seconds before the rest of it.",
+    "entry": "Pouts until the bill gets split its way. Wanted in three lounges.",
     "rarity": "rare"
   },
   {
@@ -1525,10 +1525,10 @@
     "sticker": "d042",
     "animated": false,
     "base": {
-      "hp": 55,
-      "atk": 54,
-      "def": 64,
-      "spd": 70
+      "hp": 54,
+      "atk": 58,
+      "def": 56,
+      "spd": 75
     },
     "moves": [
       {
@@ -1537,20 +1537,20 @@
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Earbuds in. Nobody home. Please wait.",
+    "entry": "Earbuds in. Has agreed to three plans it did not hear.",
     "rarity": "common"
   },
   {
@@ -1562,10 +1562,10 @@
     "sticker": "d043",
     "animated": false,
     "base": {
-      "hp": 56,
-      "atk": 74,
-      "def": 49,
-      "spd": 60
+      "hp": 55,
+      "atk": 79,
+      "def": 42,
+      "spd": 66
     },
     "moves": [
       {
@@ -1574,14 +1574,14 @@
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "spice-rack"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "heartburn"
       }
     ],
@@ -1599,27 +1599,27 @@
     "sticker": "d044",
     "animated": false,
     "base": {
-      "hp": 52,
-      "atk": 69,
-      "def": 54,
-      "spd": 65
+      "hp": 51,
+      "atk": 75,
+      "def": 48,
+      "spd": 72
     },
     "moves": [
       {
         "level": 1,
-        "id": "deep-fry"
+        "id": "sizzle"
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
@@ -1636,26 +1636,26 @@
     "sticker": "d045",
     "animated": false,
     "base": {
-      "hp": 68,
-      "atk": 44,
-      "def": 74,
-      "spd": 55
+      "hp": 67,
+      "atk": 51,
+      "def": 69,
+      "spd": 48
     },
     "moves": [
       {
         "level": 1,
-        "id": "exhale"
+        "id": "sheesha-fog"
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
@@ -1673,10 +1673,10 @@
     "sticker": "d046",
     "animated": false,
     "base": {
-      "hp": 59,
-      "atk": 54,
-      "def": 64,
-      "spd": 70
+      "hp": 58,
+      "atk": 62,
+      "def": 60,
+      "spd": 64
     },
     "moves": [
       {
@@ -1688,17 +1688,17 @@
         "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Freezes solid when startled. Its eyebrows have not come down since Tuesday.",
+    "entry": "Its eyebrows went up when Suhaib said the drive was 'nothing'. They're still up.",
     "rarity": "common"
   },
   {
@@ -1710,10 +1710,10 @@
     "sticker": "d047",
     "animated": false,
     "base": {
-      "hp": 70,
-      "atk": 44,
-      "def": 74,
-      "spd": 55
+      "hp": 69,
+      "atk": 53,
+      "def": 71,
+      "spd": 50
     },
     "moves": [
       {
@@ -1722,20 +1722,20 @@
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Grins so hard in every photo that its eyes clock out for the day.",
+    "entry": "Grins so hard in every photo the camera asks if it's okay.",
     "rarity": "common"
   },
   {
@@ -1747,27 +1747,27 @@
     "sticker": "d048",
     "animated": false,
     "base": {
-      "hp": 66,
-      "atk": 79,
-      "def": 64,
-      "spd": 75
+      "hp": 65,
+      "atk": 89,
+      "def": 62,
+      "spd": 71
     },
     "moves": [
       {
         "level": 1,
-        "id": "deep-fry"
+        "id": "sizzle"
       },
       {
         "level": 1,
-        "id": "squish"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 120,
@@ -1784,27 +1784,27 @@
     "sticker": "d049",
     "animated": false,
     "base": {
-      "hp": 92,
-      "atk": 79,
-      "def": 99,
-      "spd": 45
+      "hp": 91,
+      "atk": 90,
+      "def": 98,
+      "spd": 42
     },
     "moves": [
       {
         "level": 1,
-        "id": "time-zone"
+        "id": "roaming"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
-        "id": "border-delay"
+        "level": 10,
+        "id": "duty-free"
       },
       {
-        "level": 15,
-        "id": "roaming"
+        "level": 20,
+        "id": "long-drive"
       }
     ],
     "catchRate": 45,
@@ -1821,26 +1821,26 @@
     "sticker": "d050",
     "animated": false,
     "base": {
-      "hp": 74,
-      "atk": 55,
-      "def": 84,
-      "spd": 65
+      "hp": 73,
+      "atk": 57,
+      "def": 75,
+      "spd": 69
     },
     "moves": [
       {
         "level": 1,
-        "id": "steam-burst"
+        "id": "hot-towel"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
@@ -1858,27 +1858,27 @@
     "sticker": "d051",
     "animated": false,
     "base": {
-      "hp": 75,
-      "atk": 50,
-      "def": 69,
-      "spd": 40
+      "hp": 74,
+      "atk": 53,
+      "def": 61,
+      "spd": 45
     },
     "moves": [
       {
         "level": 1,
-        "id": "soup-splash"
+        "id": "spill"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "stare"
       },
       {
-        "level": 8,
-        "id": "leftover"
+        "level": 10,
+        "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -1895,32 +1895,32 @@
     "sticker": "d052",
     "animated": true,
     "base": {
-      "hp": 66,
-      "atk": 86,
-      "def": 59,
-      "spd": 70
+      "hp": 65,
+      "atk": 89,
+      "def": 52,
+      "spd": 76
     },
     "moves": [
       {
         "level": 1,
-        "id": "rib-slam"
+        "id": "hot-sauce"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "spice-rack"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 120,
     "xpYield": 90,
-    "entry": "Grins like it has a plan. The plan is ribs. It is always ribs.",
+    "entry": "Grins like it has a plan. The plan is the lounge. It is always the lounge.",
     "rarity": "uncommon"
   },
   {
@@ -1932,10 +1932,10 @@
     "sticker": "d053",
     "animated": false,
     "base": {
-      "hp": 57,
-      "atk": 56,
-      "def": 64,
-      "spd": 70
+      "hp": 56,
+      "atk": 60,
+      "def": 58,
+      "spd": 77
     },
     "moves": [
       {
@@ -1944,15 +1944,15 @@
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
@@ -1969,10 +1969,10 @@
     "sticker": "d054",
     "animated": false,
     "base": {
-      "hp": 58,
-      "atk": 56,
-      "def": 64,
-      "spd": 70
+      "hp": 57,
+      "atk": 61,
+      "def": 59,
+      "spd": 63
     },
     "moves": [
       {
@@ -1984,11 +1984,11 @@
         "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "freezer-burn"
       }
     ],
@@ -2006,27 +2006,27 @@
     "sticker": "d055",
     "animated": false,
     "base": {
-      "hp": 59,
-      "atk": 56,
-      "def": 64,
-      "spd": 70
+      "hp": 58,
+      "atk": 62,
+      "def": 60,
+      "spd": 64
     },
     "moves": [
       {
         "level": 1,
-        "id": "freezer-burn"
+        "id": "brain-freeze"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
@@ -2043,10 +2043,10 @@
     "sticker": "d056",
     "animated": false,
     "base": {
-      "hp": 65,
-      "atk": 81,
-      "def": 64,
-      "spd": 75
+      "hp": 64,
+      "atk": 88,
+      "def": 61,
+      "spd": 70
     },
     "moves": [
       {
@@ -2055,15 +2055,15 @@
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 120,
@@ -2080,10 +2080,10 @@
     "sticker": "d057",
     "animated": false,
     "base": {
-      "hp": 56,
-      "atk": 71,
-      "def": 54,
-      "spd": 65
+      "hp": 55,
+      "atk": 79,
+      "def": 52,
+      "spd": 61
     },
     "moves": [
       {
@@ -2092,15 +2092,15 @@
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 190,
@@ -2117,32 +2117,32 @@
     "sticker": "d058",
     "animated": false,
     "base": {
-      "hp": 72,
-      "atk": 46,
-      "def": 74,
-      "spd": 55
+      "hp": 71,
+      "atk": 55,
+      "def": 73,
+      "spd": 52
     },
     "moves": [
       {
         "level": 1,
-        "id": "sheesha-fog"
+        "id": "exhale"
       },
       {
         "level": 1,
-        "id": "wet-wipe"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Post-ribs. Deeply satisfied. Will be asleep in ninety seconds.",
+    "entry": "Post-ribs. Deeply satisfied. Will not be leaving this booth under any circumstances.",
     "rarity": "common"
   },
   {
@@ -2154,32 +2154,32 @@
     "sticker": "d059",
     "animated": false,
     "base": {
-      "hp": 83,
-      "atk": 56,
+      "hp": 82,
+      "atk": 66,
       "def": 84,
-      "spd": 65
+      "spd": 63
     },
     "moves": [
       {
         "level": 1,
-        "id": "exhale"
+        "id": "hot-towel"
       },
       {
         "level": 1,
         "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],
     "catchRate": 120,
     "xpYield": 90,
-    "entry": "Has not let go of the shisha hose since 2022. Seems at peace with this.",
+    "entry": "Has not let go of the shisha hose all night. Seems at peace with this.",
     "rarity": "uncommon"
   },
   {
@@ -2191,10 +2191,10 @@
     "sticker": "d060",
     "animated": false,
     "base": {
-      "hp": 90,
-      "atk": 87,
-      "def": 104,
-      "spd": 50
+      "hp": 89,
+      "atk": 88,
+      "def": 96,
+      "spd": 55
     },
     "moves": [
       {
@@ -2203,15 +2203,15 @@
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "jet-lag"
       },
       {
-        "level": 15,
-        "id": "roaming"
+        "level": 20,
+        "id": "long-drive"
       }
     ],
     "catchRate": 60,
@@ -2228,27 +2228,27 @@
     "sticker": "d061",
     "animated": false,
     "base": {
-      "hp": 81,
-      "atk": 62,
-      "def": 89,
-      "spd": 70
+      "hp": 80,
+      "atk": 64,
+      "def": 82,
+      "spd": 76
     },
     "moves": [
       {
         "level": 1,
-        "id": "lid-slam"
+        "id": "exhale"
       },
       {
         "level": 1,
         "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
-        "id": "sheesha-fog"
+        "level": 20,
+        "id": "lid-slam"
       }
     ],
     "catchRate": 45,
@@ -2265,27 +2265,27 @@
     "sticker": "d062",
     "animated": true,
     "base": {
-      "hp": 67,
-      "atk": 67,
-      "def": 74,
-      "spd": 80
+      "hp": 66,
+      "atk": 70,
+      "def": 68,
+      "spd": 87
     },
     "moves": [
       {
         "level": 1,
-        "id": "freezer-burn"
+        "id": "brain-freeze"
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 120,
@@ -2302,10 +2302,10 @@
     "sticker": "d063",
     "animated": false,
     "base": {
-      "hp": 78,
-      "atk": 53,
-      "def": 69,
-      "spd": 40
+      "hp": 77,
+      "atk": 56,
+      "def": 64,
+      "spd": 33
     },
     "moves": [
       {
@@ -2314,15 +2314,15 @@
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
-        "id": "damp-napkin"
+        "level": 10,
+        "id": "leftover"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -2339,10 +2339,10 @@
     "sticker": "d064",
     "animated": false,
     "base": {
-      "hp": 59,
-      "atk": 58,
-      "def": 64,
-      "spd": 70
+      "hp": 58,
+      "atk": 62,
+      "def": 60,
+      "spd": 64
     },
     "moves": [
       {
@@ -2351,20 +2351,20 @@
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Always films itself from below. Unbothered by the results.",
+    "entry": "Asked if it wanted to come out. Said 'whatever'. Was first in the car.",
     "rarity": "common"
   },
   {
@@ -2376,26 +2376,26 @@
     "sticker": "d065",
     "animated": false,
     "base": {
-      "hp": 80,
-      "atk": 53,
-      "def": 69,
-      "spd": 40
+      "hp": 79,
+      "atk": 58,
+      "def": 66,
+      "spd": 35
     },
     "moves": [
       {
         "level": 1,
-        "id": "dunk"
+        "id": "soak"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "stare"
       },
       {
-        "level": 8,
-        "id": "damp-napkin"
+        "level": 10,
+        "id": "leftover"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "soup-splash"
       }
     ],
@@ -2413,32 +2413,32 @@
     "sticker": "d066",
     "animated": false,
     "base": {
-      "hp": 66,
-      "atk": 83,
-      "def": 64,
-      "spd": 75
+      "hp": 65,
+      "atk": 89,
+      "def": 62,
+      "spd": 71
     },
     "moves": [
       {
         "level": 1,
-        "id": "deep-fry"
+        "id": "sizzle"
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 120,
     "xpYield": 90,
-    "entry": "Throws an arm over its head at the first sign of a Monday.",
+    "entry": "Throws an arm over its face when Suhaib texts 'twenty minutes out'. He is two hours out.",
     "rarity": "uncommon"
   },
   {
@@ -2450,32 +2450,32 @@
     "sticker": "d067",
     "animated": false,
     "base": {
-      "hp": 62,
-      "atk": 78,
-      "def": 49,
-      "spd": 60
+      "hp": 61,
+      "atk": 85,
+      "def": 48,
+      "spd": 57
     },
     "moves": [
       {
         "level": 1,
-        "id": "rib-slam"
+        "id": "hot-sauce"
       },
       {
         "level": 1,
         "id": "dumpling-face"
       },
       {
-        "level": 8,
-        "id": "extra-sauce"
+        "level": 10,
+        "id": "spice-rack"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Remembers exactly who ate its fries in 2017. Has not forgiven them.",
+    "entry": "Remembers who took the last dumpling in 2017. Brings it up at every lounge.",
     "rarity": "common"
   },
   {
@@ -2487,10 +2487,10 @@
     "sticker": "d068",
     "animated": false,
     "base": {
-      "hp": 83,
-      "atk": 53,
+      "hp": 82,
+      "atk": 61,
       "def": 69,
-      "spd": 40
+      "spd": 38
     },
     "moves": [
       {
@@ -2499,15 +2499,15 @@
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "damp-napkin"
       },
       {
-        "level": 15,
-        "id": "dunk"
+        "level": 20,
+        "id": "soup-splash"
       }
     ],
     "catchRate": 190,
@@ -2524,10 +2524,10 @@
     "sticker": "d069",
     "animated": false,
     "base": {
-      "hp": 64,
-      "atk": 58,
-      "def": 64,
-      "spd": 70
+      "hp": 63,
+      "atk": 67,
+      "def": 65,
+      "spd": 69
     },
     "moves": [
       {
@@ -2536,20 +2536,20 @@
       },
       {
         "level": 1,
-        "id": "dumpling-face"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
     "xpYield": 60,
-    "entry": "Has no idea what is going on. Nods along anyway. Has done so for years.",
+    "entry": "Nodded along to the group-chat plan. Arrived at the wrong lounge. Again.",
     "rarity": "common"
   },
   {
@@ -2561,27 +2561,27 @@
     "sticker": "d070",
     "animated": true,
     "base": {
-      "hp": 56,
+      "hp": 55,
       "atk": 59,
-      "def": 64,
-      "spd": 70
+      "def": 57,
+      "spd": 76
     },
     "moves": [
       {
         "level": 1,
-        "id": "kickflip"
+        "id": "ice-cube"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "nap"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "cold-shoulder"
       },
       {
-        "level": 15,
-        "id": "ice-cube"
+        "level": 20,
+        "id": "freezer-burn"
       }
     ],
     "catchRate": 190,
@@ -2598,10 +2598,10 @@
     "sticker": "d071",
     "animated": true,
     "base": {
-      "hp": 77,
-      "atk": 99,
-      "def": 69,
-      "spd": 80
+      "hp": 76,
+      "atk": 100,
+      "def": 63,
+      "spd": 87
     },
     "moves": [
       {
@@ -2610,15 +2610,15 @@
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "dumpling-face"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "extra-sauce"
       },
       {
-        "level": 15,
-        "id": "hot-sauce"
+        "level": 20,
+        "id": "heartburn"
       }
     ],
     "catchRate": 60,
@@ -2635,10 +2635,10 @@
     "sticker": "d072",
     "animated": true,
     "base": {
-      "hp": 58,
-      "atk": 79,
-      "def": 49,
-      "spd": 60
+      "hp": 57,
+      "atk": 81,
+      "def": 44,
+      "spd": 53
     },
     "moves": [
       {
@@ -2647,14 +2647,14 @@
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "wet-wipe"
       },
       {
-        "level": 8,
-        "id": "extra-sauce"
+        "level": 10,
+        "id": "spice-rack"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "heartburn"
       }
     ],
@@ -2672,32 +2672,32 @@
     "sticker": "d073",
     "animated": true,
     "base": {
-      "hp": 64,
-      "atk": 84,
-      "def": 64,
-      "spd": 75
+      "hp": 63,
+      "atk": 87,
+      "def": 60,
+      "spd": 69
     },
     "moves": [
       {
         "level": 1,
-        "id": "deep-fry"
+        "id": "sizzle"
       },
       {
         "level": 1,
-        "id": "stare"
+        "id": "squish"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "oil-splash"
       },
       {
-        "level": 15,
-        "id": "crispy-edge"
+        "level": 20,
+        "id": "deep-fry"
       }
     ],
     "catchRate": 120,
     "xpYield": 90,
-    "entry": "Opened the front camera by accident. Has been stuck there ever since.",
+    "entry": "Meant to photograph the ribs. Photographed itself. Posted it anyway.",
     "rarity": "uncommon"
   },
   {
@@ -2709,10 +2709,10 @@
     "sticker": "d074",
     "animated": true,
     "base": {
-      "hp": 80,
-      "atk": 60,
-      "def": 84,
-      "spd": 65
+      "hp": 79,
+      "atk": 63,
+      "def": 81,
+      "spd": 60
     },
     "moves": [
       {
@@ -2721,14 +2721,14 @@
       },
       {
         "level": 1,
-        "id": "nap"
+        "id": "stare"
       },
       {
-        "level": 8,
+        "level": 10,
         "id": "long-drag"
       },
       {
-        "level": 15,
+        "level": 20,
         "id": "lid-slam"
       }
     ],

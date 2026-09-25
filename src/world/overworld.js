@@ -20,12 +20,14 @@ import { TrainerFlow } from './trainers.js';
 import { FlashWipe } from '../battle/transition.js';
 
 const S = TILE_SIZE;
+const BUMP_TICKS = 20;
 
 export class OverworldScene {
   constructor({ db, maps, state, tileset, input, textbox, save, audio, rng = defaultRng, onBattle = null, onChampion = null }) {
     Object.assign(this, { db, maps, state, tileset, input, textbox, save, audio, rng, onBattle, onChampion });
     this.transition = new FlashWipe(); // owned/drawn here: the flash + wipe into any battle
     this.ticks = 0;
+    this.lastBumpTick = -Infinity; // walking into a wall thuds at most every BUMP_TICKS while held
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
     this.overlay = null; // one full-input screen at a time (shop, fridge); drawn above the map, below the fade
@@ -40,6 +42,7 @@ export class OverworldScene {
     this.map = this.maps[state.pos.map];
     this.player = this.makePlayer(state.pos.x, state.pos.y, state.pos.facing);
     this.trainerFlow.placeChampion();
+    this.audio?.startMusic('overworld'); // interiors share the track
   }
 
   /** Build a Player wired for this scene: onArrive syncs state.pos, checks for a warp underfoot,
@@ -91,11 +94,12 @@ export class OverworldScene {
     if (!player.moving) {
       const d = input.pressedDirection();
       if (d) {
-        player.tryMove(d, this.map, {
+        const moved = player.tryMove(d, this.map, {
           blocked: (x, y) => !!npcAt(this.map, x, y),
           allow: (x, y) => tileAt(this.map, x, y) === 'G' && state.badges.includes('haze'),
         });
         state.pos.facing = player.facing;
+        if (!moved && this.ticks - this.lastBumpTick >= BUMP_TICKS) { this.audio?.playSfx('bump'); this.lastBumpTick = this.ticks; }
       }
     }
     player.update(dt);
@@ -137,7 +141,7 @@ export class OverworldScene {
     if (npc.kind === 'shop') return this.openOverlay(ShopScreen);
     if (npc.kind === 'weather') state.flags.weatherNice = rollWeather();
     await this.textbox.say(dialogueFor(npc, state, this.db.dialogue ?? {}));
-    if (npc.kind === 'healer') { healParty(state); await this.say('haze-heal-2'); }
+    if (npc.kind === 'healer') { healParty(state); this.audio?.playJingle('heal'); await this.say('haze-heal-2'); }
     await this.trainerFlow.officerGift(npc);
   }
 

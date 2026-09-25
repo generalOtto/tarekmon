@@ -3,8 +3,10 @@ import { createScreen } from './engine/canvas.js';
 import { SceneStack, startLoop } from './engine/loop.js';
 import { ButtonState, attachInput } from './engine/input.js';
 import { createSave } from './engine/save.js';
+import { createAudio } from './engine/audio.js';
 import { newGameState } from './engine/state.js';
 import { TextBox } from './ui/textbox.js';
+import { Menu } from './ui/menu.js';
 import { buildTileset } from './world/tileset.js';
 import { loadMaps } from './world/map.js';
 import { OverworldScene } from './world/overworld.js';
@@ -17,9 +19,19 @@ const db = await loadDb();
 const screen = createScreen(document.getElementById('screen'));
 const scenes = new SceneStack();
 const input = new ButtonState();
-attachInput(document.body, input);
+const audio = createAudio({ onMuteChange: () => showMute() });
+// Browsers only let audio start inside a user activation (keydown, mouse down, or a touch's pointerup),
+// so the first input unlocks it, and later activating events retry until the context really runs.
+const unlockAudio = () => { if (navigator.userActivation?.isActive !== false) audio.unlock(); };
+attachInput(document.body, input, { onAnyPress: unlockAudio });
+for (const type of ['keydown', 'pointerup', 'touchend']) window.addEventListener(type, unlockAudio, { capture: true });
+Menu.audio = audio; // every menu blips on cursor moves and A
+const muteBtn = document.getElementById('mute');
+function showMute() { if (muteBtn) muteBtn.textContent = audio.muted ? '🔇' : '🔊'; }
+muteBtn?.addEventListener('click', () => audio.setMuted(!audio.muted)); // same toggle as the Start menu's SOUND
+showMute();
 const save = createSave(localStorage);
-const textbox = new TextBox();
+const textbox = new TextBox({ audio });
 
 // TEMP: straight into a fresh game until the title/intro scenes exist.
 const state = newGameState('TAREK', debugStart() ?? db.mapData.start);
@@ -42,12 +54,12 @@ function debugStart() {
 /** Build a Battle and push its scene; on end, pop back to the overworld with the battle's context. */
 function startBattle({ kind, foeParty, trainer = null }) {
   scenes.push(new BattleScene({
-    db, state, battle: new Battle({ db, state, kind, foeParty, trainer }), input, textbox, images: db.images,
+    db, state, battle: new Battle({ db, state, kind, foeParty, trainer }), input, textbox, images: db.images, audio,
     onEnd: result => { scenes.pop(); overworld.onBattleEnd(result, { kind, trainer }); },
   }));
 }
 const overworld = new OverworldScene({
-  db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save,
+  db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save, audio,
   onBattle: startBattle,
   onChampion: () => {}, // TODO Task 37: roll the credits
 });

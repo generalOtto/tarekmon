@@ -59,6 +59,7 @@ export class BattleScene {
   }
 
   enter() {
+    this.audio?.startMusic('battle');
     this.fadeIn = FADE_IN;
     this.pump();
     this.next();
@@ -109,13 +110,15 @@ export class BattleScene {
       case 'levelup':
         p.level = ev.level;
         this.sparkle = TIMING.SPARKLE;
+        this.audio?.playJingle('levelup');
         return this.play({ type: 'text', text: `${p.mon.nickname} GREW TO L${ev.level}!` });
       case 'learn': {
         const name = id => upper(this.db.movesById[id]?.name ?? id);
         const forgot = ev.forgot ? `\n... AND FORGOT ${name(ev.forgot)}!` : '';
         return this.play({ type: 'text', text: `${p.mon.nickname} LEARNED ${name(ev.move)}!${forgot}` });
       }
-      case 'money':
+      case 'money': // only trainers pay out: the victory fanfare, then the prize line
+        this.audio?.playJingle('victory');
         return this.play({ type: 'text', text: `${this.state.playerName} GOT $${ev.amount} FOR WINNING!` });
     }
     const cur = { ...ev, t: 0 };
@@ -143,7 +146,10 @@ export class BattleScene {
         cur.mon = ev.side === 'player' ? this.state.party[ev.index] : this.battle.foeParty[ev.index];
         if (side.hidden) cur.t = SLIDE_TICKS - 1; // a fainted side has nothing to slide out
         break;
+      case 'faint': this.audio?.playSfx('bump'); break;
+      case 'flee': this.audio?.playSfx('flee'); break;
       case 'end':
+        if (ev.result === 'ran') this.audio?.playSfx('flee');
         this.ended = true;
         this.current = null;
         this.onEnd?.(ev.result);
@@ -170,6 +176,7 @@ export class BattleScene {
         break;
       }
       case 'hp':
+        if (cur.t % 3 === 1 && !cur.tween.done) this.audio?.playSfx('hpTick');
         cur.tween.update();
         side.hp = cur.tween.value;
         side.hpText = Math.round(cur.tween.value);
@@ -213,6 +220,7 @@ export class BattleScene {
   stepBall(cur) {
     const { foe } = this.view, ball = this.view.ball, t = cur.t;
     const shrinkEnd = BALL_ARC + BALL_SHRINK, wobbleEnd = shrinkEnd + cur.wobbles * WOBBLE;
+    this.ballSound(cur, shrinkEnd, wobbleEnd);
     ball.visible = true; ball.star = 0;
     if (t <= BALL_ARC) {
       const k = t / BALL_ARC;
@@ -235,6 +243,16 @@ export class BattleScene {
       if (t >= wobbleEnd + BALL_POP) { foe.scale = 1; return true; }
     }
     return false;
+  }
+
+  /** The ball's sounds on the same timeline: throw, one per wobble, then click + caught fanfare or pop. */
+  ballSound({ t, success }, shrinkEnd, wobbleEnd) {
+    const a = this.audio;
+    if (!a) return;
+    if (t === 1) a.playSfx('ballThrow');
+    else if (t > shrinkEnd && t <= wobbleEnd && (t - shrinkEnd - 1) % WOBBLE === 0) a.playSfx('wobble');
+    else if (t === wobbleEnd + 1) a.playSfx(success ? 'click' : 'pop');
+    else if (success && t === wobbleEnd + BALL_STAR) a.playJingle('caught');
   }
 
   // ---------------------------------------------------------------- menus

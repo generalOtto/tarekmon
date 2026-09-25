@@ -1,6 +1,6 @@
 // A cursor-driven list menu: pure move/select/cancel logic, plus a textbox-styled draw().
 import { drawText, LINE_H } from '../engine/font.js';
-import { INK } from './textbox.js';
+import { INK } from '../world/palette.js';
 import { paperBox } from './box.js';
 
 const REPEAT_DELAY = 12; // ticks before the first auto-repeat while a direction is held
@@ -8,9 +8,13 @@ const REPEAT_RATE = 6;   // ticks between subsequent auto-repeats
 
 /** Cursor state over a flat list of items, optionally arranged in a grid of `cols` columns. */
 export class Menu {
-  constructor(items, { cols = 1 } = {}) {
+  /** Shared sound hook for every menu (set once by main.js): a select blip on cursor moves and A. */
+  static audio = null;
+
+  constructor(items, { cols = 1, audio = null } = {}) {
     this.items = items;
     this.cols = cols;
+    this.audio = audio; // per-menu override of Menu.audio
     this.index = 0;
     this._heldDir = null;
     this._heldTicks = 0;
@@ -40,6 +44,7 @@ export class Menu {
 
   /** Reads input for one tick: moves the cursor (with initial-delay/repeat while held), and fires onSelect/onCancel. */
   handle(input, { onSelect, onCancel } = {}) {
+    const audio = this.audio ?? Menu.audio, from = this.index;
     const dir = input.pressedDirection();
     if (dir) {
       // A fresh press (or rolling onto a different direction) moves immediately and starts the delay window.
@@ -63,7 +68,9 @@ export class Menu {
       this._repeating = false;
     }
 
-    if (input.justPressed('a')) onSelect?.(this.selected(), this.index);
+    if (this.index !== from) audio?.playSfx('select');
+
+    if (input.justPressed('a')) { audio?.playSfx('select'); onSelect?.(this.selected(), this.index); }
     else if (input.justPressed('b')) onCancel?.();
   }
 

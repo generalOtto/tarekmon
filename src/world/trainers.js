@@ -105,7 +105,7 @@ export class TrainerFlow {
     if (s.state.badges.includes('haze')) return null;
     const regulars = Object.values(s.db.trainersById).filter(t => t.kind === 'regular');
     if (regulars.every(t => this.beaten(t.id))) return this.challenge(npc);
-    return (async () => { await s.say('haze-leader-wait'); healParty(s.state); await s.say('haze-heal-2'); })();
+    return (async () => { await s.say('haze-leader-wait'); healParty(s.state); s.audio?.playJingle('heal'); await s.say('haze-heal-2'); })();
   }
 
   /** Battle won: record it now (before the autosave) and return the outro to run. */

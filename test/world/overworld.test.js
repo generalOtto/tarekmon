@@ -303,7 +303,7 @@ test('rng order: rate, weight, level, uid, uid → the foe handed to onBattle is
 
 test('a forced-hit encounter plays the jingle through the audio the scene was constructed with', () => {
   const calls = [];
-  const audio = { playJingle: name => calls.push(name) };
+  const audio = { playJingle: name => calls.push(name), playSfx() {}, startMusic() {}, stopMusic() {} };
   const { scene } = encounterHarness({ rng: () => 0.01, audio });
   scene.player.tryMove('right', scene.map, {}); // one step onto the Route 1 grass tile (11,22)
   for (let i = 0; i < 20 && scene.player.moving; i++) scene.player.update(1 / 60);
@@ -353,7 +353,7 @@ function trainerHarness(start, { badges = [], defeated = [] } = {}) {
     db: fullDb, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
     input: makeInput({ direction: () => ctl.dir, justPressed: b => b === 'a' && ctl.a }),
     textbox: { open: false, update() {}, draw() {}, say(t) { ctl.said.push(t); return Promise.resolve(); } },
-    save: { autosave() {} }, rng: () => 0.99, audio: { playJingle: n => ctl.jingles.push(n) },
+    save: { autosave() {} }, rng: () => 0.99, audio: { playJingle: n => ctl.jingles.push(n), playSfx() {}, startMusic() {}, stopMusic() {} },
     onBattle: b => ctl.battles.push(b), onChampion: () => ctl.champion++,
   });
   scene.enter();

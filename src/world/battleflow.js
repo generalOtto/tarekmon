@@ -29,6 +29,7 @@ export function attachBattleFlow(scene) {
     /** The one way into any battle: jingle + flash/wipe, then hand it to whoever owns the scene
      *  stack (main.js) via scene.onBattle. */
     startBattle({ kind, foeParty, trainer = null, jingle = 'encounter' }) {
+      scene.audio?.stopMusic();
       scene.audio?.playJingle(jingle);
       scene.player.moving = false;
       scene.transition.start(() => scene.onBattle?.({ kind, foeParty, trainer }));
@@ -39,6 +40,7 @@ export function attachBattleFlow(scene) {
      *  or play the trainer's outro (post line, badge, champion). A lost trainer stays undefeated. */
     onBattleEnd(result, { kind, trainer } = {}) {
       for (const m of scene.state.party) resetBattleState(m);
+      scene.audio?.startMusic('overworld');
       const outro = result === 'win' && kind === 'trainer' ? scene.trainerFlow.recordWin(trainer) : null;
       scene.save.autosave(scene.state);
       if (result === 'lose') scene.blackout?.();

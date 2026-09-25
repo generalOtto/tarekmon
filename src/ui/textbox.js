@@ -1,9 +1,9 @@
 import { drawText, LINE_H } from '../engine/font.js';
 import { W } from '../engine/canvas.js';
 import { paperBox } from './box.js';
+import { INK } from '../world/palette.js';
 
-export const PAPER = '#f8f8f0';
-export const INK = '#0f380f';
+export { PAPER, INK } from '../world/palette.js'; // palette.js is canonical; re-exported for older importers
 
 /** Greedily word-wraps a single logical line to `cols` columns, hard-splitting words too long to fit. */
 function wrapWords(str, cols) {
@@ -79,7 +79,9 @@ const PAD = 8;
 
 /** A Gen-1-style dialog box: paginates text, types it out, and waits for A to advance/dismiss. */
 export class TextBox {
-  constructor() {
+  /** audio (optional): plays a textTick every 2 revealed characters while a page types out. */
+  constructor({ audio = null } = {}) {
+    this.audio = audio;
     this.open = false;
     this.pages = [];
     this.pageIndex = 0;
@@ -123,7 +125,9 @@ export class TextBox {
     if (!this.typewriter.done) {
       const fast = input.isDown('a') || input.isDown('b');
       this.typewriter.charsPerTick = fast ? FAST_SPEED : BASE_SPEED;
+      const before = this.typewriter.revealed;
       this.typewriter.tick();
+      if ((this.typewriter.revealed >> 1) > (before >> 1)) this.audio?.playSfx('textTick');
       return;
     }
 

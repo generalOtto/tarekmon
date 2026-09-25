@@ -24,7 +24,7 @@ export class StartMenu {
   }
 
   _items() {
-    return [...BASE_ITEMS, this.state.flags.muted ? 'SOUND OFF' : 'SOUND ON', 'CLOSE'];
+    return [...BASE_ITEMS, this.audio?.muted ? 'SOUND OFF' : 'SOUND ON', 'CLOSE'];
   }
 
   start() {
@@ -55,8 +55,7 @@ export class StartMenu {
     switch (label) {
       case 'SOUND ON':
       case 'SOUND OFF':
-        this.state.flags.muted = !this.state.flags.muted;
-        this.audio?.setMuted?.(this.state.flags.muted);
+        this.audio?.setMuted(!this.audio.muted); // persisted by the audio module
         break;
       case 'SAVE':
         this._doSave();

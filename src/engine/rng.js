@@ -36,6 +36,7 @@ export function randInt(rng, min, max) { return min + Math.floor(rng() * (max - 
 
 export function chance(rng, p) { return rng() < p; }
 
+// Empty list or all-zero weights fall through to the last item; callers guard.
 export function pickWeighted(rng, items) {
   const total = items.reduce((s, i) => s + i.weight, 0);
   let r = rng() * total;

@@ -20,7 +20,10 @@ export function createSave(storage) {
 export function toSaveCode(state) {
   const json = JSON.stringify({ version: VERSION, state });
   const bytes = new TextEncoder().encode(json);
-  return btoa(String.fromCharCode(...bytes));
+  // Chunked: spreading a huge array into fromCharCode can exceed the engine's argument limit.
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x10000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x10000));
+  return btoa(binary);
 }
 
 export function fromSaveCode(code) {

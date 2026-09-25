@@ -10,6 +10,9 @@ import speciesList from '../../data/species.json' with { type: 'json' };
 import movesList from '../../data/moves.json' with { type: 'json' };
 import trainersList from '../../data/trainers.json' with { type: 'json' };
 import { dialogueFor } from '../../src/world/npc.js';
+import itemsList from '../../data/items.json' with { type: 'json' };
+import { ShopScreen } from '../../src/ui/shop.js';
+import { BagScreen } from '../../src/ui/bag.js';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 /** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */
@@ -574,4 +577,65 @@ test('booth officer: with the badge, gives 3 Extra Sauce exactly once', async ()
   const n = trainerHarness({ map: 'booth', x: 3, y: 3, facing: 'up' });
   await n.pressA();
   assert.deepEqual(n.ctl.said, [dialogue['booth-officer-locked']], 'no badge, no sauce');
+});
+
+/** Headless scene with a real-ish button set: `press(...)` makes buttons justPressed for one tick. */
+function buttons(start, setupState = () => {}) {
+  const ctl = { pressed: new Set(), said: [], saves: [] };
+  const state = newGameState('T', start);
+  setupState(state);
+  const textbox = { open: false, update() {}, draw() {}, say(t) { ctl.said.push(t); return Promise.resolve(); } };
+  const db = { dialogue, items: itemsList, itemsById: Object.fromEntries(itemsList.map(i => [i.id, i])) };
+  const scene = new OverworldScene({
+    db, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
+    input: makeInput({ direction: () => null, justPressed: b => ctl.pressed.has(b) }),
+    textbox, save: { autosave: s => ctl.saves.push(structuredClone(s.pos)) },
+  });
+  scene.enter();
+  const press = async (...b) => { ctl.pressed = new Set(b); scene.update(1 / 60); ctl.pressed = new Set(); for (let i = 0; i < 5; i++) await null; };
+  return { scene, state, ctl, press };
+}
+
+test('talking to the shopkeeper over the counter opens the shop overlay; leaving closes it', async () => {
+  const t = buttons({ map: 'ribs', x: 3, y: 3, facing: 'up' });
+  await t.press('a');
+  assert.ok(t.scene.overlay instanceof ShopScreen);
+  assert.deepEqual(t.ctl.said, [dialogue['ribs-shop']]);
+  await t.press('a'); // BUY
+  await t.press('a'); // DUMPLINGBALL, x1
+  await t.press('a'); // pay
+  assert.equal(t.state.money, 400);
+  assert.equal(t.ctl.said.at(-1), dialogue['shop-bought-balls']);
+  await t.press('b'); await t.press('b'); // list → main → leave
+  assert.equal(t.ctl.said.at(-1), dialogue['shop-leave']);
+  assert.equal(t.scene.overlay, null);
+});
+
+test('a napkin from the Start menu BAG warps to Haze Lounge, autosaves, then says so', async () => {
+  const t = buttons({ map: 'town', x: 11, y: 12, facing: 'down' }, s => { s.bag.napkin = 1; });
+  await t.press('start');
+  await t.press('down'); await t.press('down'); await t.press('a'); // BAG
+  assert.ok(t.scene.startMenu.screen instanceof BagScreen);
+  await t.press('down'); await t.press('a'); await t.press('a'); // NAPKIN → USE
+  assert.equal(t.state.bag.napkin, 0);
+  assert.equal(t.scene.startMenu.open, false);
+  assert.equal(t.scene.fader.active, true);
+  for (let i = 0; i < 60 && t.scene.fader.active; i++) await t.press();
+  await t.press();
+  const door = mapData.maps.town.warps.find(w => w.to === 'haze');
+  assert.deepEqual(t.state.pos, { map: 'haze', x: door.tx, y: door.ty, facing: 'up' });
+  assert.equal(t.scene.map.id, 'haze');
+  assert.deepEqual(t.ctl.saves, [t.state.pos]);
+  assert.equal(t.ctl.said.at(-1), 'T WIPED HIS WAY\nBACK TO HAZE LOUNGE.');
+});
+
+test('Start → DUMPLINGS opens the party screen; B returns to the Start menu', async () => {
+  const t = buttons({ map: 'town', x: 11, y: 12, facing: 'down' }, s => {
+    s.party.push(makeMonster(speciesList[0], 5, Object.fromEntries(movesList.map(m => [m.id, m])), () => 0.5));
+  });
+  await t.press('start'); await t.press('down'); await t.press('a');
+  assert.equal(t.scene.startMenu.screen?.mode, 'manage');
+  await t.press('b');
+  assert.equal(t.scene.startMenu.screen, null);
+  assert.equal(t.scene.startMenu.open, true);
 });

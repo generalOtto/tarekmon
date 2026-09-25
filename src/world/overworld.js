@@ -12,6 +12,8 @@ import { INK } from './palette.js';
 import { healParty } from '../engine/state.js';
 import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
+import { ShopScreen } from '../ui/shop.js';
+import { napkinWarp } from './items.js';
 import { attachBattleFlow } from './battleflow.js';
 import { TrainerFlow } from './trainers.js';
 import { FlashWipe } from '../battle/transition.js';
@@ -25,7 +27,9 @@ export class OverworldScene {
     this.ticks = 0;
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
-    this.startMenu = new StartMenu({ state, save, textbox, audio });
+    this.overlay = null; // one full-input screen at a time (the shop); drawn above the map, below the fade
+    this.afterFade = null; // run once the current warp fade has finished (the napkin's arrival line)
+    this.startMenu = new StartMenu({ state, save, textbox, audio, db, onNapkin: () => this.useNapkin() });
     this.flow = attachBattleFlow(this);
     this.trainerFlow = new TrainerFlow(this);
   }
@@ -69,8 +73,13 @@ export class OverworldScene {
 
   update(dt) {
     const { input, textbox, player, state, fader, startMenu } = this;
-    if (fader.active) { fader.update(); return; } // no input while warping
+    if (fader.active) { // no input while warping
+      fader.update();
+      if (!fader.active && this.afterFade) { const f = this.afterFade; this.afterFade = null; this.run(f); }
+      return;
+    }
     if (this.transition?.active) { this.transition.update(); return; }
+    if (this.overlay) { this.overlay.update(input); return; }
     if (startMenu.open) { startMenu.update(input); return; }
     if (textbox.open) { textbox.update(input); return; }
     if (this.busy) return; // between two lines of a multi-say interaction
@@ -123,10 +132,25 @@ export class OverworldScene {
     npc.facing = faceToward(npc, player.x, player.y);
     const fight = this.trainerFlow.talk(npc);
     if (fight) return fight;
+    if (npc.kind === 'shop') return this.openShop();
     if (npc.kind === 'weather') state.flags.weatherNice = rollWeather();
     await this.textbox.say(dialogueFor(npc, state, this.db.dialogue ?? {}));
     if (npc.kind === 'healer') { healParty(state); await this.say('haze-heal-2'); }
     await this.trainerFlow.officerGift(npc);
+  }
+
+  openShop() {
+    const shop = new ShopScreen({ state: this.state, db: this.db, textbox: this.textbox,
+      onClose: () => { if (this.overlay === shop) this.overlay = null; } });
+    this.overlay = shop;
+  }
+
+  /** A napkin from the BAG: fade to the Haze Lounge entrance mat (autosaves), then say so. */
+  useNapkin() {
+    const w = napkinWarp(this.maps);
+    if (!w) return;
+    this.afterFade = () => this.textbox.say(`${this.state.playerName} WIPED HIS WAY\nBACK TO HAZE LOUNGE.`);
+    this.beginWarp(w);
   }
 
   draw(ctx) {
@@ -150,6 +174,7 @@ export class OverworldScene {
     }
     this.trainerFlow.drawBubble(ctx, ox, oy);
     drawPlayer(ctx, Math.round(px) - ox, Math.round(py) - oy, player.facing, player.frame, player.skating);
+    this.overlay?.draw(ctx);
     this.startMenu.draw(ctx); // draws the shared textbox too, whether from the menu or a plain interaction
     drawFade(ctx, fader.alpha);
     this.transition?.draw(ctx);

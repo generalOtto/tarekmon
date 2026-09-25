@@ -1,7 +1,11 @@
-// The pause menu: opened with Start in the overworld. Save/load, sound toggle, and placeholders
-// for the dex/party/bag screens that arrive in later tasks.
+// The pause menu: opened with Start in the overworld. Save, sound toggle, the DUMPLINGS (party)
+// and BAG overlay screens, and a placeholder for the dex. While a screen is open the menu hides
+// its own box and forwards update/draw to it; closing the screen returns here.
 import { Menu } from './menu.js';
 import { toSaveCode } from '../engine/save.js';
+import { PartyScreen } from './party.js';
+import { BagScreen } from './bag.js';
+import { applyFieldItem } from '../world/items.js';
 
 const X = 160 - 88;
 const Y = 0;
@@ -10,8 +14,10 @@ const W = 88;
 const BASE_ITEMS = ['DUMPLINGDEX', 'DUMPLINGS', 'BAG', 'SAVE'];
 
 export class StartMenu {
-  constructor({ state, save, textbox, audio }) {
-    Object.assign(this, { state, save, textbox, audio });
+  /** onNapkin(): the overworld's warp back to Haze Lounge, run after a napkin is used from the BAG. */
+  constructor({ state, save, textbox, audio, db = {}, onNapkin = null }) {
+    Object.assign(this, { state, save, textbox, audio, db, onNapkin });
+    this.screen = null; // the open PartyScreen / BagScreen, if any
     this.open = false;
     this.menu = null;
     this.busy = false; // true for the whole SAVE flow, incl. the gap between say() calls, so Start can't race it
@@ -29,10 +35,12 @@ export class StartMenu {
   close() {
     this.open = false;
     this.menu = null;
+    this.screen = null;
   }
 
   update(input) {
     if (!this.open) return;
+    if (this.screen) { this.screen.update(input); return; }
     if (this.textbox.open) { this.textbox.update(input); return; }
     if (this.busy) return; // mid-SAVE, between say() calls: ignore Start/B/menu input until it settles
     if (input.justPressed('start')) { this.close(); return; }
@@ -56,12 +64,31 @@ export class StartMenu {
       case 'CLOSE':
         this.close();
         break;
-      case 'DUMPLINGDEX':
       case 'DUMPLINGS':
+        this._show(new PartyScreen({ ...this._screenOpts(), mode: 'manage' }));
+        break;
       case 'BAG':
+        this._show(new BagScreen({ ...this._screenOpts(), context: 'field', onUse: (id, i) => this._useItem(id, i) }));
+        break;
+      case 'DUMPLINGDEX':
         this.textbox.say('NOT YET.');
         break;
     }
+  }
+
+  _screenOpts() { return { state: this.state, db: this.db, textbox: this.textbox }; }
+
+  /** Opens an overlay screen; its onClose drops it (only if it is still the current one). */
+  _show(screen) {
+    screen.onClose = () => { if (this.screen === screen) this.screen = null; };
+    if (screen.open) this.screen = screen;
+  }
+
+  /** BAG → USE in the field: heal a picked member, or napkin out (closes everything, then warps). */
+  _useItem(id, partyIndex) {
+    const r = applyFieldItem(this.state, id, partyIndex, { db: this.db });
+    if (r.warp) { this.close(); this.onNapkin?.(); return; }
+    this.textbox.say(r.text);
   }
 
   async _doSave() {
@@ -83,9 +110,10 @@ export class StartMenu {
   }
 
   // Always safe to call: draws the shared textbox whenever it's open (menu or plain overworld
-  // dialogue alike), plus the menu box itself when the start menu is open and not covered by it.
+  // dialogue alike), on top of the open screen, or the menu box when it is not covered.
   draw(ctx) {
-    if (this.open && !this.textbox.open) this.menu.draw(ctx, X, Y, W);
+    if (this.screen) this.screen.draw(ctx);
+    else if (this.open && !this.textbox.open) this.menu.draw(ctx, X, Y, W);
     this.textbox.draw(ctx);
   }
 }

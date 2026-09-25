@@ -211,7 +211,7 @@
       ],
       "zones": [],
       "npcs": [
-        { "id": "shopkeeper", "x": 3, "y": 1, "facing": "down", "sprite": "npc-shop", "dialogue": "ribs-shop" }
+        { "id": "shopkeeper", "x": 3, "y": 1, "facing": "down", "sprite": "npc-shop", "dialogue": "ribs-shop", "kind": "shop" }
       ],
       "trainers": [],
       "signs": [],

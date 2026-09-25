@@ -115,9 +115,8 @@ function drawBottom(ctx, scene) {
     drawText(ctx, move?.type ? move.type : '-', PANEL_X, BOX_Y + 18, INK);
     drawText(ctx, slot ? `PP ${slot.pp}/${slot.maxPp}` : 'PP -', PANEL_X, BOX_Y + 32, slot?.pp === 0 ? RED : INK);
   } else {
-    // bag / party: a list that grows upward from the bottom edge
-    const rows = Math.min(menu.items.length, 6);
-    menu.draw(ctx, 0, H - (16 + rows * 16), W, { rows });
+    // bag / party: the scene draws its overlay screen over the whole battle after this
+    paperBox(ctx, 0, BOX_Y, W, BOX_H);
   }
 }
 

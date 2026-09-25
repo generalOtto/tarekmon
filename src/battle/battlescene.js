@@ -7,6 +7,8 @@ import { Menu } from '../ui/menu.js';
 import { Tween } from '../ui/hpbar.js';
 import { xpForLevel, MAX_LEVEL } from './stats.js';
 import { drawBattle, BALL_FROM, BALL_TO } from './battledraw.js';
+import { BagScreen } from '../ui/bag.js';
+import { PartyScreen } from '../ui/party.js';
 
 /** Pacing, in ticks (60/s). */
 export const TIMING = Object.freeze({
@@ -44,8 +46,8 @@ export class BattleScene {
     this.current = null;   // the event being played: { type, ..., t } (t = ticks elapsed)
     this.mode = 'events';  // 'events' | 'action' | 'fight' | 'bag' | 'party'
     this.menu = null;
+    this.screen = null;    // the BagScreen / PartyScreen overlay while mode is 'bag' / 'party'
     this.actionMenu = new Menu(ACTIONS, { cols: 2 });
-    this.forcedSwitch = false;
     this.returnTo = null; // 'party': reopen the party list after a rejected voluntary switch
     this.ended = false;
     this.fadeIn = 0;
@@ -250,22 +252,35 @@ export class BattleScene {
   }
 
   openBag() {
-    const ids = Object.keys(this.state.bag).filter(id => this.state.bag[id] > 0 && this.db.itemsById[id]?.battle != null);
-    if (!ids.length) return this.play({ type: 'text', text: 'THE BAG IS EMPTY.' });
-    this.menu = new Menu(ids.map(id => `${this.db.itemsById[id].name} x${this.state.bag[id]}`));
-    this.menu.ids = ids;
-    this.mode = 'bag';
+    this.openScreen('bag', new BagScreen({ ...this.screenOpts(), context: 'battle',
+      onUse: (id, i) => this.act(() => this.battle.useItem(id, i)) }));
   }
 
   openParty(forced = false) {
-    this.forcedSwitch = forced;
-    this.menu = new Menu(this.state.party.map(m => `${m.nickname} L${m.level} HP ${m.hp}/${m.maxHp}`));
-    if (forced) this.menu.index = Math.max(0, this.state.party.findIndex(m => m.hp > 0));
-    this.mode = 'party';
+    this.openScreen('party', new PartyScreen({ ...this.screenOpts(), mode: 'switch', forced, battle: this.battle,
+      onPick: i => {
+        // a rejected voluntary pick (already out / no energy) comes back to the party screen, not the action menu
+        const m = this.state.party[i];
+        if (!forced && (i === this.battle.playerIndex || !(m?.hp > 0))) this.returnTo = 'party';
+        this.act(() => this.battle.switchTo(i));
+      } }));
+  }
+
+  screenOpts() { return { state: this.state, db: { ...this.db, images: this.images }, textbox: this.textbox }; }
+
+  /** Shows a shared overlay screen; backing out of it (B, or an empty bag) returns to the action menu. */
+  openScreen(mode, screen) {
+    this.mode = mode;
+    this.menu = null;
+    this.screen = screen;
+    screen.onClose = () => { if (this.screen === screen) { this.screen = null; this.openAction(); } };
   }
 
   /** Runs one battle.* action, then pulls its events so they play from the next tick. */
   act(fn) {
+    const screen = this.screen;
+    this.screen = null; // detach first, so its close() below doesn't reopen the action menu
+    screen?.close();
     this.mode = 'events';
     this.menu = null;
     fn();
@@ -289,25 +304,15 @@ export class BattleScene {
           this.fightIndex = i;
           this.act(() => battle.chooseMove(struggle ? 'struggle' : i));
         } });
-      case 'bag':
-        return this.menu.handle(input, { onCancel: back, onSelect: (_, i) => {
-          const id = this.menu.ids[i];
-          this.act(() => battle.useItem(id));
-        } });
-      case 'party':
-        return this.menu.handle(input, {
-          onCancel: this.forcedSwitch ? undefined : back,
-          onSelect: (_, i) => {
-            // a rejected voluntary pick (already out / no energy) comes back to this list, not the action menu
-            const m = this.state.party[i];
-            if (!this.forcedSwitch && (i === battle.playerIndex || !(m?.hp > 0))) this.returnTo = 'party';
-            this.act(() => battle.switchTo(i));
-          },
-        });
+      case 'bag': case 'party':
+        return this.screen?.update(input);
     }
   }
 
   // ---------------------------------------------------------------- drawing
 
-  draw(ctx) { drawBattle(ctx, this); }
+  draw(ctx) {
+    drawBattle(ctx, this);
+    if (this.screen) { this.screen.draw(ctx); this.textbox.draw(ctx); } // INFO / no-effect lines over the screen
+  }
 }

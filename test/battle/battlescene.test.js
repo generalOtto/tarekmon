@@ -5,6 +5,8 @@ import { TextBox } from '../../src/ui/textbox.js';
 import { Battle } from '../../src/battle/battle.js';
 import { makeMonster } from '../../src/battle/monster.js';
 import { newGameState } from '../../src/engine/state.js';
+import { BagScreen, CRUMBS } from '../../src/ui/bag.js';
+import { PartyScreen } from '../../src/ui/party.js';
 import types from '../../data/types.json' with { type: 'json' };
 import items from '../../data/items.json' with { type: 'json' };
 
@@ -195,7 +197,9 @@ test('phase mustSwitch opens the party list automatically and B is ignored', () 
   assert.equal(scene.mode, 'party');
   tick('b');
   assert.equal(scene.mode, 'party');
-  assert.equal(scene.menu.index, 1, 'cursor starts on the first healthy member');
+  assert.ok(scene.screen instanceof PartyScreen);
+  assert.equal(scene.screen.forced, true);
+  assert.equal(scene.screen.menu.index, 1, 'cursor starts on the first healthy member');
   tick('a');
   assert.equal(battle.playerIndex, 1);
   assert.equal(scene.mode, 'events');
@@ -224,17 +228,47 @@ test('all moves at 0 PP → FIGHT shows only STRUGGLE', () => {
   assert.deepEqual(calls, ['struggle']);
 });
 
-test('BAG lists battle items with count > 0 and uses the selected one', () => {
+test('BAG opens the shared bag screen with battle items; USE hands the item to battle.useItem', () => {
   const { scene, state, battle, tick, clearTexts } = setup();
   clearTexts();
   state.bag = { 'dumpling-ball': 3, 'wet-wipe': 0, 'extra-sauce': 1 };
   const calls = [];
-  battle.useItem = id => calls.push(id);
+  battle.useItem = (...a) => calls.push(a);
   tick('right'); tick('a');
   assert.equal(scene.mode, 'bag');
-  assert.deepEqual(scene.menu.items, ['DUMPLINGBALL x3', 'EXTRA SAUCE x1']);
+  assert.ok(scene.screen instanceof BagScreen);
+  assert.deepEqual(scene.screen.ids, ['dumpling-ball', 'extra-sauce']);
+  tick('a'); tick('a'); // item → USE
+  assert.deepEqual(calls, [['dumpling-ball', undefined]]);
+  assert.equal(scene.mode, 'events');
+  assert.equal(scene.screen, null);
+});
+
+test('BAG → a heal item picks its target on the party screen; B out of the bag returns to the action menu', () => {
+  const { scene, state, battle, tick, clearTexts } = setup({ party: [mon('pA', 10), mon('pA', 10)] });
+  clearTexts();
+  state.bag = { 'wet-wipe': 1 };
+  const calls = [];
+  battle.useItem = (...a) => calls.push(a);
+  tick('right'); tick('a'); tick('a'); tick('a'); // BAG → WET WIPE → USE
+  assert.equal(scene.screen.picker.mode, 'pick');
+  tick('down'); tick('a');
+  assert.deepEqual(calls, [['wet-wipe', 1]]);
+  clearTexts();
+  tick('right'); tick('a'); tick('b');
+  assert.equal(scene.mode, 'action');
+  assert.equal(scene.screen, null);
+});
+
+test('an empty BAG says the crumbs line, then returns to the action menu', async () => {
+  const { scene, state, textbox, tick, clearTexts } = setup();
+  clearTexts();
+  state.bag = {};
+  tick('right'); tick('a');
+  assert.equal(textbox.said.at(-1), CRUMBS);
   tick('a');
-  assert.deepEqual(calls, ['dumpling-ball']);
+  for (let i = 0; i < 5; i++) await null;
+  assert.equal(scene.mode, 'action');
 });
 
 test('ball event: success hides the foe and keeps the ball; timeline length matches wobbles', () => {

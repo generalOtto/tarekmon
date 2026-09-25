@@ -1,0 +1,7 @@
+{
+  "types": ["Steamed", "Fried", "Spicy", "Soggy", "Frozen", "Imported"],
+  "beats": { "Fried": "Steamed", "Soggy": "Fried", "Spicy": "Soggy", "Frozen": "Spicy", "Steamed": "Frozen" },
+  "resistsAll": "Imported",
+  "resistsAllMultiplier": 0.5,
+  "colors": { "Steamed": "#e8e0c8", "Fried": "#e0a040", "Spicy": "#d84030", "Soggy": "#4878c0", "Frozen": "#88d0e8", "Imported": "#9058b8" }
+}

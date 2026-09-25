@@ -1,1 +1,211 @@
-{ "start": { "map": "lab", "x": 5, "y": 6, "facing": "down" }, "maps": {} }
+{
+  "start": { "map": "lab", "x": 5, "y": 7, "facing": "up" },
+  "maps": {
+    "town": {
+      "name": "DUMPLINGTON",
+      "outdoor": true,
+      "rows": [
+        "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+        "TTTTTTTTTTTTTTTT:::::::::=::::TT",
+        "TTTTTTTTTTTTTTT===========:::::T",
+        "TTTTTTTTTTTTTTTT:::::::::=:::::T",
+        "T~~~#####################GPPPP#T",
+        "T~~~:=::T...............S=PPPP.T",
+        "T~~~:=::T.LLLLLL.***..*..=WWDW.T",
+        "T~~~,=,,T.LLLLLL.***...*.=..=S.T",
+        "T~~~,=,,T.WWWWWW....TT...=..=..T",
+        "T~~~,=,,T.WWDWWW....TT...=..=.TT",
+        "T~~~,=,,T..S=...T........=..=.TT",
+        "T~~~,=,TT...=............=..=..T",
+        "T~~~,=,TT=====================.T",
+        "T~~~,=,,T=.............=.......T",
+        "T~~~,=,,T=**..HHHHHHHH.=BBBBBB*T",
+        "T~~~,=,,T=**..HHHHHHHH.=BBBBBB*T",
+        "T~~~,=,,T=....HHHHHHHH.=WWWWWW.T",
+        "T~~~T=,,T=TTT.WWWWWWWW.=WWDWWW.T",
+        "T~~~,=,,T=....WWWDWWWW.=..=S...T",
+        "T~~~,=,,T=......S=.....=..=....T",
+        "T~~~,=,,T======================T",
+        "T~~~,=,TT=TTTTTTT=TTTTTTTT=TTTTT",
+        "T~~~,=,TT=T,,,,,,=TT*.T,,,=,,,,T",
+        "T~~~,=,,T=T,,,,,,=...*T,,,=,,TTT",
+        "T~~~,=,,T=.,,,,,,=,,,,T,,,=,,TTT",
+        "T~~~,=,,T=.,,,,,,=,,,,TT,,=,,,,T",
+        "T~~~,=,,T=.,,,,,,=,,,,TT,,=####T",
+        "T~~~T=,,T=..======,,,,T,,,=,,,,T",
+        "T~~~,=,,T=.,=,,,.=,,,,T,===,,,,T",
+        "T~~~,=,,T=.,,,,,.=,,,,T,=,,,,,,T",
+        "T~~~,=,TT=.,,,,,T=,,,,T,=,,,,,,T",
+        "T~~~,=,,T=.,,,,,T=...TT,=,,TT,,T",
+        "T~~~,=,,T=.,,,,,.=...TT,=,,TT,,T",
+        "T~~~.=..T=**.....=.**.T,=,*,,,,T",
+        "T~~~K=S.T=.......=....T,=,,,,,,T",
+        "T~~~.==================,=,,,,,,T",
+        "T~~~..........**.......,,....**T",
+        "T:::...T....TT....T.**.,,.....*T",
+        "T:::......*.T..................T",
+        "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+      ],
+      "warps": [
+        { "x": 12, "y": 9, "to": "lab", "tx": 5, "ty": 7, "facing": "up" },
+        { "x": 17, "y": 18, "to": "haze", "tx": 6, "ty": 8, "facing": "up" },
+        { "x": 26, "y": 17, "to": "ribs", "tx": 4, "ty": 6, "facing": "up" },
+        { "x": 28, "y": 6, "to": "booth", "tx": 3, "ty": 4, "facing": "up" }
+      ],
+      "zones": [
+        {
+          "id": "route-1",
+          "rect": [10, 21, 12, 13],
+          "rate": 0.12,
+          "table": [
+            { "species": "d002", "min": 2, "max": 5, "weight": 12 },
+            { "species": "d003", "min": 2, "max": 5, "weight": 10 },
+            { "species": "d004", "min": 2, "max": 5, "weight": 10 },
+            { "species": "d006", "min": 2, "max": 5, "weight": 8 },
+            { "species": "d007", "min": 2, "max": 5, "weight": 12 },
+            { "species": "d010", "min": 2, "max": 5, "weight": 10 },
+            { "species": "d012", "min": 2, "max": 5, "weight": 9 },
+            { "species": "d014", "min": 2, "max": 5, "weight": 8 },
+            { "species": "d017", "min": 2, "max": 5, "weight": 11 }
+          ]
+        },
+        {
+          "id": "route-2",
+          "rect": [23, 21, 8, 18],
+          "rate": 0.14,
+          "table": [
+            { "species": "d018", "min": 5, "max": 9, "weight": 10 },
+            { "species": "d019", "min": 5, "max": 9, "weight": 10 },
+            { "species": "d020", "min": 5, "max": 9, "weight": 10 },
+            { "species": "d022", "min": 5, "max": 9, "weight": 10 },
+            { "species": "d029", "min": 5, "max": 9, "weight": 10 },
+            { "species": "d031", "min": 5, "max": 9, "weight": 10 },
+            { "species": "d001", "min": 6, "max": 9, "weight": 5 },
+            { "species": "d005", "min": 6, "max": 9, "weight": 5 },
+            { "species": "d023", "min": 6, "max": 9, "weight": 5 },
+            { "species": "d025", "min": 6, "max": 9, "weight": 5 }
+          ]
+        },
+        {
+          "id": "skate",
+          "rect": [4, 5, 4, 30],
+          "rate": 0.14,
+          "table": [
+            { "species": "d026", "min": 8, "max": 13, "weight": 8 },
+            { "species": "d038", "min": 8, "max": 13, "weight": 8 },
+            { "species": "d050", "min": 8, "max": 13, "weight": 8 },
+            { "species": "d056", "min": 8, "max": 13, "weight": 8 },
+            { "species": "d008", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d021", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d028", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d039", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d041", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d060", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d071", "min": 9, "max": 13, "weight": 2 },
+            { "species": "d024", "min": 11, "max": 13, "weight": 1 },
+            { "species": "d030", "min": 11, "max": 13, "weight": 1 }
+          ]
+        }
+      ],
+      "npcs": [],
+      "trainers": [],
+      "signs": [],
+      "objects": [
+        { "x": 25, "y": 4, "kind": "gate" }
+      ]
+    },
+    "lab": {
+      "name": "PROF. OTTO'S LAB",
+      "outdoor": false,
+      "rows": [
+        "WWWWWWWWWWWW",
+        "WWWWWWWWWWWW",
+        "_CCC________",
+        "_____EEE____",
+        "____________",
+        "CC________CC",
+        "____________",
+        "____________",
+        "_____MM_____"
+      ],
+      "warps": [
+        { "x": 5, "y": 8, "to": "town", "tx": 12, "ty": 10, "facing": "down" },
+        { "x": 6, "y": 8, "to": "town", "tx": 12, "ty": 10, "facing": "down" }
+      ],
+      "zones": [],
+      "npcs": [],
+      "trainers": [],
+      "signs": [],
+      "objects": []
+    },
+    "haze": {
+      "name": "HAZE LOUNGE",
+      "outdoor": false,
+      "rows": [
+        "WWWWWWWWWWWWWW",
+        "F_____________",
+        "CCCCCC_CCCCCCC",
+        "______________",
+        "_Q__RRRRRR__Q_",
+        "____RRRRRR____",
+        "_Q__RRRRRR__Q_",
+        "______________",
+        "______________",
+        "______MM______"
+      ],
+      "warps": [
+        { "x": 6, "y": 9, "to": "town", "tx": 17, "ty": 19, "facing": "down" },
+        { "x": 7, "y": 9, "to": "town", "tx": 17, "ty": 19, "facing": "down" }
+      ],
+      "zones": [],
+      "npcs": [],
+      "trainers": [],
+      "signs": [],
+      "objects": []
+    },
+    "ribs": {
+      "name": "THAT RIBS PLACE",
+      "outdoor": false,
+      "rows": [
+        "WWWWWWWWWW",
+        "__________",
+        "CCCCCCC___",
+        "__________",
+        "__________",
+        "__________",
+        "__________",
+        "____MM____"
+      ],
+      "warps": [
+        { "x": 4, "y": 7, "to": "town", "tx": 26, "ty": 18, "facing": "down" },
+        { "x": 5, "y": 7, "to": "town", "tx": 26, "ty": 18, "facing": "down" }
+      ],
+      "zones": [],
+      "npcs": [],
+      "trainers": [],
+      "signs": [],
+      "objects": []
+    },
+    "booth": {
+      "name": "PASSPORT BOOTH",
+      "outdoor": false,
+      "rows": [
+        "WWWWWWWW",
+        "________",
+        "_CCCCCC_",
+        "________",
+        "________",
+        "___MM___"
+      ],
+      "warps": [
+        { "x": 3, "y": 5, "to": "town", "tx": 28, "ty": 7, "facing": "down" },
+        { "x": 4, "y": 5, "to": "town", "tx": 28, "ty": 7, "facing": "down" }
+      ],
+      "zones": [],
+      "npcs": [],
+      "trainers": [],
+      "signs": [],
+      "objects": []
+    }
+  }
+}

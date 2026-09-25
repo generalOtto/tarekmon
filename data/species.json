@@ -1,0 +1,2740 @@
+[
+  {
+    "id": "d001",
+    "num": 1,
+    "name": "Ghutrabun",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d001",
+    "animated": false,
+    "base": {
+      "hp": 85,
+      "atk": 61,
+      "def": 83,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-towel"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Smiles like it knows what you ordered. It does.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d002",
+    "num": 2,
+    "name": "Spectopout",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d002",
+    "animated": false,
+    "base": {
+      "hp": 86,
+      "atk": 56,
+      "def": 68,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "spill"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "leftover"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Has been 'about to leave' for forty minutes. Glasses fogged from the effort.",
+    "rarity": "common"
+  },
+  {
+    "id": "d003",
+    "num": 3,
+    "name": "Puppydome",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d003",
+    "animated": false,
+    "base": {
+      "hp": 87,
+      "atk": 56,
+      "def": 68,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "dunk"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "leftover"
+      },
+      {
+        "level": 15,
+        "id": "spill"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Its pleading eyes have secured over 400 bites of other people's food.",
+    "rarity": "common"
+  },
+  {
+    "id": "d004",
+    "num": 4,
+    "name": "Zipshock",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d004",
+    "animated": false,
+    "base": {
+      "hp": 48,
+      "atk": 76,
+      "def": 53,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "deep-fry"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "sizzle"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Zips its jacket all the way up when startled, which is always.",
+    "rarity": "common"
+  },
+  {
+    "id": "d005",
+    "num": 5,
+    "name": "Grinlord",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d005",
+    "animated": false,
+    "base": {
+      "hp": 64,
+      "atk": 91,
+      "def": 58,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "rib-slam"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "chili-oil"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Its grin has no off switch. Scientists have tried.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d006",
+    "num": 6,
+    "name": "Quiffle",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d006",
+    "animated": false,
+    "base": {
+      "hp": 75,
+      "atk": 56,
+      "def": 68,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "spill"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "leftover"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Spends twenty minutes on its quiff. Then it rains. Every time.",
+    "rarity": "common"
+  },
+  {
+    "id": "d007",
+    "num": 7,
+    "name": "Snoozle",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d007",
+    "animated": false,
+    "base": {
+      "hp": 66,
+      "atk": 51,
+      "def": 73,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "lid-slam"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "hot-towel"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Found asleep on the lounge couch in 9 of 10 sightings. The tenth was a different couch.",
+    "rarity": "common"
+  },
+  {
+    "id": "d008",
+    "num": 8,
+    "name": "Hoodini",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d008",
+    "animated": false,
+    "base": {
+      "hp": 87,
+      "atk": 71,
+      "def": 93,
+      "spd": 75
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "sheesha-fog"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "hot-towel"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "Can vanish entirely inside a hoodie. Has been reported missing twice while present.",
+    "rarity": "rare"
+  },
+  {
+    "id": "d009",
+    "num": 9,
+    "name": "Lil Dumpz",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d009",
+    "animated": false,
+    "base": {
+      "hp": 68,
+      "atk": 91,
+      "def": 58,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "rib-slam"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "chili-oil"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Throws up hand signs no one recognizes. Claims they stand for 'the lounge'.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d010",
+    "num": 10,
+    "name": "Beaniblob",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d010",
+    "animated": false,
+    "base": {
+      "hp": 75,
+      "atk": 53,
+      "def": 73,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-towel"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Melts into its hoodie at a rate of two centimetres per hour.",
+    "rarity": "common"
+  },
+  {
+    "id": "d011",
+    "num": 11,
+    "name": "Fezzington",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d011",
+    "animated": false,
+    "base": {
+      "hp": 96,
+      "atk": 68,
+      "def": 78,
+      "spd": 50
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "soup-splash"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "leftover"
+      },
+      {
+        "level": 15,
+        "id": "spill"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Begs politely in a fez. Nobody has ever said no to the fez.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d012",
+    "num": 12,
+    "name": "Lampface",
+    "who": "otto",
+    "type": "Fried",
+    "sticker": "d012",
+    "animated": false,
+    "base": {
+      "hp": 62,
+      "atk": 78,
+      "def": 53,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "double-coal"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "sizzle"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Wears a headlamp indoors 'just in case'. The case has never come.",
+    "rarity": "common"
+  },
+  {
+    "id": "d013",
+    "num": 13,
+    "name": "Dumplord",
+    "who": "otto",
+    "type": "Fried",
+    "sticker": "d013",
+    "animated": false,
+    "base": {
+      "hp": 63,
+      "atk": 93,
+      "def": 68,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "sizzle"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 45,
+    "xpYield": 100,
+    "entry": "The first face ever squished into a dumpling. Has not stopped smiling about it.",
+    "rarity": "starter"
+  },
+  {
+    "id": "d014",
+    "num": 14,
+    "name": "Forecasto",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d014",
+    "animated": false,
+    "base": {
+      "hp": 64,
+      "atk": 53,
+      "def": 73,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "steam-burst"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "hot-towel"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Gazes skyward, checking if it's e-skateboard weather. Forecast: not today.",
+    "rarity": "common"
+  },
+  {
+    "id": "d015",
+    "num": 15,
+    "name": "Fedorable",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d015",
+    "animated": false,
+    "base": {
+      "hp": 65,
+      "atk": 73,
+      "def": 73,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "freezer-burn"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "brain-freeze"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Dressed for a mountain hike. Has walked to the car and back.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d016",
+    "num": 16,
+    "name": "Showerpout",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d016",
+    "animated": false,
+    "base": {
+      "hp": 66,
+      "atk": 93,
+      "def": 58,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "rib-slam"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "chili-oil"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Sulks in a floral shower cap. Do not mention the shower cap.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d017",
+    "num": 17,
+    "name": "Bedhedgie",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d017",
+    "animated": false,
+    "base": {
+      "hp": 57,
+      "atk": 83,
+      "def": 48,
+      "spd": 60
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "chili-oil"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Its hair points north. Its plans for the day point nowhere.",
+    "rarity": "common"
+  },
+  {
+    "id": "d018",
+    "num": 18,
+    "name": "Ribsy",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d018",
+    "animated": false,
+    "base": {
+      "hp": 68,
+      "atk": 53,
+      "def": 73,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "exhale"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "hot-towel"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Sighs at a plate of ribs the way others sigh at sunsets.",
+    "rarity": "common"
+  },
+  {
+    "id": "d019",
+    "num": 19,
+    "name": "Gaspo",
+    "who": "otto",
+    "type": "Fried",
+    "sticker": "d019",
+    "animated": false,
+    "base": {
+      "hp": 54,
+      "atk": 78,
+      "def": 53,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "deep-fry"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "sizzle"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Wears a collared shirt so its panic looks professional.",
+    "rarity": "common"
+  },
+  {
+    "id": "d020",
+    "num": 20,
+    "name": "Gogglo",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d020",
+    "animated": false,
+    "base": {
+      "hp": 61,
+      "atk": 80,
+      "def": 54,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "sizzle"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Its glasses magnify its alarm to three times actual size.",
+    "rarity": "common"
+  },
+  {
+    "id": "d021",
+    "num": 21,
+    "name": "Dumplonaut",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d021",
+    "animated": false,
+    "base": {
+      "hp": 87,
+      "atk": 85,
+      "def": 84,
+      "spd": 90
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "ice-cube"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "freezer-burn"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "Went to space looking for a shisha lounge open past 3 a.m. Search ongoing.",
+    "rarity": "rare"
+  },
+  {
+    "id": "d022",
+    "num": 22,
+    "name": "Daydreamer",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d022",
+    "animated": false,
+    "base": {
+      "hp": 63,
+      "atk": 55,
+      "def": 74,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "exhale"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Thinking hard about the ribs place. Still cannot remember its name.",
+    "rarity": "common"
+  },
+  {
+    "id": "d023",
+    "num": 23,
+    "name": "Sobwards",
+    "who": "otto",
+    "type": "Soggy",
+    "sticker": "d023",
+    "animated": false,
+    "base": {
+      "hp": 84,
+      "atk": 70,
+      "def": 79,
+      "spd": 50
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "soak"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Wears its cap backwards so the tears have a clear path.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d024",
+    "num": 24,
+    "name": "Orange Boy",
+    "who": "other",
+    "type": "Spicy",
+    "sticker": "d024",
+    "animated": false,
+    "base": {
+      "hp": 85,
+      "atk": 115,
+      "def": 79,
+      "spd": 90
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "chili-oil"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "extra-sauce"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 30,
+    "xpYield": 200,
+    "entry": "Made entirely of orange peel. Shouts in all caps. Nobody knows who let it in.",
+    "rarity": "legend"
+  },
+  {
+    "id": "d025",
+    "num": 25,
+    "name": "Foamando",
+    "who": "otto",
+    "type": "Spicy",
+    "sticker": "d025",
+    "animated": false,
+    "base": {
+      "hp": 66,
+      "atk": 95,
+      "def": 59,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-sauce"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "extra-sauce"
+      },
+      {
+        "level": 15,
+        "id": "heartburn"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Poses with its foam blaster for twenty minutes before firing it once.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d026",
+    "num": 26,
+    "name": "Dartvader",
+    "who": "otto",
+    "type": "Spicy",
+    "sticker": "d026",
+    "animated": false,
+    "base": {
+      "hp": 67,
+      "atk": 95,
+      "def": 59,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "heartburn"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "extra-sauce"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Has you in its sights. The dart will bounce off you. It knows. It fires anyway.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d027",
+    "num": 27,
+    "name": "Puffington",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d027",
+    "animated": false,
+    "base": {
+      "hp": 68,
+      "atk": 75,
+      "def": 74,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "kickflip"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "A rare 3D render. Acts like it has its own animated movie coming out.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d028",
+    "num": 28,
+    "name": "Funguy",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d028",
+    "animated": true,
+    "base": {
+      "hp": 99,
+      "atk": 80,
+      "def": 89,
+      "spd": 60
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "spill"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "A fun guy. Grows in damp corners of the lounge. Please do not stomp on it.",
+    "rarity": "rare"
+  },
+  {
+    "id": "d029",
+    "num": 29,
+    "name": "Wobblip",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d029",
+    "animated": false,
+    "base": {
+      "hp": 80,
+      "atk": 60,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "dunk"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "soup-splash"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Its lower lip has trembled since 2019. It has not cried yet. It is close.",
+    "rarity": "common"
+  },
+  {
+    "id": "d030",
+    "num": 30,
+    "name": "Suhaibabe",
+    "who": "suhaib",
+    "type": "Imported",
+    "sticker": "d030",
+    "animated": false,
+    "base": {
+      "hp": 112,
+      "atk": 107,
+      "def": 114,
+      "spd": 60
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "time-zone"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "duty-free"
+      },
+      {
+        "level": 15,
+        "id": "roaming"
+      }
+    ],
+    "catchRate": 30,
+    "xpYield": 200,
+    "entry": "Crossed the border in disguise. Customs waved it straight through.",
+    "rarity": "legend"
+  },
+  {
+    "id": "d031",
+    "num": 31,
+    "name": "Panicam",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d031",
+    "animated": false,
+    "base": {
+      "hp": 48,
+      "atk": 82,
+      "def": 54,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "sizzle"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Always far too close to the camera. Always panicking about it.",
+    "rarity": "common"
+  },
+  {
+    "id": "d032",
+    "num": 32,
+    "name": "Despearate",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d032",
+    "animated": false,
+    "base": {
+      "hp": 84,
+      "atk": 72,
+      "def": 79,
+      "spd": 50
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "dunk"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "soup-splash"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Its head is shaped like a pear. Its outlook is shaped like a Monday.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d033",
+    "num": 33,
+    "name": "Cringeboi",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d033",
+    "animated": true,
+    "base": {
+      "hp": 65,
+      "atk": 77,
+      "def": 74,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "freezer-burn"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Heard what you said. Tilted its head. Is choosing not to respond.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d034",
+    "num": 34,
+    "name": "Snorelab",
+    "who": "otto",
+    "type": "Fried",
+    "sticker": "d034",
+    "animated": false,
+    "base": {
+      "hp": 51,
+      "atk": 82,
+      "def": 54,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "double-coal"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Took part in a sleep study. The study is still recovering.",
+    "rarity": "common"
+  },
+  {
+    "id": "d035",
+    "num": 35,
+    "name": "Zapnap",
+    "who": "otto",
+    "type": "Frozen",
+    "sticker": "d035",
+    "animated": false,
+    "base": {
+      "hp": 57,
+      "atk": 67,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "brain-freeze"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Covered in electrodes. Worried the machine will learn it only dreams of ribs.",
+    "rarity": "common"
+  },
+  {
+    "id": "d036",
+    "num": 36,
+    "name": "Wirewilt",
+    "who": "otto",
+    "type": "Soggy",
+    "sticker": "d036",
+    "animated": false,
+    "base": {
+      "hp": 78,
+      "atk": 62,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "dunk"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "soup-splash"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Wired up for science at 6 a.m. Fully wilted by 6:01.",
+    "rarity": "common"
+  },
+  {
+    "id": "d037",
+    "num": 37,
+    "name": "Ughsworth",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d037",
+    "animated": false,
+    "base": {
+      "hp": 79,
+      "atk": 62,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "soup-splash"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Says 'ugh' forty times a day, mostly about traffic.",
+    "rarity": "common"
+  },
+  {
+    "id": "d038",
+    "num": 38,
+    "name": "Coolish",
+    "who": "otto",
+    "type": "Frozen",
+    "sticker": "d038",
+    "animated": false,
+    "base": {
+      "hp": 70,
+      "atk": 77,
+      "def": 74,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "kickflip"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Wears the leather jacket to look cool. The nervous smile gives it away.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d039",
+    "num": 39,
+    "name": "Swaddlebun",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d039",
+    "animated": false,
+    "base": {
+      "hp": 91,
+      "atk": 77,
+      "def": 94,
+      "spd": 75
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "lid-slam"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "sheesha-fog"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "Claims this is its baby photo. The mustache suggests otherwise.",
+    "rarity": "rare"
+  },
+  {
+    "id": "d040",
+    "num": 40,
+    "name": "Broodle",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d040",
+    "animated": false,
+    "base": {
+      "hp": 73,
+      "atk": 48,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "soup-splash"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "leftover"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Broods in dark sweaters. Owns forty of them, each slightly sadder.",
+    "rarity": "common"
+  },
+  {
+    "id": "d041",
+    "num": 41,
+    "name": "Lipzilla",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d041",
+    "animated": true,
+    "base": {
+      "hp": 74,
+      "atk": 94,
+      "def": 69,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "rib-slam"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "Its lips arrive two full seconds before the rest of it.",
+    "rarity": "rare"
+  },
+  {
+    "id": "d042",
+    "num": 42,
+    "name": "Buffering",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d042",
+    "animated": false,
+    "base": {
+      "hp": 55,
+      "atk": 54,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "brain-freeze"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Earbuds in. Nobody home. Please wait.",
+    "rarity": "common"
+  },
+  {
+    "id": "d043",
+    "num": 43,
+    "name": "Fretzel",
+    "who": "otto",
+    "type": "Spicy",
+    "sticker": "d043",
+    "animated": false,
+    "base": {
+      "hp": 56,
+      "atk": 74,
+      "def": 49,
+      "spd": 60
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-sauce"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "heartburn"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Twisted into a knot of worry about whether the lounge has a free table.",
+    "rarity": "common"
+  },
+  {
+    "id": "d044",
+    "num": 44,
+    "name": "Gawkward",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d044",
+    "animated": false,
+    "base": {
+      "hp": 52,
+      "atk": 69,
+      "def": 54,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "deep-fry"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Has been gawking with its mouth open since the bill arrived.",
+    "rarity": "common"
+  },
+  {
+    "id": "d045",
+    "num": 45,
+    "name": "Wrapsody",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d045",
+    "animated": false,
+    "base": {
+      "hp": 68,
+      "atk": 44,
+      "def": 74,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "exhale"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Rolls itself into a blanket at 9 p.m. and declines all further plans.",
+    "rarity": "common"
+  },
+  {
+    "id": "d046",
+    "num": 46,
+    "name": "Browzer",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d046",
+    "animated": false,
+    "base": {
+      "hp": 59,
+      "atk": 54,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "brain-freeze"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Freezes solid when startled. Its eyebrows have not come down since Tuesday.",
+    "rarity": "common"
+  },
+  {
+    "id": "d047",
+    "num": 47,
+    "name": "Cheesin",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d047",
+    "animated": false,
+    "base": {
+      "hp": 70,
+      "atk": 44,
+      "def": 74,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-towel"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Grins so hard in every photo that its eyes clock out for the day.",
+    "rarity": "common"
+  },
+  {
+    "id": "d048",
+    "num": 48,
+    "name": "Wheezer",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d048",
+    "animated": false,
+    "base": {
+      "hp": 66,
+      "atk": 79,
+      "def": 64,
+      "spd": 75
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "deep-fry"
+      },
+      {
+        "level": 1,
+        "id": "squish"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Laughs at its own jokes before finishing them. Has never finished one.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d049",
+    "num": 49,
+    "name": "Suhaibro",
+    "who": "suhaib",
+    "type": "Imported",
+    "sticker": "d049",
+    "animated": false,
+    "base": {
+      "hp": 92,
+      "atk": 79,
+      "def": 99,
+      "spd": 45
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "time-zone"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "border-delay"
+      },
+      {
+        "level": 15,
+        "id": "roaming"
+      }
+    ],
+    "catchRate": 45,
+    "xpYield": 100,
+    "entry": "Arrives every Friday. Claims the drive was 'nothing'.",
+    "rarity": "starter"
+  },
+  {
+    "id": "d050",
+    "num": 50,
+    "name": "Coalsworth",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d050",
+    "animated": false,
+    "base": {
+      "hp": 74,
+      "atk": 55,
+      "def": 84,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "steam-burst"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "At Haze Lounge since the coals were fresh. The coals are no longer fresh.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d051",
+    "num": 51,
+    "name": "Baabeque",
+    "who": "otto",
+    "type": "Soggy",
+    "sticker": "d051",
+    "animated": false,
+    "base": {
+      "hp": 75,
+      "atk": 50,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "soup-splash"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "leftover"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Forgot the name of the ribs place. Will not admit it. Bleats sheepishly when asked.",
+    "rarity": "common"
+  },
+  {
+    "id": "d052",
+    "num": 52,
+    "name": "Manicotti",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d052",
+    "animated": true,
+    "base": {
+      "hp": 66,
+      "atk": 86,
+      "def": 59,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "rib-slam"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "spice-rack"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Grins like it has a plan. The plan is ribs. It is always ribs.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d053",
+    "num": 53,
+    "name": "Doubtfire",
+    "who": "otto",
+    "type": "Frozen",
+    "sticker": "d053",
+    "animated": false,
+    "base": {
+      "hp": 57,
+      "atk": 56,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "brain-freeze"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Has not believed a single 'five minutes away' since 2021.",
+    "rarity": "common"
+  },
+  {
+    "id": "d054",
+    "num": 54,
+    "name": "Lurkling",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d054",
+    "animated": false,
+    "base": {
+      "hp": 58,
+      "atk": 56,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "ice-cube"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "freezer-burn"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Lurks in dim lighting, side-eyeing whoever took the last dumpling.",
+    "rarity": "common"
+  },
+  {
+    "id": "d055",
+    "num": 55,
+    "name": "Unamused",
+    "who": "otto",
+    "type": "Frozen",
+    "sticker": "d055",
+    "animated": false,
+    "base": {
+      "hp": 59,
+      "atk": 56,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "freezer-burn"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Rated your kickflip a four. Out of a hundred.",
+    "rarity": "common"
+  },
+  {
+    "id": "d056",
+    "num": 56,
+    "name": "Sweatbeard",
+    "who": "otto",
+    "type": "Fried",
+    "sticker": "d056",
+    "animated": false,
+    "base": {
+      "hp": 65,
+      "atk": 81,
+      "def": 64,
+      "spd": 75
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "double-coal"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Took a steep hill on the electric skateboard once. Still recovering emotionally.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d057",
+    "num": 57,
+    "name": "Owlbeard",
+    "who": "otto",
+    "type": "Fried",
+    "sticker": "d057",
+    "animated": false,
+    "base": {
+      "hp": 56,
+      "atk": 71,
+      "def": 54,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "sizzle"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Its eyes go full saucer whenever the lounge runs out of mint.",
+    "rarity": "common"
+  },
+  {
+    "id": "d058",
+    "num": 58,
+    "name": "Steamboi",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d058",
+    "animated": false,
+    "base": {
+      "hp": 72,
+      "atk": 46,
+      "def": 74,
+      "spd": 55
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "sheesha-fog"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Post-ribs. Deeply satisfied. Will be asleep in ninety seconds.",
+    "rarity": "common"
+  },
+  {
+    "id": "d059",
+    "num": 59,
+    "name": "Hosehead",
+    "who": "otto",
+    "type": "Steamed",
+    "sticker": "d059",
+    "animated": false,
+    "base": {
+      "hp": 83,
+      "atk": 56,
+      "def": 84,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "exhale"
+      },
+      {
+        "level": 1,
+        "id": "wet-wipe"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Has not let go of the shisha hose since 2022. Seems at peace with this.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d060",
+    "num": 60,
+    "name": "Jetlaggo",
+    "who": "suhaib",
+    "type": "Imported",
+    "sticker": "d060",
+    "animated": false,
+    "base": {
+      "hp": 90,
+      "atk": 87,
+      "def": 104,
+      "spd": 50
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "visa-check"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "jet-lag"
+      },
+      {
+        "level": 15,
+        "id": "roaming"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "Just finished the long drive home. Unsure which city, day, or shirt it is in.",
+    "rarity": "rare"
+  },
+  {
+    "id": "d061",
+    "num": 61,
+    "name": "Chillbao",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d061",
+    "animated": false,
+    "base": {
+      "hp": 81,
+      "atk": 62,
+      "def": 89,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "lid-slam"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "sheesha-fog"
+      }
+    ],
+    "catchRate": 45,
+    "xpYield": 100,
+    "entry": "Its squish-to-face ratio is the highest ever recorded. It is fine with this.",
+    "rarity": "starter"
+  },
+  {
+    "id": "d062",
+    "num": 62,
+    "name": "Swabby",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d062",
+    "animated": true,
+    "base": {
+      "hp": 67,
+      "atk": 67,
+      "def": 74,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "freezer-burn"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Tested negative. Wants you to know. Is showing everyone.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d063",
+    "num": 63,
+    "name": "Yearnling",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d063",
+    "animated": false,
+    "base": {
+      "hp": 78,
+      "atk": 53,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "soak"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Stares wistfully at your plate. Will ask if you are 'going to finish that'.",
+    "rarity": "common"
+  },
+  {
+    "id": "d064",
+    "num": 64,
+    "name": "Unbothered",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d064",
+    "animated": false,
+    "base": {
+      "hp": 59,
+      "atk": 58,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "brain-freeze"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Always films itself from below. Unbothered by the results.",
+    "rarity": "common"
+  },
+  {
+    "id": "d065",
+    "num": 65,
+    "name": "Knitpick",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d065",
+    "animated": false,
+    "base": {
+      "hp": 80,
+      "atk": 53,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "dunk"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "soup-splash"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Worries about parking. And the weather. And whether you locked the car. You did.",
+    "rarity": "common"
+  },
+  {
+    "id": "d066",
+    "num": 66,
+    "name": "Armageddon",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d066",
+    "animated": false,
+    "base": {
+      "hp": 66,
+      "atk": 83,
+      "def": 64,
+      "spd": 75
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "deep-fry"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Throws an arm over its head at the first sign of a Monday.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d067",
+    "num": 67,
+    "name": "Grudgeling",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d067",
+    "animated": false,
+    "base": {
+      "hp": 62,
+      "atk": 78,
+      "def": 49,
+      "spd": 60
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "rib-slam"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "extra-sauce"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Remembers exactly who ate its fries in 2017. Has not forgiven them.",
+    "rarity": "common"
+  },
+  {
+    "id": "d068",
+    "num": 68,
+    "name": "Pleadoh",
+    "who": "tarek",
+    "type": "Soggy",
+    "sticker": "d068",
+    "animated": false,
+    "base": {
+      "hp": 83,
+      "atk": 53,
+      "def": 69,
+      "spd": 40
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "spill"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "damp-napkin"
+      },
+      {
+        "level": 15,
+        "id": "dunk"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Pleads for 'five more minutes' at the lounge. Has said so for three hours.",
+    "rarity": "common"
+  },
+  {
+    "id": "d069",
+    "num": 69,
+    "name": "Confuzzled",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d069",
+    "animated": false,
+    "base": {
+      "hp": 64,
+      "atk": 58,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "ice-cube"
+      },
+      {
+        "level": 1,
+        "id": "dumpling-face"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "freezer-burn"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Has no idea what is going on. Nods along anyway. Has done so for years.",
+    "rarity": "common"
+  },
+  {
+    "id": "d070",
+    "num": 70,
+    "name": "Retesto",
+    "who": "tarek",
+    "type": "Frozen",
+    "sticker": "d070",
+    "animated": true,
+    "base": {
+      "hp": 56,
+      "atk": 59,
+      "def": 64,
+      "spd": 70
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "kickflip"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "cold-shoulder"
+      },
+      {
+        "level": 15,
+        "id": "ice-cube"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Tested again, just to be sure. And again. Holds the test closer every time.",
+    "rarity": "common"
+  },
+  {
+    "id": "d071",
+    "num": 71,
+    "name": "Kickflippo",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d071",
+    "animated": true,
+    "base": {
+      "hp": 77,
+      "atk": 99,
+      "def": 69,
+      "spd": 80
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "chili-oil"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "extra-sauce"
+      },
+      {
+        "level": 15,
+        "id": "hot-sauce"
+      }
+    ],
+    "catchRate": 60,
+    "xpYield": 140,
+    "entry": "Lands flawless kickflips in VR. Has not tried one in real life. 'The weather.'",
+    "rarity": "rare"
+  },
+  {
+    "id": "d072",
+    "num": 72,
+    "name": "Sweatpea",
+    "who": "tarek",
+    "type": "Spicy",
+    "sticker": "d072",
+    "animated": true,
+    "base": {
+      "hp": 58,
+      "atk": 79,
+      "def": 49,
+      "spd": 60
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-sauce"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "extra-sauce"
+      },
+      {
+        "level": 15,
+        "id": "heartburn"
+      }
+    ],
+    "catchRate": 190,
+    "xpYield": 60,
+    "entry": "Ordered the extra-hot wings. Is fine. Is sweating. Is fine.",
+    "rarity": "common"
+  },
+  {
+    "id": "d073",
+    "num": 73,
+    "name": "Frontcam",
+    "who": "tarek",
+    "type": "Fried",
+    "sticker": "d073",
+    "animated": true,
+    "base": {
+      "hp": 64,
+      "atk": 84,
+      "def": 64,
+      "spd": 75
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "deep-fry"
+      },
+      {
+        "level": 1,
+        "id": "stare"
+      },
+      {
+        "level": 8,
+        "id": "oil-splash"
+      },
+      {
+        "level": 15,
+        "id": "crispy-edge"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Opened the front camera by accident. Has been stuck there ever since.",
+    "rarity": "uncommon"
+  },
+  {
+    "id": "d074",
+    "num": 74,
+    "name": "Motionblur",
+    "who": "tarek",
+    "type": "Steamed",
+    "sticker": "d074",
+    "animated": true,
+    "base": {
+      "hp": 80,
+      "atk": 60,
+      "def": 84,
+      "spd": 65
+    },
+    "moves": [
+      {
+        "level": 1,
+        "id": "hot-towel"
+      },
+      {
+        "level": 1,
+        "id": "nap"
+      },
+      {
+        "level": 8,
+        "id": "long-drag"
+      },
+      {
+        "level": 15,
+        "id": "lid-slam"
+      }
+    ],
+    "catchRate": 120,
+    "xpYield": 90,
+    "entry": "Moves too fast for any camera. Has only ever been photographed looking smug.",
+    "rarity": "uncommon"
+  }
+]

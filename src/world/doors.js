@@ -3,7 +3,7 @@
 import { warpAt } from './map.js';
 import { W, H } from '../engine/canvas.js';
 
-/** Resolve the tile at (x, y) to its warp target, or null if it isn't a D/M warp tile. */
+/** Resolve the tile at (x, y) to its warp target, or null if no warp is defined at this position. */
 export function resolveWarp(map, x, y) {
   const w = warpAt(map, x, y);
   return w ? { map: w.to, x: w.tx, y: w.ty, facing: w.facing } : null;
@@ -21,6 +21,9 @@ export class Fader {
   }
 
   start(onDark) {
+    // Ignore re-entry: a second start mid-fade would reset the ramp and replace (drop) the
+    // pending onDark swap. The first warp wins; another can only begin once this fade ends.
+    if (this.active) return;
     this.active = true;
     this.phase = 'out';
     this.t = 0;

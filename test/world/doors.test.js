@@ -18,3 +18,9 @@ test('Fader: out then in, reports phases and completion, alpha ramps 0→1→0',
   for (let i = 0; i < 12; i++) f.update(); assert.equal(fired, 1, 'midpoint callback fires exactly once when fully dark'); assert.equal(f.alpha, 1);
   for (let i = 0; i < 12; i++) f.update(); assert.equal(f.active, false); assert.equal(f.alpha, 0);
 });
+test('Fader.start is ignored while a fade is already running (first onDark wins)', () => {
+  const f = new Fader(4); const hits = [];
+  f.start(() => hits.push('a')); f.update(); f.start(() => hits.push('b'));
+  for (let i = 0; i < 8; i++) f.update();
+  assert.deepEqual(hits, ['a']); assert.equal(f.active, false);
+});

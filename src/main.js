@@ -19,7 +19,19 @@ const save = createSave(localStorage);
 const textbox = new TextBox();
 
 // TEMP: straight into a fresh game until the title/intro scenes exist.
-const state = newGameState('TAREK', db.mapData.start);
+const state = newGameState('TAREK', debugStart() ?? db.mapData.start);
+
+/** Dev aid, kept on purpose: `?start=map,x,y,facing` (e.g. `?start=haze,6,8,up`) drops a fresh game
+ *  at that tile for play-testing. Absent or malformed → null (normal start). `?date=` will follow suit. */
+function debugStart() {
+  const raw = new URLSearchParams(location.search).get('start');
+  if (!raw) return null;
+  const [map, x, y, facing = 'down'] = raw.split(',');
+  const start = { map, x: Number(x), y: Number(y), facing };
+  const ok = db.mapData.maps[map] && Number.isInteger(start.x) && Number.isInteger(start.y) && ['up', 'down', 'left', 'right'].includes(facing);
+  if (!ok) { console.warn(`ignoring bad ?start=${raw}`); return null; }
+  return start;
+}
 scenes.push(new OverworldScene({ db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save }));
 
 startLoop({

@@ -1,0 +1,117 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>TarekMon — Dumplingdex review</title>
+<style>
+  body { font: 14px/1.4 system-ui, sans-serif; background: #111; color: #eee; margin: 16px; }
+  h1 { display: flex; align-items: center; gap: 12px; font-size: 20px; margin: 0 0 4px; }
+  h1 button { font: inherit; cursor: pointer; background: #2a2a2a; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 4px 10px; }
+  h1 button:hover { background: #333; }
+  h1 button.copied { background: #2f6b3a; border-color: #4caf50; }
+  #totals { color: #aaa; margin-bottom: 4px; }
+  #totals .tc { padding: 0 4px; border-radius: 3px; color: #111; font-weight: 700; margin-right: 4px; }
+  h2 { margin: 28px 0 10px; font-size: 15px; letter-spacing: 0.08em; color: #ccc; border-bottom: 1px solid #333; padding-bottom: 4px; }
+  h2 .count { color: #777; font-weight: 400; letter-spacing: normal; }
+
+  .g { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .c { background: #1c1c1c; border: 2px solid #333; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; }
+  .c.legend { border-color: #e6b800; box-shadow: 0 0 8px rgba(230, 184, 0, 0.25); }
+  .c.starter { border-color: #4caf50; box-shadow: 0 0 8px rgba(76, 175, 80, 0.2); }
+  .c img { width: 192px; height: 192px; object-fit: contain; display: block; margin: 4px auto; image-rendering: pixelated; }
+
+  .hdr { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+  .num { color: #888; font-size: 12px; }
+  .name { font-weight: 700; font-size: 15px; }
+
+  .t { display: inline-block; padding: 1px 6px; border-radius: 4px; color: #111; font-weight: 700; font-size: 11px; margin: 4px 0; }
+  .s { font-size: 11px; color: #aaa; }
+  .meta { display: flex; justify-content: space-between; margin-bottom: 4px; }
+
+  .bars { margin: 4px 0; display: flex; flex-direction: column; gap: 2px; }
+  .bar-row { display: grid; grid-template-columns: 22px 1fr 26px; align-items: center; gap: 4px; }
+  .bar-row .lbl { font-size: 10px; color: #888; }
+  .bar-track { background: #2a2a2a; border-radius: 2px; height: 6px; overflow: hidden; }
+  .bar { height: 6px; background: #4a4; border-radius: 2px; }
+  .bar-row .val { font-size: 10px; color: #999; text-align: right; }
+
+  .moves { font-size: 11px; color: #bbb; margin: 4px 0; }
+  .entry { font-size: 12px; color: #ddd; font-style: italic; margin-top: 4px; border-top: 1px solid #2a2a2a; padding-top: 4px; }
+</style>
+<h1>Dumplingdex review <button id="csv">Copy CSV</button></h1>
+<div id="totals" class="s"></div>
+<div id="out"></div>
+<script type="module">
+const [species, types] = await Promise.all([
+  fetch('../data/species.json').then(r => r.json()),
+  fetch('../data/types.json').then(r => r.json()),
+]);
+
+const color = t => types.colors[t] || '#888';
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const statMax = 130;
+
+function statRow(label, value) {
+  const pct = Math.max(0, Math.min(100, (value / statMax) * 100));
+  return `<div class="bar-row"><span class="lbl">${label}</span><div class="bar-track"><div class="bar" style="width:${pct}%"></div></div><span class="val">${value}</span></div>`;
+}
+
+function card(s) {
+  const cls = s.rarity === 'legend' ? ' legend' : s.rarity === 'starter' ? ' starter' : '';
+  const movesText = s.moves.map(m => `L${m.level} ${m.id}`).join(' · ');
+  return `<div class="c${cls}">
+    <img src="../assets/stickers/${s.sticker}.webp" alt="${s.name}" width="192" height="192" loading="lazy">
+    <div class="hdr"><span class="num">#${String(s.num).padStart(3, '0')}</span><span class="name">${s.name.toUpperCase()}</span></div>
+    <div class="meta">
+      <span class="t" style="background:${color(s.type)}">${s.type}</span>
+      <span class="s">${cap(s.who)} · ${s.rarity}</span>
+    </div>
+    <div class="bars">
+      ${statRow('HP', s.base.hp)}
+      ${statRow('ATK', s.base.atk)}
+      ${statRow('DEF', s.base.def)}
+      ${statRow('SPD', s.base.spd)}
+    </div>
+    <div class="moves">${movesText}</div>
+    <div class="entry">${s.entry}</div>
+  </div>`;
+}
+
+function section(title, list) {
+  if (!list.length) return '';
+  return `<h2>${title} <span class="count">(${list.length})</span></h2><div class="g">${list.map(card).join('')}</div>`;
+}
+
+const starters = species.filter(s => s.rarity === 'starter');
+const legends = species.filter(s => s.rarity === 'legend');
+const shown = new Set([...starters, ...legends].map(s => s.id));
+const rest = who => species.filter(s => s.who === who && !shown.has(s.id));
+
+const out = document.getElementById('out');
+out.innerHTML = [
+  section('STARTERS', starters),
+  section('LEGENDS', legends),
+  section('TAREK', rest('tarek')),
+  section('OTTO', rest('otto')),
+  section('SUHAIB', rest('suhaib')),
+].join('');
+
+const typeCounts = {};
+for (const s of species) typeCounts[s.type] = (typeCounts[s.type] || 0) + 1;
+const typeBits = types.types.map(t => `<span class="tc" style="background:${color(t)}">${t} ${typeCounts[t] || 0}</span>`).join('');
+document.getElementById('totals').innerHTML = `${species.length} species &nbsp; ${typeBits}`;
+
+document.getElementById('csv').addEventListener('click', async () => {
+  const rows = [['id', 'name', 'type', 'who', 'rarity', 'entry']];
+  for (const s of species) rows.push([s.id, s.name, s.type, s.who, s.rarity, JSON.stringify(s.entry)]);
+  const csv = rows.map(r => r.join(',')).join('\n');
+  try {
+    await navigator.clipboard.writeText(csv);
+    const btn = document.getElementById('csv');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  } catch (err) {
+    alert('Copy failed: ' + err.message);
+  }
+});
+</script>

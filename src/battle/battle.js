@@ -217,6 +217,7 @@ export class Battle {
       const tr = this.trainer, next = this.foeParty.findIndex(m => m.hp > 0);
       if (next < 0) { this.payout(); this.endBattle('win'); return true; } // a mutual KO on the last foe is a win
       if (!playerOut) {
+        // Only reachable while the trainer has a monster left, so speechAfterFaints must be < team size.
         if (tr.speech && tr.speechAfterFaints === this.foesFainted) this.push({ type: 'speech', text: tr.speech });
         this.foeIndex = next;
         this.text(`${tr.name} SENT OUT ${this.foe.nickname}!`);

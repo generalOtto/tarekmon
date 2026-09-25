@@ -15,8 +15,9 @@ import { StartMenu } from '../ui/startmenu.js';
 const S = TILE_SIZE;
 
 export class OverworldScene {
-  constructor({ db, maps, state, tileset, input, textbox, save, audio }) {
-    Object.assign(this, { db, maps, state, tileset, input, textbox, save });
+  constructor({ db, maps, state, tileset, input, textbox, save, audio, onDebug1 = null }) {
+    Object.assign(this, { db, maps, state, tileset, input, textbox, save, onDebug1 });
+    this.transition = null; // e.g. a battle FlashWipe: drawn over the map, input locked while active
     this.ticks = 0;
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
@@ -53,10 +54,12 @@ export class OverworldScene {
   update(dt) {
     const { input, textbox, player, state, fader, startMenu } = this;
     if (fader.active) { fader.update(); return; } // no input while warping
+    if (this.transition?.active) { this.transition.update(); return; }
     if (startMenu.open) { startMenu.update(input); return; }
     if (textbox.open) { textbox.update(input); return; }
     if (this.busy) return; // between two lines of a multi-say interaction
     if (!player.moving && input.justPressed('start')) { startMenu.start(); return; }
+    if (!player.moving && this.onDebug1 && input.justPressed('debug1')) { this.onDebug1(); return; } // TEMP (Task 28)
     if (!player.moving && input.justPressed('a') && this.interact()) return;
     if (!player.moving) {
       const d = input.pressedDirection();
@@ -126,5 +129,6 @@ export class OverworldScene {
     drawPlayer(ctx, Math.round(px) - ox, Math.round(py) - oy, player.facing, player.frame, player.skating);
     this.startMenu.draw(ctx); // draws the shared textbox too, whether from the menu or a plain interaction
     drawFade(ctx, fader.alpha);
+    this.transition?.draw(ctx);
   }
 }

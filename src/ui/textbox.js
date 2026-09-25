@@ -55,7 +55,6 @@ export class Typewriter {
 
   tick() { this.revealed = Math.min(this.total, this.revealed + this.charsPerTick); }
 
-  // Used by battle text auto-advance in a later task.
   skip() { this.revealed = this.total; }
 
   visibleLines() {
@@ -129,18 +128,32 @@ export class TextBox {
 
     this.blinkTimer = (this.blinkTimer + 1) % (BLINK_FRAMES * 2);
     if (skipDismiss) return;
-    if (input.justPressed('a')) {
-      if (this.pageIndex < this.pages.length - 1) {
-        this.pageIndex += 1;
-        this._startPage();
-      } else {
-        this.open = false;
-        this.typewriter = null;
-        const resolve = this._resolve;
-        this._resolve = null;
-        resolve?.();
-      }
+    if (input.justPressed('a')) this.advance();
+  }
+
+  /** True once the current page is fully typed out. */
+  get revealed() { return this.open && !!this.typewriter?.done; }
+  get onLastPage() { return this.pageIndex >= this.pages.length - 1; }
+
+  /** What A does on a revealed page: next page, or close and resolve on the last one. */
+  advance() {
+    if (!this.open) return;
+    if (!this.onLastPage) {
+      this.pageIndex += 1;
+      this._startPage();
+    } else {
+      this.dismiss();
     }
+  }
+
+  /** Closes the box and resolves the pending say() immediately (battle auto-advance). */
+  dismiss() {
+    if (!this.open) return;
+    this.open = false;
+    this.typewriter = null;
+    const resolve = this._resolve;
+    this._resolve = null;
+    resolve?.();
   }
 
   draw(ctx) {

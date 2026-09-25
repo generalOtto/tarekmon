@@ -8,6 +8,11 @@ import { TextBox } from './ui/textbox.js';
 import { buildTileset } from './world/tileset.js';
 import { loadMaps } from './world/map.js';
 import { OverworldScene } from './world/overworld.js';
+import { Battle } from './battle/battle.js';
+import { BattleScene } from './battle/battlescene.js';
+import { FlashWipe } from './battle/transition.js';
+import { makeMonster } from './battle/monster.js';
+import { healParty } from './engine/state.js';
 
 const db = await loadDb();
 
@@ -32,7 +37,21 @@ function debugStart() {
   if (!ok) { console.warn(`ignoring bad ?start=${raw}`); return null; }
   return start;
 }
-scenes.push(new OverworldScene({ db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save }));
+const overworld = new OverworldScene({ db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save, onDebug1: debugBattle });
+scenes.push(overworld);
+
+/** TEMP (remove in Task 28): key 1 in the overworld starts a test wild battle. */
+function debugBattle() {
+  const mk = (id, lv) => makeMonster(db.speciesById[id], lv, db.movesById);
+  if (!state.party.length) state.party.push(mk('d061', 8), mk('d013', 6));
+  if (!state.party.some(m => m.hp > 0)) healParty(state);
+  state.bag['dumpling-ball'] = Math.max(5, state.bag['dumpling-ball'] ?? 0);
+  const battle = new Battle({ db, state, kind: 'wild', foeParty: [mk('d002', 4)] });
+  overworld.transition = new FlashWipe();
+  overworld.transition.start(() => scenes.push(new BattleScene({
+    db, state, battle, input, textbox, images: db.images, onEnd: () => { scenes.pop(); },
+  })));
+}
 
 startLoop({
   tick: dt => { scenes.update(dt); input.endFrame(); },

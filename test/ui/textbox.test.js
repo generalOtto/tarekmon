@@ -124,3 +124,28 @@ test('TextBox: holding A doubles the reveal speed (4 chars/tick instead of 2)', 
   tb.update(inputWith({ down: ['a'] }));
   assert.equal(tb.typewriter.revealed, 6);
 });
+
+test('TextBox: dismiss() resolves the pending say() immediately, from any page', async () => {
+  const tb = new TextBox();
+  let resolved = false;
+  const done = tb.say('ONE\fTWO').then(() => { resolved = true; });
+  assert.equal(tb.revealed, false);
+  tb.update(inputWith());
+  tb.update(inputWith());
+  assert.equal(tb.revealed, true);
+  assert.equal(tb.onLastPage, false);
+  tb.dismiss();
+  assert.equal(tb.open, false);
+  await done;
+  assert.equal(resolved, true);
+  tb.dismiss(); // closed: harmless no-op
+});
+
+test('TextBox: advance() does what A does (next page, then close)', () => {
+  const tb = new TextBox();
+  tb.say('ONE\fTWO');
+  tb.advance();
+  assert.equal(tb.pageIndex, 1); assert.equal(tb.onLastPage, true);
+  tb.advance();
+  assert.equal(tb.open, false);
+});

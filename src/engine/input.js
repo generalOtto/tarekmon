@@ -1,6 +1,6 @@
 export const BUTTONS = ['up', 'down', 'left', 'right', 'a', 'b', 'start'];
 const DIRS = ['up', 'down', 'left', 'right'];
-const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', z: 'a', Z: 'a', x: 'b', X: 'b', Enter: 'start', ' ': 'a', Escape: 'b' };
+const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', z: 'a', Z: 'a', x: 'b', X: 'b', Enter: 'start', ' ': 'a', Escape: 'b', '1': 'debug1' };
 
 /**
  * Tracks per-button down/pressed state.

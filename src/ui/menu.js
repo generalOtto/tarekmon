@@ -2,7 +2,6 @@
 import { drawText, LINE_H } from '../engine/font.js';
 import { PAPER, INK } from './textbox.js';
 
-const DIRS = ['up', 'down', 'left', 'right'];
 const REPEAT_DELAY = 12; // ticks before the first auto-repeat while a direction is held
 const REPEAT_RATE = 6;   // ticks between subsequent auto-repeats
 
@@ -40,9 +39,8 @@ export class Menu {
 
   /** Reads input for one tick: moves the cursor (with initial-delay/repeat while held), and fires onSelect/onCancel. */
   handle(input, { onSelect, onCancel } = {}) {
-    // Held direction first; justPressed catches a tap released before this tick ran (see engine/input.js).
-    const dir = input.direction() ?? DIRS.find(b => input.justPressed(b));
-    if (dir && DIRS.includes(dir)) {
+    const dir = input.pressedDirection();
+    if (dir) {
       // A fresh press (or rolling onto a different direction) moves immediately and starts the delay window.
       if (input.justPressed(dir) || dir !== this._heldDir) {
         this.move(dir);

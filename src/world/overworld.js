@@ -13,7 +13,6 @@ import { rollWeather } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
 
 const S = TILE_SIZE;
-const DIRS = ['up', 'down', 'left', 'right'];
 
 export class OverworldScene {
   constructor({ db, maps, state, tileset, input, textbox, save, audio }) {
@@ -60,8 +59,7 @@ export class OverworldScene {
     if (!player.moving && input.justPressed('start')) { startMenu.start(); return; }
     if (!player.moving && input.justPressed('a') && this.interact()) return;
     if (!player.moving) {
-      // Held direction first; justPressed catches a tap released before this tick ran.
-      const d = input.direction() ?? DIRS.find(b => input.justPressed(b));
+      const d = input.pressedDirection();
       if (d) {
         player.tryMove(d, this.map, {
           blocked: (x, y) => !!npcAt(this.map, x, y),

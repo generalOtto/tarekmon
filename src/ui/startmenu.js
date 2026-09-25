@@ -14,6 +14,7 @@ export class StartMenu {
     Object.assign(this, { state, save, textbox, audio });
     this.open = false;
     this.menu = null;
+    this.busy = false; // true for the whole SAVE flow, incl. the gap between say() calls, so Start can't race it
   }
 
   _items() {
@@ -33,6 +34,7 @@ export class StartMenu {
   update(input) {
     if (!this.open) return;
     if (this.textbox.open) { this.textbox.update(input); return; }
+    if (this.busy) return; // mid-SAVE, between say() calls: ignore Start/B/menu input until it settles
     if (input.justPressed('start')) { this.close(); return; }
     this.menu.items = this._items(); // keep the SOUND label current after a toggle
     this.menu.handle(input, {
@@ -63,15 +65,20 @@ export class StartMenu {
   }
 
   async _doSave() {
-    this.save.save(this.state);
-    await this.textbox.say(`${this.state.playerName} SAVED THE GAME.`);
+    this.busy = true;
     try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(toSaveCode(this.state));
-        await this.textbox.say('SAVE CODE COPIED\nTO CLIPBOARD.');
+      this.save.save(this.state);
+      await this.textbox.say(`${this.state.playerName} SAVED THE GAME.`);
+      try {
+        if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(toSaveCode(this.state));
+          await this.textbox.say('SAVE CODE COPIED\nTO CLIPBOARD.');
+        }
+      } catch {
+        // Clipboard write failed or unavailable — the save itself already succeeded.
       }
-    } catch {
-      // Clipboard write failed or unavailable — the save itself already succeeded.
+    } finally {
+      this.busy = false;
     }
   }
 

@@ -16,6 +16,16 @@ test('direction returns the most recently pressed held direction', () => {
   b.set('left', false); assert.equal(b.direction(), null);
 });
 
+test('pressedDirection prefers the held direction, falling back to a tap released before this tick', () => {
+  const b = new ButtonState();
+  b.set('down', true);
+  assert.equal(b.pressedDirection(), 'down', 'held direction wins');
+  b.set('down', false); // released before the next tick reads input, but still justPressed this tick
+  assert.equal(b.pressedDirection(), 'down', 'falls back to the justPressed edge');
+  b.endFrame();
+  assert.equal(b.pressedDirection(), null, 'nothing held, nothing just pressed');
+});
+
 test('repeated set(true) while already down does not re-fire justPressed after endFrame', () => {
   const b = new ButtonState();
   b.set('a', true);

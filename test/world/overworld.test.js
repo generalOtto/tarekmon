@@ -6,13 +6,19 @@ import { newGameState } from '../../src/engine/state.js';
 import mapData from '../../data/map.json' with { type: 'json' };
 import dialogue from '../../data/dialogue.json' with { type: 'json' };
 
+const DIRS = ['up', 'down', 'left', 'right'];
+/** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */
+function makeInput({ direction, justPressed, isDown = () => false }) {
+  return { direction, justPressed, isDown, pressedDirection() { return this.direction() ?? DIRS.find(b => this.justPressed(b)); } };
+}
+
 /** Headless scene with stub input/textbox/save/tileset; `ctl.dir` drives the held direction. */
 function headless(start = mapData.start) {
   const ctl = { dir: null, calls: [] };
   const state = newGameState('T', start);
   const scene = new OverworldScene({
     db: {}, maps: loadMaps(mapData), state, tileset: { draw() {} },
-    input: { direction: () => ctl.dir, justPressed: () => false, isDown: () => false },
+    input: makeInput({ direction: () => ctl.dir, justPressed: () => false }),
     textbox: { open: false, update() {}, draw() {} },
     save: { autosave: s => ctl.calls.push(structuredClone(s.pos)) },
   });
@@ -54,7 +60,7 @@ function talker(start) {
   const textbox = { open: false, update() {}, draw() {}, say(t) { ctl.said.push(t); return Promise.resolve(); } };
   const scene = new OverworldScene({
     db: { dialogue }, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
-    input: { direction: () => null, justPressed: b => b === 'a' && ctl.a, isDown: () => false },
+    input: makeInput({ direction: () => null, justPressed: b => b === 'a' && ctl.a }),
     textbox, save: { autosave() {} },
   });
   scene.enter();
@@ -124,7 +130,7 @@ function menuHarness(start = mapData.start) {
   };
   const scene = new OverworldScene({
     db: {}, maps: loadMaps(mapData), state, tileset: { draw() {} },
-    input: { direction: () => ctl.dir, justPressed: b => ctl.justPressed.has(b), isDown: () => false },
+    input: makeInput({ direction: () => ctl.dir, justPressed: b => ctl.justPressed.has(b) }),
     textbox, save: { save: s => saveCalls.push(structuredClone(s)), autosave() {} },
   });
   scene.enter();
@@ -156,4 +162,57 @@ test('selecting SAVE from the start menu calls save.save once and the textbox sa
   assert.equal(h.saveCalls.length, 1);
   assert.equal(h.saveCalls[0].playerName, 'T');
   assert.equal(h.ctl.said[0], 'T SAVED THE GAME.');
+});
+
+/** Like menuHarness, but the textbox's say() never resolves on its own — the test resolves each
+ *  call in turn via ctl.resolveSay(), so it can land input in the gap between chained say()s
+ *  (textbox.open flips back to false the instant the previous say resolves, before its awaiter's
+ *  continuation — including StartMenu's own busy-clearing `finally` — has actually run). */
+function manualSayHarness(start = mapData.start) {
+  const ctl = { dir: null, justPressed: new Set(), said: [], resolvers: [] };
+  const state = newGameState('T', start);
+  const saveCalls = [];
+  const textbox = {
+    open: false,
+    update() {},
+    draw() {},
+    say(t) {
+      this.open = true;
+      ctl.said.push(t);
+      return new Promise(resolve => { ctl.resolvers.push(() => { this.open = false; resolve(); }); });
+    },
+  };
+  const scene = new OverworldScene({
+    db: {}, maps: loadMaps(mapData), state, tileset: { draw() {} },
+    input: makeInput({ direction: () => ctl.dir, justPressed: b => ctl.justPressed.has(b) }),
+    textbox, save: { save: s => saveCalls.push(structuredClone(s)), autosave() {} },
+  });
+  scene.enter();
+  const press = btn => { ctl.justPressed.add(btn); scene.update(1 / 60); ctl.justPressed.delete(btn); };
+  const resolveSay = () => ctl.resolvers.shift()?.();
+  return { scene, state, ctl, saveCalls, textbox, press, resolveSay };
+}
+
+test('SAVE re-entrancy guard: Start/A land in the gap between say()s without closing/reopening the menu', async () => {
+  const h = manualSayHarness();
+  h.press('start');
+  h.scene.startMenu.menu.index = h.scene.startMenu.menu.items.indexOf('SAVE');
+  h.press('a'); // kicks off _doSave: save.save() runs synchronously, then the first say() is in flight
+  assert.equal(h.saveCalls.length, 1);
+  assert.equal(h.scene.startMenu.busy, true);
+
+  // Resolve the first say() and, in the same synchronous tick (before its awaiter's continuation
+  // — StartMenu's own busy-clearing `finally` — runs as a microtask), land Start and A: this is
+  // exactly the window where textbox.open is already false but the save flow hasn't settled.
+  h.resolveSay();
+  h.press('start');
+  assert.equal(h.scene.startMenu.open, true, 'Start is ignored while the save flow is still busy');
+  h.press('a');
+  assert.equal(h.saveCalls.length, 1, 'A is ignored too — no second save.save call');
+
+  await null; await null; await null; await null; // let _doSave's continuation (and finally) run
+  assert.equal(h.scene.startMenu.busy, false, 'the flow settles once _doSave finishes');
+
+  h.press('start');
+  assert.equal(h.scene.startMenu.open, false, 'Start works again after the flow finishes');
 });

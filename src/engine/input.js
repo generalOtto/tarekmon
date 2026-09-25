@@ -1,4 +1,5 @@
 export const BUTTONS = ['up', 'down', 'left', 'right', 'a', 'b', 'start'];
+const DIRS = ['up', 'down', 'left', 'right'];
 const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', z: 'a', Z: 'a', x: 'b', X: 'b', Enter: 'start', ' ': 'a', Escape: 'b' };
 
 /**
@@ -20,7 +21,9 @@ export class ButtonState {
   }
   isDown(btn) { return this.down.has(btn); }
   justPressed(btn) { return this.pressed.has(btn); }
-  direction() { for (let i = this.order.length - 1; i >= 0; i--) if (['up', 'down', 'left', 'right'].includes(this.order[i])) return this.order[i]; return null; }
+  direction() { for (let i = this.order.length - 1; i >= 0; i--) if (DIRS.includes(this.order[i])) return this.order[i]; return null; }
+  /** Held direction first; justPressed catches a tap released before this tick ran. */
+  pressedDirection() { return this.direction() ?? DIRS.find(b => this.justPressed(b)) ?? null; }
   endFrame() { this.pressed.clear(); }
 }
 

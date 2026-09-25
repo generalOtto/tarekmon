@@ -1,0 +1,31 @@
+<!doctype html><meta charset="utf-8"><title>TarekMon — who is who?</title>
+<style>
+body{font:14px system-ui;background:#111;color:#eee;margin:16px}
+h2{margin:24px 0 8px;font-size:18px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.c{background:#1c1c1c;border:2px solid #333;border-radius:8px;padding:4px;text-align:center}
+.c img{width:112px;height:112px;object-fit:contain;display:block;margin:auto}
+.c b{display:block;font-size:13px}
+.c small{color:#aaa;font-size:11px}
+.otto{border-color:#4878c0}.tarek{border-color:#e0a040}.suhaib{border-color:#9058b8}.unsure{border-color:#e6b800}
+</style>
+<h1>Who is who? Tell me the ids that are wrong.</h1>
+<div id="out"></div>
+<script type="module">
+const stickers = await fetch('../data/stickers.json').then(r => r.json());
+const notes = await fetch('sticker-notes.json').then(r => r.json()).catch(() => ({}));
+const groups = {};
+for (const s of stickers) (groups[s.who] ??= []).push(s);
+const out = document.getElementById('out');
+for (const who of ['otto', 'tarek', 'suhaib', 'unsure']) {
+  if (!groups[who]) continue;
+  const h = document.createElement('h2'); h.textContent = `${who.toUpperCase()} — ${groups[who].length}`; out.append(h);
+  const g = document.createElement('div'); g.className = 'g';
+  for (const s of groups[who]) {
+    const d = document.createElement('div'); d.className = 'c ' + who;
+    d.innerHTML = `<img src="../assets/stickers/${s.file}"><b>${s.id}</b><small>${notes[s.id]?.desc ?? ''}</small>`;
+    g.append(d);
+  }
+  out.append(g);
+}
+</script>

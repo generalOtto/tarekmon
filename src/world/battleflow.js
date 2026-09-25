@@ -20,21 +20,24 @@ export function attachBattleFlow(scene) {
       if (hit) scene.startWildBattle(hit.species, hit.level);
     },
 
-    /** Jingle + flash/wipe, then hand the foe to whoever owns the scene stack (main.js). */
+    /** Jingle + flash/wipe, then hand the battle to whoever owns the scene stack (main.js). */
     startWildBattle(species, level) {
       const { db, rng, audio } = scene;
       const foeMonster = makeMonster(db.speciesById[species], level, db.movesById, rng);
       audio?.playJingle('encounter');
       scene.player.moving = false;
-      scene.transition.start(() => scene.onEncounter?.(foeMonster));
+      scene.transition.start(() => scene.onBattle?.({ kind: 'wild', foeParty: [foeMonster] }));
     },
 
     /** Called by main.js's BattleScene onEnd once a battle is over: reset transient battle
-     *  state, autosave, and — on a loss — get the player back into play. */
-    onBattleEnd(result) {
+     *  state, record a trainer win (before the autosave), autosave, then either black out (loss)
+     *  or play the trainer's outro (post line, badge, champion). A lost trainer stays undefeated. */
+    onBattleEnd(result, { kind, trainer } = {}) {
       for (const m of scene.state.party) resetBattleState(m);
+      const outro = result === 'win' && kind === 'trainer' ? scene.trainerFlow.recordWin(trainer) : null;
       scene.save.autosave(scene.state);
       if (result === 'lose') scene.blackout?.();
+      if (outro) scene.run(outro);
     },
 
     // TODO Task 32: replace this stub with the real blackout sequence (fade/text/carry to the

@@ -57,8 +57,25 @@ test('map npcs: unique ids, known sprites, on walkable non-warp tiles, valid fac
     assert.ok(isWalkable(m, n.x, n.y), `${n.id} stands on ${tileAt(m, n.x, n.y)}`);
     assert.equal(warpAt(m, n.x, n.y), null, `${n.id} stands on a warp`);
   }
-  for (const id of ['weather-guy', 'prof-otto', 'haze-guy', 'shopkeeper', 'officer', 'townie-1', 'regular-4']) assert.ok(ids.has(id), id);
+  for (const id of ['weather-guy', 'prof-otto', 'haze-guy', 'shopkeeper', 'officer', 'townie-1']) assert.ok(ids.has(id), id);
   for (const m of Object.values(maps)) for (const s of m.signs) assert.equal(tileAt(m, s.x, s.y), 'S', `sign at ${m.id} ${s.x},${s.y}`);
   const sTiles = maps.town.rows.join('').split('S').length - 1;
   assert.equal(maps.town.signs.length, sTiles, 'one sign entry per S tile');
+});
+
+test('map trainers stand on walkable non-warp tiles with a valid facing and sight; the champion tile is walkable', () => {
+  const maps = loadMaps(mapData);
+  for (const m of Object.values(maps)) for (const t of m.trainers) {
+    assert.ok(['up', 'down', 'left', 'right'].includes(t.facing), `${t.id}: facing`);
+    assert.ok(Number.isInteger(t.sight) && t.sight >= 0 && t.sight <= 3, `${t.id}: sight`);
+    assert.ok(isWalkable(m, t.x, t.y), `${t.id} stands on ${tileAt(m, t.x, t.y)}`);
+    assert.equal(warpAt(m, t.x, t.y), null, `${t.id} stands on a warp`);
+    for (let i = 1; i <= t.sight; i++) { // the sight line is a walkable lane the player can step into
+      const [dx, dy] = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[t.facing];
+      assert.ok(isWalkable(m, t.x + dx * i, t.y + dy * i), `${t.id}: sight tile ${i} not walkable`);
+    }
+  }
+  const c = maps.town.champion;
+  assert.ok(c && isWalkable(maps.town, c.x, c.y), 'champion tile walkable');
+  assert.ok(c.y >= 1 && c.y <= 3, 'champion stands in the border strip');
 });

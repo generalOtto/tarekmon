@@ -8,6 +8,8 @@ import mapData from '../../data/map.json' with { type: 'json' };
 import dialogue from '../../data/dialogue.json' with { type: 'json' };
 import speciesList from '../../data/species.json' with { type: 'json' };
 import movesList from '../../data/moves.json' with { type: 'json' };
+import trainersList from '../../data/trainers.json' with { type: 'json' };
+import { dialogueFor } from '../../src/world/npc.js';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 /** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */
@@ -240,18 +242,18 @@ function encounterHarness({ rng, party = [makeMonster(speciesById['d002'], 5, mo
     save: { autosave: s => ctl.saveCalls.push(structuredClone(s.pos)) },
     rng,
     audio,
-    onEncounter: foe => ctl.encounters.push(foe),
+    onBattle: b => { assert.equal(b.kind, 'wild'); ctl.encounters.push(b.foeParty[0]); },
   });
   scene.enter();
   return { scene, state, ctl };
 }
 
-test('walking into Route 1 tall grass with a forced-hit rng fires onEncounter once, after the transition, with a foe from the zone table; input is ignored throughout', () => {
+test('walking into Route 1 tall grass with a forced-hit rng fires onBattle once, after the transition, with a foe from the zone table; input is ignored throughout', () => {
   const { scene, ctl } = encounterHarness({ rng: () => 0.01 }); // always low: rate roll hits, picks the first table entry
   ctl.dir = 'right';
   for (let i = 0; i < 20 && !scene.transition.active; i++) scene.update(1 / 60);
   assert.equal(scene.transition.active, true, 'arriving on the grass tile starts the real FlashWipe transition');
-  assert.equal(ctl.encounters.length, 0, 'onEncounter has not fired mid-transition');
+  assert.equal(ctl.encounters.length, 0, 'onBattle has not fired mid-transition');
 
   for (let i = 0; i < 90 && scene.transition.active; i++) {
     ctl.dir = 'left'; // held throughout: proves input is ignored while the transition plays
@@ -259,7 +261,7 @@ test('walking into Route 1 tall grass with a forced-hit rng fires onEncounter on
     assert.equal(scene.player.moving, false, `tick ${i}: player moved during the transition`);
   }
   assert.equal(scene.transition.active, false, 'transition completed (~72 ticks)');
-  assert.equal(ctl.encounters.length, 1, 'onEncounter fired exactly once');
+  assert.equal(ctl.encounters.length, 1, 'onBattle fired exactly once');
 
   const foe = ctl.encounters[0];
   const zone = zoneAt(scene.map, 11, 22);
@@ -267,7 +269,7 @@ test('walking into Route 1 tall grass with a forced-hit rng fires onEncounter on
   assert.ok(zone.table.some(t => t.species === foe.speciesId), 'foe species comes from the zone table');
 });
 
-test('rng order: rate, weight, level, uid, uid → the foe handed to onEncounter is exactly what that sequence produces', () => {
+test('rng order: rate, weight, level, uid, uid → the foe handed to onBattle is exactly what that sequence produces', () => {
   // route-1: rate 0.12, weights total 90 → 0.2*90 = 18 lands in d003 (12..22); level randInt(2,5) with 0.99 → 5.
   const seq = [0.05, 0.2, 0.99, 0.25, 0.5];
   const rng = () => { assert.ok(seq.length, 'rng called more times than the sequence allows'); return seq.shift(); };
@@ -291,7 +293,7 @@ test('a forced-hit encounter plays the jingle through the audio the scene was co
   assert.deepEqual(calls, ['encounter']);
 });
 
-test('a forced-miss rng never fires onEncounter', () => {
+test('a forced-miss rng never fires onBattle', () => {
   const { scene, ctl } = encounterHarness({ rng: () => 0.99 }); // always high: rate roll always fails
   ctl.dir = 'right';
   for (let i = 0; i < 100; i++) scene.update(1 / 60);
@@ -316,4 +318,186 @@ test('onBattleEnd("win") autosaves once and resets every party member\'s battle-
   assert.equal(ctl.saveCalls.length, 1, 'save.autosave called exactly once');
   for (const m of state.party) assert.deepEqual(m.stages, { atk: 0, def: 0, acc: 0 });
   for (const m of state.party) assert.equal(m.skipNext, false);
+});
+
+// ---------------------------------------------------------------- trainers, gym, badge, champion (Task 29)
+
+const trainersById = byId(trainersList);
+const fullDb = { dialogue, speciesById, movesById, trainers: trainersList, trainersById, mapData };
+
+/** Headless scene with every db table, a recording textbox (say resolves at once), an onBattle /
+ *  onChampion spy, a jingle recorder and a never-hit rng (no wild encounters get in the way). */
+function trainerHarness(start, { badges = [], defeated = [] } = {}) {
+  const ctl = { dir: null, a: false, said: [], battles: [], jingles: [], champion: 0 };
+  const state = newGameState('T', start);
+  state.party = [makeMonster(speciesById['d002'], 20, movesById)];
+  state.badges.push(...badges); state.defeatedTrainers.push(...defeated);
+  const scene = new OverworldScene({
+    db: fullDb, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
+    input: makeInput({ direction: () => ctl.dir, justPressed: b => b === 'a' && ctl.a }),
+    textbox: { open: false, update() {}, draw() {}, say(t) { ctl.said.push(t); return Promise.resolve(); } },
+    save: { autosave() {} }, rng: () => 0.99, audio: { playJingle: n => ctl.jingles.push(n) },
+    onBattle: b => ctl.battles.push(b), onChampion: () => ctl.champion++,
+  });
+  scene.enter();
+  const flush = async () => { for (let i = 0; i < 8; i++) await null; };
+  const tick = async () => { scene.update(1 / 60); await flush(); };
+  const until = async (cond, max = 600) => { for (let i = 0; i < max && !cond(); i++) await tick(); assert.ok(cond(), 'condition never met'); };
+  const pressA = async () => { ctl.a = true; scene.update(1 / 60); ctl.a = false; await flush(); };
+  const npc = id => [...scene.map.npcs, ...scene.map.trainers].find(n => n.id === id);
+  return { scene, state, ctl, tick, until, pressA, flush, npc };
+}
+const teamOf = b => b.foeParty.map(m => ({ species: m.speciesId, level: m.level }));
+
+test('LOS: stepping into a route trainer\'s sight → ! bubble, walk-up, pre line, then a trainer battle with its team', async () => {
+  const h = trainerHarness({ map: 'town', x: 12, y: 22, facing: 'down' });
+  const nic = h.npc('napkin-nic');
+  assert.deepEqual([nic.x, nic.y, nic.facing], [10, 24, 'right']);
+  h.ctl.dir = 'down';
+  await h.until(() => h.scene.trainerFlow.seq);
+  h.ctl.dir = null;
+  assert.deepEqual([h.state.pos.x, h.state.pos.y], [12, 24], 'spotted on the first tile of the sight line');
+  assert.equal(h.scene.trainerFlow.seq.phase, 'alert', 'the ! bubble shows first');
+  for (let i = 0; i < 29; i++) await h.tick();
+  assert.equal(h.scene.trainerFlow.seq.phase, 'alert', 'the bubble holds for 30 ticks');
+  assert.deepEqual([nic.x, nic.y], [10, 24], 'no walking during the bubble');
+  await h.tick();
+  assert.equal(h.scene.trainerFlow.seq.phase, 'walk');
+  await h.until(() => h.ctl.said.length);
+  assert.deepEqual([nic.x, nic.y], [11, 24], 'walked up to the tile beside the player');
+  assert.equal(h.scene.player.facing, 'left', 'the player turns to face the trainer');
+  assert.deepEqual(h.ctl.said, [dialogue['napkin-nic-pre']]);
+  await h.until(() => h.ctl.battles.length);
+  const [b] = h.ctl.battles;
+  assert.equal(b.kind, 'trainer');
+  assert.deepEqual(teamOf(b), trainersById['napkin-nic'].team);
+  assert.equal(b.trainer.id, 'napkin-nic'); assert.equal(b.trainer.name, 'NAPKIN NIC');
+  for (let i = 0; i < 60; i++) await h.tick();
+  assert.equal(h.ctl.battles.length, 1, 'no second trigger while the battle is pending');
+});
+
+test('beating a trainer records it and says post; a defeated trainer never re-spots and says post when talked to', async () => {
+  const h = trainerHarness({ map: 'town', x: 11, y: 24, facing: 'left' });
+  h.scene.onBattleEnd('win', { kind: 'trainer', trainer: { id: 'napkin-nic', name: 'NAPKIN NIC' } });
+  await h.flush();
+  assert.deepEqual(h.state.defeatedTrainers, ['napkin-nic']);
+  assert.deepEqual(h.ctl.said, [dialogue['napkin-nic-post']]);
+  for (let i = 0; i < 40; i++) await h.tick();
+  assert.equal(h.scene.trainerFlow.seq, null, 'standing in its sight line does nothing now');
+  await h.pressA();
+  assert.deepEqual(h.ctl.said, [dialogue['napkin-nic-post'], dialogue['napkin-nic-post']]);
+  assert.equal(h.ctl.battles.length, 0);
+});
+
+test('talking to an undefeated sight-0 regular: pre line, then a battle (no bubble, no walk)', async () => {
+  const h = trainerHarness({ map: 'haze', x: 5, y: 4, facing: 'left' });
+  await h.pressA();
+  assert.deepEqual(h.ctl.said, [dialogue['regular-1']]);
+  assert.equal(h.scene.trainerFlow.seq, null);
+  await h.until(() => h.ctl.battles.length);
+  assert.deepEqual(teamOf(h.ctl.battles[0]), trainersById['regular-1'].team);
+});
+
+test('a trainer loss blacks out and leaves the trainer undefeated', async () => {
+  const h = trainerHarness({ map: 'town', x: 11, y: 24, facing: 'left' });
+  let blackouts = 0; h.scene.blackout = () => blackouts++;
+  h.scene.onBattleEnd('lose', { kind: 'trainer', trainer: { id: 'napkin-nic', name: 'NAPKIN NIC' } });
+  await h.flush();
+  assert.equal(blackouts, 1);
+  assert.deepEqual(h.state.defeatedTrainers, []);
+  assert.deepEqual(h.ctl.said, []);
+});
+
+test('shisha guy: waits (and heals) until the regulars are beaten, then fights; with the badge he just heals', async () => {
+  const REGS = ['regular-1', 'regular-2', 'regular-3', 'regular-4'];
+  let h = trainerHarness({ map: 'haze', x: 7, y: 3, facing: 'up' }, { defeated: REGS.slice(0, 3) });
+  h.state.party[0].hp = 1;
+  await h.pressA();
+  assert.deepEqual(h.ctl.said, [dialogue['haze-leader-wait'], dialogue['haze-heal-2']]);
+  assert.equal(h.state.party[0].hp, h.state.party[0].maxHp, 'healed anyway');
+  for (let i = 0; i < 90; i++) await h.tick();
+  assert.equal(h.ctl.battles.length, 0);
+
+  h = trainerHarness({ map: 'haze', x: 7, y: 3, facing: 'up' }, { defeated: REGS });
+  await h.pressA();
+  assert.deepEqual(h.ctl.said, [dialogue['haze-leader-pre']]);
+  await h.until(() => h.ctl.battles.length);
+  assert.equal(h.ctl.battles[0].trainer.id, 'haze-guy');
+  assert.deepEqual(teamOf(h.ctl.battles[0]), trainersById['haze-guy'].team);
+
+  h = trainerHarness({ map: 'haze', x: 7, y: 3, facing: 'up' }, { badges: ['haze'], defeated: [...REGS, 'haze-guy'] });
+  await h.pressA();
+  assert.deepEqual(h.ctl.said, [dialogue['haze-heal-1'], dialogue['haze-heal-2']]);
+  for (let i = 0; i < 90; i++) await h.tick();
+  assert.equal(h.ctl.battles.length, 0);
+});
+
+test('beating the leader: badge + jingle + badge text; the officer\'s line flips; the gate opens', async () => {
+  const h = trainerHarness({ map: 'haze', x: 7, y: 3, facing: 'up' });
+  h.scene.onBattleEnd('win', { kind: 'trainer', trainer: { id: 'haze-guy', name: 'HAZE GUY' } });
+  await h.flush();
+  assert.deepEqual(h.state.badges, ['haze']);
+  assert.ok(h.state.defeatedTrainers.includes('haze-guy'));
+  assert.deepEqual(h.ctl.said, [dialogue['haze-leader-post'], 'T RECEIVED THE\nHAZE BADGE!']);
+  assert.deepEqual(h.ctl.jingles, ['badge']);
+  const officer = h.scene.maps.booth.npcs.find(n => n.id === 'officer');
+  assert.equal(dialogueFor(officer, h.state, dialogue), dialogue['booth-officer-open']);
+
+  const shut = trainerHarness({ map: 'town', x: 25, y: 5, facing: 'up' });
+  shut.ctl.dir = 'up'; for (let i = 0; i < 20; i++) await shut.tick();
+  assert.equal(shut.state.pos.y, 5, 'the closed gate blocks');
+  const open = trainerHarness({ map: 'town', x: 25, y: 5, facing: 'up' }, { badges: h.state.badges });
+  open.ctl.dir = 'up'; await open.until(() => open.state.pos.y === 4, 40);
+  assert.equal(open.scene.map.rows[4][25], 'G', 'the tile data stays G; the badge makes it passable');
+});
+
+test('champion: with the badge, stepping into the border strip brings Suhaib in; win → champion, onChampion once, rematch after', async () => {
+  const h = trainerHarness({ map: 'town', x: 25, y: 5, facing: 'up' }, { badges: ['haze'], defeated: ['haze-guy'] });
+  assert.equal(h.npc('suhaib'), undefined, 'not placed before the trigger');
+  h.ctl.dir = 'up';
+  await h.until(() => h.scene.trainerFlow.seq);
+  h.ctl.dir = null;
+  assert.deepEqual([h.state.pos.x, h.state.pos.y], [25, 3], 'triggered on the first strip tile');
+  const suhaib = h.npc('suhaib');
+  assert.deepEqual([suhaib.x, suhaib.y, suhaib.sprite], [25, 0, 'npc-suhaib'], 'walks in from the top edge');
+  await h.until(() => h.ctl.said.length);
+  assert.deepEqual([suhaib.x, suhaib.y], [25, 2], 'stops at the champion tile');
+  assert.deepEqual(h.ctl.said, [dialogue['suhaib-pre']]);
+  await h.until(() => h.ctl.battles.length);
+  const { trainer } = h.ctl.battles[0];
+  assert.equal(h.ctl.battles[0].kind, 'trainer');
+  assert.deepEqual(trainer, { id: 'suhaib', name: 'SUHAIB', payout: trainersById.suhaib.payout, isChampion: true, speechAfterFaints: 3, speech: dialogue['suhaib-mid'] });
+  assert.equal(h.ctl.battles[0].foeParty.length, 6);
+
+  h.scene.onBattleEnd('win', { kind: 'trainer', trainer });
+  await h.flush();
+  assert.equal(h.state.flags.champion, true);
+  assert.ok(h.state.defeatedTrainers.includes('suhaib'));
+  assert.deepEqual(h.ctl.said.slice(1), [dialogue['suhaib-lost'], 'T IS THE\nDUMPLING CHAMPION!']);
+  assert.deepEqual(h.ctl.jingles, ['victory']);
+  assert.equal(h.ctl.champion, 1);
+
+  h.ctl.said.length = 0;
+  h.scene.player.facing = 'up';
+  await h.pressA();
+  assert.deepEqual(h.ctl.said, [dialogue['suhaib-rematch']]);
+  await h.until(() => h.ctl.battles.length === 2);
+  h.scene.onBattleEnd('win', { kind: 'trainer', trainer: h.ctl.battles[1].trainer });
+  await h.flush();
+  assert.deepEqual(h.ctl.said, [dialogue['suhaib-rematch'], dialogue['suhaib-lost']], 'a rematch win just repeats post');
+  assert.equal(h.ctl.champion, 1, 'onChampion fires once');
+  assert.equal(h.scene.map.npcs.filter(n => n.id === 'suhaib').length, 1);
+});
+
+test('champion: no badge → no Suhaib; after a reload as champion he is already standing at his tile', async () => {
+  const h = trainerHarness({ map: 'town', x: 25, y: 3, facing: 'up' });
+  for (let i = 0; i < 20; i++) await h.tick();
+  assert.equal(h.scene.trainerFlow.seq, null);
+  assert.equal(h.npc('suhaib'), undefined);
+  const c = trainerHarness({ map: 'town', x: 20, y: 2, facing: 'up' }, { badges: ['haze'], defeated: ['suhaib'] });
+  c.state.flags.champion = true; c.scene.enter();
+  const s = c.npc('suhaib');
+  assert.deepEqual([s.x, s.y], [25, 2]);
+  for (let i = 0; i < 20; i++) await c.tick();
+  assert.equal(c.scene.trainerFlow.seq, null, 'no walk-in once champion');
 });

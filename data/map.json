@@ -113,7 +113,15 @@
         { "id": "townie-2", "x": 22, "y": 19, "facing": "left", "sprite": "npc-townie", "dialogue": "townie-2" },
         { "id": "townie-3", "x": 14, "y": 10, "facing": "down", "sprite": "npc-townie", "dialogue": "townie-3" }
       ],
-      "trainers": [],
+      "trainers": [
+        { "id": "napkin-nic", "x": 10, "y": 24, "facing": "right", "sight": 3 },
+        { "id": "wet-will", "x": 17, "y": 30, "facing": "down", "sight": 3 },
+        { "id": "coal-kid", "x": 26, "y": 25, "facing": "up", "sight": 3 },
+        { "id": "lounge-liz", "x": 24, "y": 31, "facing": "down", "sight": 3 },
+        { "id": "skater-dan", "x": 5, "y": 9, "facing": "down", "sight": 3 },
+        { "id": "driver-dee", "x": 5, "y": 31, "facing": "down", "sight": 3 }
+      ],
+      "champion": { "x": 25, "y": 2, "facing": "down" },
       "signs": [
         { "x": 11, "y": 10, "dialogue": "sign-lab" },
         { "x": 16, "y": 19, "dialogue": "sign-haze" },
@@ -173,13 +181,14 @@
       ],
       "zones": [],
       "npcs": [
-        { "id": "haze-guy", "x": 7, "y": 1, "facing": "down", "sprite": "npc-shisha", "dialogue": "haze-heal-1", "kind": "healer" },
-        { "id": "regular-1", "x": 4, "y": 4, "facing": "right", "sprite": "npc-regular", "dialogue": "regular-1" },
-        { "id": "regular-2", "x": 9, "y": 4, "facing": "left", "sprite": "npc-regular", "dialogue": "regular-2" },
-        { "id": "regular-3", "x": 4, "y": 6, "facing": "right", "sprite": "npc-regular", "dialogue": "regular-3" },
-        { "id": "regular-4", "x": 9, "y": 6, "facing": "left", "sprite": "npc-regular", "dialogue": "regular-4" }
+        { "id": "haze-guy", "x": 7, "y": 1, "facing": "down", "sprite": "npc-shisha", "dialogue": "haze-heal-1", "kind": "healer", "trainer": "haze-guy" }
       ],
-      "trainers": [],
+      "trainers": [
+        { "id": "regular-1", "x": 4, "y": 4, "facing": "right", "sight": 0 },
+        { "id": "regular-2", "x": 9, "y": 4, "facing": "left", "sight": 0 },
+        { "id": "regular-3", "x": 4, "y": 6, "facing": "right", "sight": 0 },
+        { "id": "regular-4", "x": 9, "y": 6, "facing": "left", "sight": 0 }
+      ],
       "signs": [],
       "objects": []
     },

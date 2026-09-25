@@ -1,5 +1,6 @@
 // OverworldScene: walks the player around a map, scrolls the camera, draws tiles + NPCs + sprite,
-// and handles A-button interaction (NPCs, signs, fridge, rack, pedestals, gate).
+// and handles A-button interaction (NPCs, signs, fridge, rack, pedestals, gate). Battles (wild and
+// trainer) go out through onBattle({ kind, foeParty, trainer }); main.js owns the scene stack.
 import { Player, drawPlayer } from './player.js';
 import { cameraFor } from './camera.js';
 import { tileAt, npcAt, signAt, step } from './map.js';
@@ -12,25 +13,28 @@ import { healParty } from '../engine/state.js';
 import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
 import { attachBattleFlow } from './battleflow.js';
+import { TrainerFlow } from './trainers.js';
 import { FlashWipe } from '../battle/transition.js';
 
 const S = TILE_SIZE;
 
 export class OverworldScene {
-  constructor({ db, maps, state, tileset, input, textbox, save, audio, rng = defaultRng, onEncounter = null }) {
-    Object.assign(this, { db, maps, state, tileset, input, textbox, save, audio, rng, onEncounter });
-    this.transition = new FlashWipe(); // owned/drawn here: the wild-encounter flash + wipe
+  constructor({ db, maps, state, tileset, input, textbox, save, audio, rng = defaultRng, onBattle = null, onChampion = null }) {
+    Object.assign(this, { db, maps, state, tileset, input, textbox, save, audio, rng, onBattle, onChampion });
+    this.transition = new FlashWipe(); // owned/drawn here: the flash + wipe into any battle
     this.ticks = 0;
     this.fader = new Fader();
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
     this.startMenu = new StartMenu({ state, save, textbox, audio });
     this.flow = attachBattleFlow(this);
+    this.trainerFlow = new TrainerFlow(this);
   }
 
   enter() {
     const { state } = this;
     this.map = this.maps[state.pos.map];
     this.player = this.makePlayer(state.pos.x, state.pos.y, state.pos.facing);
+    this.trainerFlow.placeChampion();
   }
 
   /** Build a Player wired for this scene: onArrive syncs state.pos, checks for a warp underfoot,
@@ -52,6 +56,7 @@ export class OverworldScene {
       this.map = this.maps[w.map];
       this.player = this.makePlayer(w.x, w.y, w.facing);
       this.state.pos = { map: w.map, x: w.x, y: w.y, facing: w.facing };
+      this.trainerFlow.placeChampion();
       this.save.autosave(this.state);
     });
   }
@@ -69,6 +74,7 @@ export class OverworldScene {
     if (startMenu.open) { startMenu.update(input); return; }
     if (textbox.open) { textbox.update(input); return; }
     if (this.busy) return; // between two lines of a multi-say interaction
+    if (this.trainerFlow.update()) return; // a trainer spotted us (or Suhaib is walking in)
     if (!player.moving && input.justPressed('start')) { startMenu.start(); return; }
     if (!player.moving && input.justPressed('a') && this.interact()) return;
     if (!player.moving) {
@@ -115,6 +121,8 @@ export class OverworldScene {
   async talkTo(npc) {
     const { player, state } = this;
     npc.facing = faceToward(npc, player.x, player.y);
+    const fight = this.trainerFlow.talk(npc);
+    if (fight) return fight;
     if (npc.kind === 'weather') state.flags.weatherNice = rollWeather();
     await this.textbox.say(dialogueFor(npc, state, this.db.dialogue ?? {}));
     if (npc.kind === 'healer') { healParty(state); await this.say('haze-heal-2'); }
@@ -135,7 +143,11 @@ export class OverworldScene {
         tileset.draw(ctx, t, x * S - ox, y * S - oy, frame);
       }
     }
-    for (const n of [...map.npcs, ...map.trainers]) drawNpc(ctx, n, n.x * S - ox, n.y * S - oy, this.ticks);
+    for (const n of [...map.npcs, ...map.trainers]) {
+      const [dx, dy] = this.trainerFlow.offset(n);
+      drawNpc(ctx, n, n.x * S - ox + dx, n.y * S - oy + dy, this.ticks);
+    }
+    this.trainerFlow.drawBubble(ctx, ox, oy);
     drawPlayer(ctx, Math.round(px) - ox, Math.round(py) - oy, player.facing, player.frame, player.skating);
     this.startMenu.draw(ctx); // draws the shared textbox too, whether from the menu or a plain interaction
     drawFade(ctx, fader.alpha);

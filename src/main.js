@@ -48,7 +48,8 @@ function startBattle({ kind, foeParty, trainer = null }) {
 }
 const overworld = new OverworldScene({
   db, maps: loadMaps(db.mapData), state, tileset: buildTileset(), input, textbox, save,
-  onEncounter: foe => startBattle({ kind: 'wild', foeParty: [foe] }),
+  onBattle: startBattle,
+  onChampion: () => {}, // TODO Task 37: roll the credits
 });
 scenes.push(overworld);
 

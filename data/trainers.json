@@ -1,1 +1,14 @@
-[]
+[
+  {"id":"napkin-nic","name":"NAPKIN NIC","sprite":"npc-townie","kind":"route","team":[{"species":"d002","level":5}],"pre":"napkin-nic-pre","post":"napkin-nic-post"},
+  {"id":"wet-will","name":"WET WILL","sprite":"npc-cap","kind":"route","team":[{"species":"d007","level":4},{"species":"d017","level":6}],"pre":"wet-will-pre","post":"wet-will-post"},
+  {"id":"coal-kid","name":"COAL KID","sprite":"npc-townie","kind":"route","team":[{"species":"d019","level":7},{"species":"d001","level":8}],"pre":"coal-kid-pre","post":"coal-kid-post"},
+  {"id":"lounge-liz","name":"LOUNGE LIZ","sprite":"npc-cap","kind":"route","team":[{"species":"d022","level":8},{"species":"d005","level":9}],"pre":"lounge-liz-pre","post":"lounge-liz-post"},
+  {"id":"skater-dan","name":"SKATER DAN","sprite":"npc-cap","kind":"route","team":[{"species":"d026","level":10},{"species":"d071","level":12}],"pre":"skater-dan-pre","post":"skater-dan-post"},
+  {"id":"driver-dee","name":"DRIVER DEE","sprite":"npc-townie","kind":"route","team":[{"species":"d056","level":10},{"species":"d038","level":11},{"species":"d021","level":12}],"pre":"driver-dee-pre","post":"driver-dee-post"},
+  {"id":"regular-1","name":"REGULAR AL","sprite":"npc-regular","kind":"regular","team":[{"species":"d050","level":12},{"species":"d059","level":13}],"pre":"regular-1","post":"regular-1-post"},
+  {"id":"regular-2","name":"REGULAR MO","sprite":"npc-regular","kind":"regular","team":[{"species":"d034","level":13},{"species":"d048","level":13}],"pre":"regular-2","post":"regular-2-post"},
+  {"id":"regular-3","name":"REGULAR JO","sprite":"npc-regular","kind":"regular","team":[{"species":"d064","level":14},{"species":"d047","level":14}],"pre":"regular-3","post":"regular-3-post"},
+  {"id":"regular-4","name":"REGULAR BO","sprite":"npc-regular","kind":"regular","team":[{"species":"d063","level":14},{"species":"d029","level":15}],"pre":"regular-4","post":"regular-4-post"},
+  {"id":"haze-guy","name":"HAZE GUY","sprite":"npc-shisha","kind":"leader","team":[{"species":"d058","level":16},{"species":"d019","level":16},{"species":"d050","level":17},{"species":"d066","level":17},{"species":"d059","level":18}],"pre":"haze-leader-pre","post":"haze-leader-post","payout":1000},
+  {"id":"suhaib","name":"SUHAIB","sprite":"npc-suhaib","kind":"champion","team":[{"species":"d060","level":19},{"species":"d049","level":20},{"species":"d030","level":20},{"species":"d060","level":21},{"species":"d030","level":21},{"species":"d049","level":22}],"pre":"suhaib-pre","post":"suhaib-lost","speechAfterFaints":3,"speech":"suhaib-mid","payout":2000}
+]

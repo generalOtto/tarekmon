@@ -1,11 +1,15 @@
-// OverworldScene: walks the player around a map, scrolls the camera, draws tiles + sprite.
+// OverworldScene: walks the player around a map, scrolls the camera, draws tiles + NPCs + sprite,
+// and handles A-button interaction (NPCs, signs, fridge, rack, pedestals, gate).
 import { Player, drawPlayer } from './player.js';
 import { cameraFor } from './camera.js';
-import { tileAt, npcAt } from './map.js';
+import { tileAt, npcAt, signAt, step } from './map.js';
+import { drawNpc, faceToward, dialogueFor } from './npc.js';
 import { resolveWarp, Fader, drawFade } from './doors.js';
 import { TILE_SIZE } from './tiles.js';
 import { W, H } from '../engine/canvas.js';
 import { INK } from './palette.js';
+import { healParty } from '../engine/state.js';
+import { rollWeather } from '../engine/rng.js';
 
 const S = TILE_SIZE;
 const DIRS = ['up', 'down', 'left', 'right'];
@@ -15,6 +19,7 @@ export class OverworldScene {
     Object.assign(this, { db, maps, state, tileset, input, textbox, save });
     this.ticks = 0;
     this.fader = new Fader();
+    this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
   }
 
   enter() {
@@ -48,6 +53,8 @@ export class OverworldScene {
     const { input, textbox, player, state, fader } = this;
     if (fader.active) { fader.update(); return; } // no input while warping
     if (textbox.open) { textbox.update(input); return; }
+    if (this.busy) return; // between two lines of a multi-say interaction
+    if (!player.moving && input.justPressed('a') && this.interact()) return;
     if (!player.moving) {
       // Held direction first; justPressed catches a tap released before this tick ran.
       const d = input.direction() ?? DIRS.find(b => input.justPressed(b));
@@ -61,6 +68,41 @@ export class OverworldScene {
     }
     player.update(dt);
     this.ticks++;
+  }
+
+  /** A pressed while standing: act on the faced tile (or an NPC across a counter). Returns true if something happened. */
+  interact() {
+    const { map, player, state } = this;
+    const [fx, fy] = step(player.x, player.y, player.facing);
+    let npc = npcAt(map, fx, fy);
+    if (!npc && tileAt(map, fx, fy) === 'C') npc = npcAt(map, ...step(fx, fy, player.facing)); // talk over the counter
+    if (npc) return this.run(() => this.talkTo(npc));
+    const sign = signAt(map, fx, fy);
+    if (sign) return this.run(() => this.say(sign.dialogue));
+    switch (tileAt(map, fx, fy)) {
+      case 'F': return this.run(() => this.say('fridge-open')); // Fridge screen: Task 31
+      case 'K': return this.run(() => this.say(rollWeather() ? 'rack-nice' : 'rack-bad'));
+      case 'E': return this.run(() => this.say('pedestal'));
+      case 'G': return !state.badges.includes('haze') && this.run(() => this.say('gate-closed'));
+    }
+    return false;
+  }
+
+  /** Run an async interaction with input locked until it settles. */
+  run(fn) {
+    this.busy = true;
+    fn().catch(e => console.error(e)).finally(() => { this.busy = false; });
+    return true;
+  }
+
+  say(id) { return this.textbox.say(this.db.dialogue?.[id] ?? '...'); }
+
+  async talkTo(npc) {
+    const { player, state } = this;
+    npc.facing = faceToward(npc, player.x, player.y);
+    if (npc.kind === 'weather') state.flags.weatherNice = rollWeather();
+    await this.textbox.say(dialogueFor(npc, state, this.db.dialogue ?? {}));
+    if (npc.kind === 'healer') { healParty(state); await this.say('haze-heal-2'); }
   }
 
   draw(ctx) {
@@ -78,6 +120,7 @@ export class OverworldScene {
         tileset.draw(ctx, t, x * S - ox, y * S - oy, frame);
       }
     }
+    for (const n of [...map.npcs, ...map.trainers]) drawNpc(ctx, n, n.x * S - ox, n.y * S - oy, this.ticks);
     drawPlayer(ctx, Math.round(px) - ox, Math.round(py) - oy, player.facing, player.frame, player.skating);
     this.textbox.draw(ctx);
     drawFade(ctx, fader.alpha);

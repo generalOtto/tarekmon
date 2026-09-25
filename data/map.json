@@ -107,9 +107,21 @@
           ]
         }
       ],
-      "npcs": [],
+      "npcs": [
+        { "id": "weather-guy", "x": 7, "y": 34, "facing": "left", "sprite": "npc-cap", "dialogue": ["weather-guy-bad", "weather-guy-nice"], "flag": "weatherNice", "kind": "weather" },
+        { "id": "townie-1", "x": 20, "y": 12, "facing": "down", "sprite": "npc-townie", "dialogue": "townie-1" },
+        { "id": "townie-2", "x": 22, "y": 19, "facing": "left", "sprite": "npc-townie", "dialogue": "townie-2" },
+        { "id": "townie-3", "x": 14, "y": 10, "facing": "down", "sprite": "npc-townie", "dialogue": "townie-3" }
+      ],
       "trainers": [],
-      "signs": [],
+      "signs": [
+        { "x": 11, "y": 10, "dialogue": "sign-lab" },
+        { "x": 16, "y": 19, "dialogue": "sign-haze" },
+        { "x": 27, "y": 18, "dialogue": "sign-ribs" },
+        { "x": 29, "y": 7, "dialogue": "sign-booth" },
+        { "x": 24, "y": 5, "dialogue": "sign-border" },
+        { "x": 6, "y": 34, "dialogue": "sign-skate" }
+      ],
       "objects": [
         { "x": 25, "y": 4, "kind": "gate" }
       ]
@@ -133,7 +145,9 @@
         { "x": 6, "y": 8, "to": "town", "tx": 12, "ty": 10, "facing": "down" }
       ],
       "zones": [],
-      "npcs": [],
+      "npcs": [
+        { "id": "prof-otto", "x": 6, "y": 2, "facing": "down", "sprite": "npc-otto", "dialogue": ["otto-lab-intro", "otto-lab-after"], "flag": "starterPicked" }
+      ],
       "trainers": [],
       "signs": [],
       "objects": []
@@ -158,7 +172,13 @@
         { "x": 7, "y": 9, "to": "town", "tx": 17, "ty": 19, "facing": "down" }
       ],
       "zones": [],
-      "npcs": [],
+      "npcs": [
+        { "id": "haze-guy", "x": 7, "y": 1, "facing": "down", "sprite": "npc-shisha", "dialogue": "haze-heal-1", "kind": "healer" },
+        { "id": "regular-1", "x": 4, "y": 4, "facing": "right", "sprite": "npc-regular", "dialogue": "regular-1" },
+        { "id": "regular-2", "x": 9, "y": 4, "facing": "left", "sprite": "npc-regular", "dialogue": "regular-2" },
+        { "id": "regular-3", "x": 4, "y": 6, "facing": "right", "sprite": "npc-regular", "dialogue": "regular-3" },
+        { "id": "regular-4", "x": 9, "y": 6, "facing": "left", "sprite": "npc-regular", "dialogue": "regular-4" }
+      ],
       "trainers": [],
       "signs": [],
       "objects": []
@@ -181,7 +201,9 @@
         { "x": 5, "y": 7, "to": "town", "tx": 26, "ty": 18, "facing": "down" }
       ],
       "zones": [],
-      "npcs": [],
+      "npcs": [
+        { "id": "shopkeeper", "x": 3, "y": 1, "facing": "down", "sprite": "npc-shop", "dialogue": "ribs-shop" }
+      ],
       "trainers": [],
       "signs": [],
       "objects": []
@@ -202,7 +224,9 @@
         { "x": 4, "y": 5, "to": "town", "tx": 28, "ty": 7, "facing": "down" }
       ],
       "zones": [],
-      "npcs": [],
+      "npcs": [
+        { "id": "officer", "x": 3, "y": 1, "facing": "down", "sprite": "npc-officer", "dialogue": ["booth-officer-locked", "booth-officer-open"], "flag": "badge:haze" }
+      ],
       "trainers": [],
       "signs": [],
       "objects": []

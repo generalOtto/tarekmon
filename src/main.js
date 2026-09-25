@@ -2,6 +2,7 @@ import { loadDb } from './data/load.js';
 import { createScreen } from './engine/canvas.js';
 import { SceneStack, startLoop } from './engine/loop.js';
 import { ButtonState, attachInput } from './engine/input.js';
+import { TextBox } from './ui/textbox.js';
 
 const db = await loadDb();
 
@@ -15,12 +16,20 @@ const placeholderScene = {
   x: 76,
   y: 68,
   flash: false,
+  textbox: new TextBox(),
   update() {
-    const dir = input.direction();
-    if (dir === 'up') this.y -= 1;
-    else if (dir === 'down') this.y += 1;
-    else if (dir === 'left') this.x -= 1;
-    else if (dir === 'right') this.x += 1;
+    if (input.justPressed('start') && !this.textbox.open) {
+      this.textbox.say("WELCOME TO THE WORLD OF TAREKMON!\fMY NAME IS OTTO. PEOPLE CALL ME THE DUMPLING PROFESSOR.");
+    }
+    this.textbox.update(input);
+
+    if (!this.textbox.open) {
+      const dir = input.direction();
+      if (dir === 'up') this.y -= 1;
+      else if (dir === 'down') this.y += 1;
+      else if (dir === 'left') this.x -= 1;
+      else if (dir === 'right') this.x += 1;
+    }
     // OR-accumulate rather than assign: the loop can run several ticks per
     // rendered frame (catch-up after a slow frame), so a plain assignment
     // here could be overwritten back to false by a later tick in the same
@@ -32,6 +41,7 @@ const placeholderScene = {
     ctx.fillStyle = this.flash ? '#ffffff' : '#1f1a33';
     ctx.fillRect(this.x, this.y, 8, 8);
     this.flash = false;
+    this.textbox.draw(ctx);
   },
 };
 scenes.push(placeholderScene);

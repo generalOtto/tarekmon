@@ -39,3 +39,11 @@ test('tryMove while a step is in flight is rejected and keeps facing; the step s
   for (let i = 0; i < 15; i++) p.update(1 / 60);
   assert.equal(p.moving, false); assert.deepEqual([p.x, p.y], [2, 1]);
 });
+test('tryMove: an `allow` override lets the player step onto an otherwise non-walkable tile; without it the tile stays blocked', () => {
+  // Synthetic map with a wall tile ('T', not in WALKABLE) directly below the player.
+  const gated = loadMaps({ maps: { o: { rows: ['..', 'T.'] } } }).o;
+  const p = new Player(0, 0, 'down');
+  assert.equal(p.tryMove('down', gated, {}), false, 'blocked with no allow override');
+  const p2 = new Player(0, 0, 'down');
+  assert.equal(p2.tryMove('down', gated, { allow: (x, y) => true }), true, 'allow override opens the tile');
+});

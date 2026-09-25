@@ -19,13 +19,14 @@ export class Player {
     this.onArrive = null;
   }
 
-  /** No-op while moving. Otherwise face `dir`, then start a one-tile step if the target is walkable and not blocked. */
-  tryMove(dir, map, { blocked } = {}) {
+  /** No-op while moving. Otherwise face `dir`, then start a one-tile step if the target is walkable
+   *  (or explicitly `allow`ed, e.g. a badge-gated tile) and not `blocked`. */
+  tryMove(dir, map, { blocked, allow } = {}) {
     // Guard first: pixelPos() and the arrival in update() read this.facing, so it must not change mid-step.
     if (this.moving) return false;
     this.facing = dir;
     const [nx, ny] = step(this.x, this.y, dir);
-    if (!isWalkable(map, nx, ny) || blocked?.(nx, ny)) return false;
+    if (!(isWalkable(map, nx, ny) || allow?.(nx, ny)) || blocked?.(nx, ny)) return false;
     this.moving = true; this.progress = 0;
     return true;
   }

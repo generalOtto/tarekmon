@@ -105,3 +105,55 @@ test('the weather guy and the rack answer by the day\'s weather and set flags.we
   const r = talker({ map: 'town', x: 5, y: 34, facing: 'left' });
   await r.pressA(); assert.deepEqual(r.ctl.said, [dialogue[nice ? 'rack-nice' : 'rack-bad']]);
 });
+
+/** Headless scene for start-menu tests: ctl.dir drives the held direction; press() sets a one-tick
+ *  justPressed edge for `btn`, ticks the scene, then clears it (mirroring ButtonState). */
+function menuHarness(start = mapData.start) {
+  const ctl = { dir: null, justPressed: new Set(), said: [] };
+  const state = newGameState('T', start);
+  const saveCalls = [];
+  const textbox = {
+    open: false,
+    update() {},
+    draw() {},
+    say(t) {
+      this.open = true;
+      ctl.said.push(t);
+      return Promise.resolve().then(() => { this.open = false; });
+    },
+  };
+  const scene = new OverworldScene({
+    db: {}, maps: loadMaps(mapData), state, tileset: { draw() {} },
+    input: { direction: () => ctl.dir, justPressed: b => ctl.justPressed.has(b), isDown: () => false },
+    textbox, save: { save: s => saveCalls.push(structuredClone(s)), autosave() {} },
+  });
+  scene.enter();
+  const press = btn => { ctl.justPressed.add(btn); scene.update(1 / 60); ctl.justPressed.delete(btn); };
+  return { scene, state, ctl, saveCalls, textbox, press };
+}
+
+test('Start opens the pause menu and blocks movement; B closes it', () => {
+  const h = menuHarness();
+  h.press('start');
+  assert.equal(h.scene.startMenu.open, true);
+
+  h.ctl.dir = 'down';
+  h.scene.update(1 / 60);
+  assert.equal(h.scene.player.moving, false, 'movement is blocked while the menu is open');
+  h.ctl.dir = null;
+
+  h.press('b');
+  assert.equal(h.scene.startMenu.open, false);
+});
+
+test('selecting SAVE from the start menu calls save.save once and the textbox says the save line', async () => {
+  const h = menuHarness();
+  h.press('start');
+  h.scene.startMenu.menu.index = h.scene.startMenu.menu.items.indexOf('SAVE');
+  h.press('a');
+  await null; await null;
+
+  assert.equal(h.saveCalls.length, 1);
+  assert.equal(h.saveCalls[0].playerName, 'T');
+  assert.equal(h.ctl.said[0], 'T SAVED THE GAME.');
+});

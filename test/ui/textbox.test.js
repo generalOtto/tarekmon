@@ -129,10 +129,10 @@ test('TextBox: dismiss() resolves the pending say() immediately, from any page',
   const tb = new TextBox();
   let resolved = false;
   const done = tb.say('ONE\fTWO').then(() => { resolved = true; });
-  assert.equal(tb.revealed, false);
+  assert.equal(tb.pageRevealed, false);
   tb.update(inputWith());
   tb.update(inputWith());
-  assert.equal(tb.revealed, true);
+  assert.equal(tb.pageRevealed, true);
   assert.equal(tb.onLastPage, false);
   tb.dismiss();
   assert.equal(tb.open, false);

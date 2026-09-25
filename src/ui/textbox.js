@@ -132,7 +132,7 @@ export class TextBox {
   }
 
   /** True once the current page is fully typed out. */
-  get revealed() { return this.open && !!this.typewriter?.done; }
+  get pageRevealed() { return this.open && !!this.typewriter?.done; }
   get onLastPage() { return this.pageIndex >= this.pages.length - 1; }
 
   /** What A does on a revealed page: next page, or close and resolve on the last one. */

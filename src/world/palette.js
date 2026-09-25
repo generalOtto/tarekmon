@@ -29,3 +29,10 @@ export const PURPLE = '#8858b8';
 export const SKIN = '#f0c8a0';
 export const WHITE = '#ffffff';
 export const BLACK = '#101010';
+// battle UI
+export const HP_GREEN = '#40c040';
+export const HP_YELLOW = '#e0c040';
+export const HP_RED = '#e04040';
+export const HP_TRACK = '#384838';
+export const XP_BLUE = '#4878d8';
+export const PLACEHOLDER = '#a0a0a0';

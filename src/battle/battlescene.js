@@ -1,30 +1,34 @@
 // BattleScene: renders a Battle and paces its events. The engine resolves a whole turn at once;
 // this scene replays the resulting events one at a time (text, bar tweens, sticker animations),
 // then shows the action menu when the queue is empty. Pacing lives in update()/play()/step() and
-// only mutates `this.view` — draw() is a pure function of that view, so pacing tests run headless.
+// only mutates `this.view`; drawing is in battledraw.js, which reads the scene and never mutates
+// it — so pacing tests run headless.
 import { Menu } from '../ui/menu.js';
-import { drawHpBar, Tween } from '../ui/hpbar.js';
-import { drawText, measure } from '../engine/font.js';
-import { W, H } from '../engine/canvas.js';
-import { drawFade } from '../world/doors.js';
-import { PAPER, INK, GRASS_L, RED, WHITE, YELLOW } from '../world/palette.js';
+import { Tween } from '../ui/hpbar.js';
 import { xpForLevel, MAX_LEVEL } from './stats.js';
+import { drawBattle, BALL_FROM, BALL_TO } from './battledraw.js';
 
-const TEXT_HOLD = 45;   // ticks a revealed battle text stays up before auto-advancing
-const HP_TICKS = 24, XP_TICKS = 30, FAINT_TICKS = 18, SLIDE_TICKS = 18, FLEE_TICKS = 12, FADE_IN = 12, SPARKLE_TICKS = 20;
-const BALL_ARC = 20, BALL_SHRINK = 10, WOBBLE = 30, BALL_STAR = 20, BALL_POP = 10;
-const STICKER = 56;
-const FOE_POS = { x: 96, y: 8 }, PLAYER_POS = { x: 8, y: 56 };
-const BALL_FROM = { x: 40, y: 80 }, BALL_TO = { x: 124, y: 50 }; // ball rests on the foe's platform, above the player info box
-const BOX_Y = 96, BOX_H = 48;
+/** Pacing, in ticks (60/s). */
+export const TIMING = Object.freeze({
+  TEXT_HOLD: 45, // a revealed battle text stays up this long before auto-advancing
+  HP: 24, XP: 30, FAINT: 18, SLIDE: 18, FLEE: 12, FADE_IN: 12, SPARKLE: 20,
+  BALL_ARC: 20, BALL_SHRINK: 10, WOBBLE: 30, BALL_STAR: 20, BALL_POP: 10,
+});
+const { TEXT_HOLD, FAINT: FAINT_TICKS, SLIDE: SLIDE_TICKS, FLEE: FLEE_TICKS, FADE_IN,
+  BALL_ARC, BALL_SHRINK, WOBBLE, BALL_STAR, BALL_POP } = TIMING;
 const ACTIONS = ['FIGHT', 'BAG', 'DUMPLINGS', 'RUN'];
 
 const clamp01 = v => Math.max(0, Math.min(1, v));
 const upper = s => String(s ?? '').toUpperCase();
 
-/** Displayed (possibly lagging) state of one side: what the info box and sticker show right now. */
-function sideView(mon) {
-  return { mon, level: mon.level, hp: mon.hp, max: mon.maxHp, hpText: mon.hp, xpRatio: xpRatioOf(mon),
+/**
+ * Displayed (possibly lagging) state of one side: what the info box and sticker show right now.
+ * `snap` ({hp, maxHp, level, xp}, e.g. a switch event's emit-time snapshot) overrides the live
+ * monster, whose numbers may already reflect the rest of the turn.
+ */
+function sideView(mon, snap = mon) {
+  const { hp, maxHp, level, xp } = snap;
+  return { mon, level, hp, max: maxHp, hpText: hp, xpRatio: xpRatioOf({ level, xp }),
     hidden: false, dx: 0, dy: 0, alpha: 1, scale: 1 };
 }
 function xpRatioOf(m) {
@@ -42,6 +46,7 @@ export class BattleScene {
     this.menu = null;
     this.actionMenu = new Menu(ACTIONS, { cols: 2 });
     this.forcedSwitch = false;
+    this.returnTo = null; // 'party': reopen the party list after a rejected voluntary switch
     this.ended = false;
     this.fadeIn = 0;
     this.sparkle = 0;
@@ -64,9 +69,16 @@ export class BattleScene {
     if (this.fadeIn > 0) this.fadeIn--;
     if (this.sparkle > 0) this.sparkle--;
     if (!this.current) { this.pump(); this.next(); }
-    if (this.current) { this.step(); return; }
+    if (this.current) {
+      // An event that finishes hands straight over to the next one (or the menu) this tick,
+      // so no empty-box frame flashes between two texts.
+      if (this.step()) { this.pump(); this.next(); }
+      return;
+    }
     this.updateMenu();
   }
+
+  get fadeAlpha() { return this.fadeIn / FADE_IN; }
 
   /** Pulls the engine's pending events into the queue. */
   pump() { this.queue.push(...this.battle.drain()); }
@@ -77,7 +89,9 @@ export class BattleScene {
     const ev = this.queue.shift();
     if (ev) return this.play(ev);
     if (this.mode !== 'events') return; // a menu is already open
-    if (this.battle.phase === 'choose') this.openAction();
+    const back = this.returnTo;
+    this.returnTo = null;
+    if (this.battle.phase === 'choose') { if (back === 'party') this.openParty(false); else this.openAction(); }
     else if (this.battle.phase === 'mustSwitch') this.openParty(true);
   }
 
@@ -92,7 +106,7 @@ export class BattleScene {
         return this.play({ type: 'text', text: `${p.mon.nickname} GAINED ${ev.amount} XP!` });
       case 'levelup':
         p.level = ev.level;
-        this.sparkle = SPARKLE_TICKS;
+        this.sparkle = TIMING.SPARKLE;
         return this.play({ type: 'text', text: `${p.mon.nickname} GREW TO L${ev.level}!` });
       case 'learn': {
         const name = id => upper(this.db.movesById[id]?.name ?? id);
@@ -113,18 +127,19 @@ export class BattleScene {
         break;
       case 'hp':
         side.max = ev.max;
-        cur.tween = new Tween(ev.from, ev.to, HP_TICKS);
+        cur.tween = new Tween(ev.from, ev.to, TIMING.HP);
         break;
       case 'xpbar': {
         const leveled = ev.level > p.level;
         const range = ev.xpForNext - ev.xpForLevel;
         cur.after = range > 0 ? clamp01((ev.xp - ev.xpForLevel) / range) : 1;
         const from = leveled ? p.xpRatio : clamp01((ev.xp - ev.amount - ev.xpForLevel) / (range || 1));
-        cur.tween = new Tween(from, leveled ? 1 : cur.after, XP_TICKS);
+        cur.tween = new Tween(from, leveled ? 1 : cur.after, TIMING.XP);
         break;
       }
       case 'switch':
         cur.mon = ev.side === 'player' ? this.state.party[ev.index] : this.battle.foeParty[ev.index];
+        if (side.hidden) cur.t = SLIDE_TICKS - 1; // a fainted side has nothing to slide out
         break;
       case 'end':
         this.ended = true;
@@ -142,9 +157,10 @@ export class BattleScene {
     let done = false;
     switch (cur.type) {
       case 'text': case 'speech': {
+        const wasRevealed = tb.pageRevealed; // the hold starts on the tick after the page finishes typing
         tb.update(this.input); // A advances/dismisses (TextBox guards the tick it opened on)
         if (tb.pageIndex !== cur.page) { cur.page = tb.pageIndex; cur.hold = 0; }
-        if (tb.open && cur.type === 'text' && tb.revealed && ++cur.hold >= TEXT_HOLD) {
+        else if (tb.open && cur.type === 'text' && wasRevealed && ++cur.hold >= TEXT_HOLD) {
           cur.hold = 0;
           if (tb.onLastPage) tb.dismiss(); else tb.advance();
         }
@@ -172,7 +188,7 @@ export class BattleScene {
         const dir = cur.side === 'player' ? -1 : 1; // player exits left, foe exits right
         if (cur.t <= SLIDE_TICKS) side.dx = Math.round(dir * 80 * cur.t / SLIDE_TICKS);
         if (cur.t === SLIDE_TICKS) { // off-screen: swap in the new monster's info
-          Object.assign(side, this.enteringView(cur.side, cur.mon));
+          Object.assign(side, sideView(cur.mon, cur.hp != null ? cur : cur.mon));
           side.dx = dir * 80;
           if (cur.side === 'foe') v.ball.visible = false;
         }
@@ -189,25 +205,6 @@ export class BattleScene {
     }
     if (done) this.current = null;
     return done;
-  }
-
-  /**
-   * The view for a monster switching in. The engine has already resolved the rest of the turn, so
-   * the monster's hp/level may be ahead of what the queued events still have to animate: rewind
-   * them to the first queued hp event's `from` and the level before any queued level-ups.
-   */
-  enteringView(sideName, mon) {
-    const view = sideView(mon);
-    let sawHp = false, xpEv = null;
-    for (const e of this.queue) {
-      if (e.type === 'switch' && e.side === sideName) break;
-      if (e.side !== sideName) continue;
-      if (e.type === 'hp' && !sawHp) { sawHp = true; view.hp = view.hpText = e.from; }
-      if (e.type === 'levelup') view.level--;
-      if (e.type === 'xp' && !xpEv) xpEv = e;
-    }
-    if (xpEv) view.xpRatio = xpRatioOf({ level: view.level, xp: xpEv.xp - xpEv.amount });
-    return view;
   }
 
   /** Ball timeline: arc → foe shrinks in → wobbles → star (caught) or pop back out. */
@@ -300,158 +297,17 @@ export class BattleScene {
       case 'party':
         return this.menu.handle(input, {
           onCancel: this.forcedSwitch ? undefined : back,
-          onSelect: (_, i) => this.act(() => battle.switchTo(i)),
+          onSelect: (_, i) => {
+            // a rejected voluntary pick (already out / no energy) comes back to this list, not the action menu
+            const m = this.state.party[i];
+            if (!this.forcedSwitch && (i === battle.playerIndex || !(m?.hp > 0))) this.returnTo = 'party';
+            this.act(() => battle.switchTo(i));
+          },
         });
     }
   }
 
   // ---------------------------------------------------------------- drawing
 
-  draw(ctx) {
-    const v = this.view;
-    ctx.fillStyle = PAPER;
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = GRASS_L;
-    ellipse(ctx, FOE_POS.x + STICKER / 2, FOE_POS.y + STICKER - 6, 30, 6);
-    ellipse(ctx, PLAYER_POS.x + STICKER / 2, 92, 34, 7);
-
-    this.drawSticker(ctx, v.foe, FOE_POS, false);
-    this.drawSticker(ctx, v.player, PLAYER_POS, true);
-    if (this.sparkle > 0) {
-      const cx = PLAYER_POS.x + STICKER / 2, cy = PLAYER_POS.y + 20, r = 26 + (this.sparkle % 4);
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * 2 * Math.PI + this.sparkle * 0.1;
-        drawStar(ctx, Math.round(cx + r * Math.cos(a)) - 2, Math.round(cy + r * Math.sin(a)) - 2, YELLOW);
-      }
-    }
-
-    this.drawFoeInfo(ctx, v.foe);
-    this.drawPlayerInfo(ctx, v.player);
-    if (v.ball.visible) drawBall(ctx, v.ball.x, v.ball.y);
-    if (v.ball.star) drawStar(ctx, v.ball.x + 4, v.ball.y - 14, YELLOW);
-    this.drawBottom(ctx);
-    drawFade(ctx, this.fadeIn / FADE_IN);
-  }
-
-  drawSticker(ctx, side, pos, mirror) {
-    if (side.hidden || side.scale <= 0) return;
-    // scale < 1 only happens to the foe during a ball throw: shrink into the ball's resting spot
-    const size = Math.round(STICKER * side.scale);
-    const x = Math.round(BALL_TO.x + (pos.x - BALL_TO.x) * side.scale) + side.dx;
-    const y = Math.round(BALL_TO.y + (pos.y - BALL_TO.y) * side.scale) + side.dy;
-    const img = this.images?.[side.mon.speciesId];
-    ctx.save();
-    ctx.globalAlpha = side.alpha;
-    if (img && img.complete !== false && (img.naturalWidth ?? 1) > 0) {
-      ctx.imageSmoothingEnabled = true; // stickers are photos: smooth scaling looks crisper than nearest
-      if (mirror) { ctx.translate(x + size, y); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0, size, size); }
-      else ctx.drawImage(img, x, y, size, size);
-      ctx.imageSmoothingEnabled = false;
-    } else {
-      ctx.fillStyle = '#a0a0a0';
-      ctx.fillRect(x, y, size, size);
-      if (size >= 12) drawText(ctx, '?', x + (size >> 1) - 2, y + (size >> 1) - 3, INK);
-    }
-    ctx.restore();
-  }
-
-  drawFoeInfo(ctx, s) {
-    const x = 8, y = 8;
-    drawText(ctx, s.mon.nickname.slice(0, 10), x + 2, y + 1, INK);
-    const lv = `L${s.level}`;
-    drawText(ctx, lv, x + 80 - measure(lv), y + 10, INK);
-    drawHpBar(ctx, x + 14, y + 19, 64, 4, s.hp / s.max);
-    ctx.fillStyle = INK;
-    ctx.fillRect(x, y + 1, 1, 24); ctx.fillRect(x, y + 25, 80, 1); // Gen-1 corner bracket
-  }
-
-  drawPlayerInfo(ctx, s) {
-    const x = 88, y = 60; // 68×36: name / level / HP bar / HP text / XP bar
-    ctx.fillStyle = PAPER; ctx.fillRect(x, y, 68, 36); // sits over the foe's platform
-    drawText(ctx, s.mon.nickname.slice(0, 10), x + 3, y + 1, INK);
-    const lv = `L${s.level}`;
-    drawText(ctx, lv, x + 67 - measure(lv), y + 9, INK);
-    drawHpBar(ctx, x + 18, y + 18, 48, 4, s.hp / s.max);
-    drawText(ctx, `HP ${s.hpText}/${s.max}`, x + 3, y + 24, INK);
-    ctx.fillStyle = INK;
-    ctx.fillRect(x + 18, y + 32, 48, 2);
-    ctx.fillStyle = '#4878d8';
-    ctx.fillRect(x + 18, y + 32, Math.round(48 * clamp01(s.xpRatio)), 2);
-    ctx.fillStyle = INK;
-    ctx.fillRect(x + 67, y, 1, 36); ctx.fillRect(x, y + 35, 68, 1); // Gen-1 corner bracket
-  }
-
-  drawBottom(ctx) {
-    if (this.mode === 'events') {
-      if (this.textbox.open) this.textbox.draw(ctx);
-      else paperBox(ctx, 0, BOX_Y, W, BOX_H);
-      return;
-    }
-    if (this.mode === 'action') {
-      paperBox(ctx, 0, BOX_Y, W, BOX_H);
-      this.menu.items.forEach((item, i) => {
-        const cx = 16 + (i % 2) * 80, cy = BOX_Y + 12 + Math.floor(i / 2) * 16;
-        if (i === this.menu.index) drawText(ctx, '▶', cx - 10, cy, INK);
-        drawText(ctx, item, cx, cy, INK);
-      });
-    } else if (this.mode === 'fight') {
-      // 4 rows of 10 px: move names can be 10 chars, so a 2×2 grid would collide with the PP panel.
-      paperBox(ctx, 0, BOX_Y, W, BOX_H);
-      for (let i = 0; i < 4; i++) {
-        const cy = BOX_Y + 5 + i * 10, item = this.menu.items[i];
-        if (i === this.menu.index && item) drawText(ctx, '▶', 6, cy, INK);
-        drawText(ctx, item ?? '-', 16, cy, INK);
-      }
-      ctx.fillStyle = INK; ctx.fillRect(96, BOX_Y + 4, 1, BOX_H - 8);
-      const slot = this.menu.struggle ? null : this.battle.player.moves[this.menu.index];
-      const move = slot && this.db.movesById[slot.id];
-      drawText(ctx, 'TYPE/', 100, 104, INK);
-      drawText(ctx, move?.type ? upper(move.type) : '-', 100, 114, INK);
-      drawText(ctx, slot ? `PP ${slot.pp}/${slot.maxPp}` : 'PP -', 100, 128, slot?.pp === 0 ? RED : INK);
-    } else {
-      // bag / party: a list that grows upward from the bottom edge
-      const rows = Math.min(this.menu.items.length, 6);
-      this.menu.draw(ctx, 0, H - (16 + rows * 16), W, { rows });
-    }
-  }
-}
-
-// ---------------------------------------------------------------- draw helpers
-
-function paperBox(ctx, x, y, w, h) {
-  ctx.fillStyle = PAPER; ctx.fillRect(x, y, w, h);
-  ctx.fillStyle = INK;
-  ctx.fillRect(x, y, w, 2); ctx.fillRect(x, y + h - 2, w, 2);
-  ctx.fillRect(x, y, 2, h); ctx.fillRect(x + w - 2, y, 2, h);
-}
-
-/** A flat pixel ellipse (horizontal scanlines), no anti-aliasing. */
-function ellipse(ctx, cx, cy, rx, ry) {
-  for (let dy = -ry; dy <= ry; dy++) {
-    const half = Math.round(rx * Math.sqrt(1 - (dy / ry) ** 2));
-    ctx.fillRect(cx - half, cy + dy, half * 2, 1);
-  }
-}
-
-/** 10 px dumpling ball: red top, white bottom, ink outline + center line, centered on (x, y). */
-function drawBall(ctx, x, y) {
-  const R = [3, 4, 5, 5, 5, 5, 5, 5, 4, 3]; // half-widths per row
-  for (let r = 0; r < 10; r++) {
-    const half = R[r], yy = y - 5 + r;
-    ctx.fillStyle = INK; ctx.fillRect(x - half, yy, half * 2, 1);
-    if (r === 0 || r === 9) continue;
-    ctx.fillStyle = r < 5 ? RED : WHITE;
-    ctx.fillRect(x - half + 1, yy, half * 2 - 2, 1);
-  }
-  ctx.fillStyle = INK; ctx.fillRect(x - 5, y, 10, 1);
-  ctx.fillStyle = WHITE; ctx.fillRect(x - 1, y - 1, 2, 2);
-}
-
-/** 5×5 pixel star (the font has no ★ glyph). */
-function drawStar(ctx, x, y, color) {
-  const rows = ['..#..', '.###.', '#####', '.###.', '.#.#.'];
-  ctx.fillStyle = INK;
-  rows.forEach((row, r) => { for (let c = 0; c < 5; c++) if (row[c] === '#') ctx.fillRect(x + c - 1, y + r - 1, 3, 3); });
-  ctx.fillStyle = color;
-  rows.forEach((row, r) => { for (let c = 0; c < 5; c++) if (row[c] === '#') ctx.fillRect(x + c, y + r, 1, 1); });
+  draw(ctx) { drawBattle(ctx, this); }
 }

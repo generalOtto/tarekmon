@@ -114,7 +114,7 @@ export class Battle {
     this.playerIndex = partyIndex;
     this.text(`GO! ${next.nickname}!`);
     resetBattleState(next);
-    this.push({ type: 'switch', side: 'player', index: partyIndex });
+    this.push({ type: 'switch', side: 'player', index: partyIndex, ...snapshot(next) });
     this.phase = 'choose';
     if (voluntary) this.foeTurn();
   }
@@ -221,7 +221,7 @@ export class Battle {
         if (tr.speech && tr.speechAfterFaints === this.foesFainted) this.push({ type: 'speech', text: tr.speech });
         this.foeIndex = next;
         this.text(`${tr.name} SENT OUT ${this.foe.nickname}!`);
-        this.push({ type: 'switch', side: 'foe', index: next });
+        this.push({ type: 'switch', side: 'foe', index: next, ...snapshot(this.foe) });
         markSeen(this.state, this.foe.speciesId);
       }
     }
@@ -297,3 +297,5 @@ export class Battle {
 }
 
 const other = side => (side === 'player' ? 'foe' : 'player');
+/** The entering monster's display state at emit time (later events in the same turn may change it). */
+const snapshot = m => ({ hp: m.hp, maxHp: m.maxHp, level: m.level, xp: m.xp });

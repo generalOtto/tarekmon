@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { BattleScene } from '../../src/battle/battlescene.js';
+import { BattleScene, TIMING } from '../../src/battle/battlescene.js';
+import { TextBox } from '../../src/ui/textbox.js';
 import { Battle } from '../../src/battle/battle.js';
 import { makeMonster } from '../../src/battle/monster.js';
 import { newGameState } from '../../src/engine/state.js';
@@ -33,7 +34,7 @@ function stubInput() {
 /** Stub textbox: say() returns a promise resolved by dismiss() or an A press; pages are always revealed. */
 function stubTextbox() {
   const tb = {
-    open: false, said: [], revealed: true, onLastPage: true, _resolve: null,
+    open: false, said: [], pageRevealed: true, onLastPage: true, _resolve: null,
     say(text) { tb.said.push(text); tb.open = true; return new Promise(r => { tb._resolve = r; }); },
     update(input) { if (tb.open && input.justPressed('a')) tb.dismiss(); },
     advance() { tb.dismiss(); },
@@ -43,11 +44,11 @@ function stubTextbox() {
   return tb;
 }
 
-function setup({ party = [mon('pA', 10)], foes = [mon('fW', 3)], rng = high, onEnd = () => {} } = {}) {
+function setup({ party = [mon('pA', 10)], foes = [mon('fW', 3)], rng = high, onEnd = () => {}, textbox = stubTextbox() } = {}) {
   const state = newGameState();
   state.party.push(...party);
   const battle = new Battle({ db, state, rng, kind: 'wild', foeParty: foes });
-  const input = stubInput(), textbox = stubTextbox();
+  const input = stubInput();
   const scene = new BattleScene({ db, state, battle, input, textbox, images: {}, onEnd });
   const tick = (...btns) => { input.pressed = new Set(btns.filter(Boolean)); scene.update(1 / 60); input.pressed = new Set(); };
   /** Presses A through texts until the scene is idle (a menu is showing) or the battle ended. */
@@ -64,16 +65,42 @@ test('enter drains the intro texts and shows the first', () => {
   assert.equal(scene.mode, 'events');
 });
 
-test('battle text auto-advances 45 ticks after it is revealed; A skips the wait', () => {
+test('battle text auto-advances TEXT_HOLD ticks after it is revealed, straight into the next; A skips the wait', () => {
   const { scene, textbox, tick } = setup();
-  for (let i = 0; i < 44; i++) tick();
-  assert.equal(textbox.said.length, 1);
-  assert.equal(textbox.open, true);
+  for (let i = 0; i < TIMING.TEXT_HOLD - 1; i++) tick();
+  assert.deepEqual(textbox.said, ['A WILD WILDY APPEARED!']);
   tick();
-  assert.equal(textbox.open, false, 'dismissed after 45 revealed ticks');
-  tick(); // next event starts
+  // dismissed after TEXT_HOLD revealed ticks, and the next text opens in the same update (no empty-box frame)
   assert.deepEqual(textbox.said, ['A WILD WILDY APPEARED!', 'GO! PLAYERMON!']);
+  assert.equal(textbox.open, true);
   tick('a');
+  assert.equal(textbox.open, false);
+  assert.equal(scene.current, null);
+  assert.equal(scene.mode, 'action', 'the menu opens on the same tick the last text closes');
+});
+
+test('multi-page text with a real TextBox auto-advances page by page', () => {
+  const textbox = new TextBox();
+  const { scene, tick, clearTexts } = setup({ textbox });
+  clearTexts();
+  scene.play({ type: 'text', text: 'ONETWO' });
+  assert.equal(textbox.pageIndex, 0);
+  // A page stays up TEXT_HOLD ticks after the tick it finishes typing.
+  const holdPage = () => {
+    let n = 0;
+    while (!textbox.pageRevealed && n < 20) { tick(); n++; }
+    assert.ok(n > 0 && textbox.pageRevealed, 'the page typed out');
+    for (let i = 0; i < TIMING.TEXT_HOLD - 1; i++) tick();
+    assert.equal(scene.current?.type, 'text');
+  };
+  holdPage();
+  assert.equal(textbox.pageIndex, 0);
+  tick();
+  assert.equal(textbox.pageIndex, 1, 'first page auto-advanced');
+  assert.equal(textbox.open, true);
+  holdPage();
+  assert.equal(textbox.pageIndex, 1, 'second page gets its own full hold');
+  tick();
   assert.equal(textbox.open, false);
   assert.equal(scene.current, null);
 });
@@ -111,10 +138,10 @@ test('an hp event animates the bar over 24 ticks to to/max', () => {
   const { scene, clearTexts } = setup();
   clearTexts();
   scene.play({ type: 'hp', side: 'foe', from: 20, to: 5, max: 20 });
-  for (let i = 0; i < 12; i++) scene.update();
+  for (let i = 0; i < TIMING.HP / 2; i++) scene.update();
   const mid = scene.view.foe.hp / scene.view.foe.max;
   assert.ok(mid < 1 && mid > 0.25, `mid-animation ratio ${mid}`);
-  for (let i = 0; i < 12; i++) scene.update();
+  for (let i = 0; i < TIMING.HP / 2; i++) scene.update();
   assert.equal(scene.view.foe.hp / scene.view.foe.max, 5 / 20);
   assert.equal(scene.current, null);
 });
@@ -214,7 +241,7 @@ test('ball event: success hides the foe and keeps the ball; timeline length matc
   const { scene, clearTexts } = setup();
   clearTexts();
   scene.play({ type: 'ball', wobbles: 3, success: true });
-  const total = 20 + 10 + 3 * 30 + 20;
+  const total = TIMING.BALL_ARC + TIMING.BALL_SHRINK + 3 * TIMING.WOBBLE + TIMING.BALL_STAR;
   for (let i = 0; i < total - 1; i++) scene.update();
   assert.equal(scene.current?.type, 'ball');
   scene.update();
@@ -227,7 +254,7 @@ test('ball event: failure pops the foe back and hides the ball', () => {
   const { scene, clearTexts } = setup();
   clearTexts();
   scene.play({ type: 'ball', wobbles: 1, success: false });
-  for (let i = 0; i < 20 + 10 + 30 + 10; i++) scene.update();
+  for (let i = 0; i < TIMING.BALL_ARC + TIMING.BALL_SHRINK + TIMING.WOBBLE + TIMING.BALL_POP; i++) scene.update();
   assert.equal(scene.current, null);
   assert.equal(scene.view.foe.hidden, false);
   assert.equal(scene.view.foe.scale, 1);
@@ -243,7 +270,8 @@ test('a monster switching in shows its pre-turn hp until the queued hp event ani
   const incoming = battle.player;
   assert.ok(incoming.hp < incoming.maxHp, 'the foe hit the incoming monster');
   for (let i = 0; i < 2000 && scene.current?.type !== 'switch'; i++) tick(scene.textbox.open ? 'a' : null);
-  while (scene.current?.type === 'switch') tick();
+  for (let i = 0; i < 200 && scene.current?.type === 'switch'; i++) tick();
+  assert.notEqual(scene.current?.type, 'switch');
   assert.equal(scene.view.player.mon, incoming);
   assert.equal(scene.view.player.hpText, incoming.maxHp, 'switched in at full hp');
   assert.ok(scene.queue.some(e => e.type === 'hp' && e.side === 'player'), 'the damage is still to be animated');
@@ -254,7 +282,7 @@ test('xp with a level-up fills the bar to 1, then resets to the new level ratio;
   clearTexts();
   const p = scene.view.player, lv = p.level;
   scene.play({ type: 'xpbar', side: 'player', amount: 500, xp: 1100, level: lv + 1, xpForLevel: 1000, xpForNext: 1400 });
-  for (let i = 0; i < 29; i++) scene.update();
+  for (let i = 0; i < TIMING.XP - 1; i++) scene.update();
   assert.ok(p.xpRatio > 0.9 && p.xpRatio < 1);
   scene.update();
   assert.equal(p.xpRatio, 0.25);
@@ -262,7 +290,7 @@ test('xp with a level-up fills the bar to 1, then resets to the new level ratio;
   scene.play({ type: 'levelup', side: 'player', level: lv + 1 });
   assert.equal(p.level, lv + 1);
   assert.equal(textbox.said.at(-1), `PLAYERMON GREW TO L${lv + 1}!`);
-  assert.equal(scene.sparkle, 20);
+  assert.equal(scene.sparkle, TIMING.SPARKLE);
 });
 
 test('learn text names the move, and the forgotten one', () => {
@@ -270,4 +298,32 @@ test('learn text names the move, and the forgotten one', () => {
   clearTexts();
   scene.play({ type: 'learn', side: 'player', move: 'skip', forgot: 'hit' });
   assert.equal(textbox.said.at(-1), 'PLAYERMON LEARNED SKIP!\n... AND FORGOT HIT!');
+});
+
+test('picking the monster already out returns to the party list, not the action menu', () => {
+  const { scene, textbox, tick, clearTexts } = setup({ party: [mon('pA', 10), mon('pA', 10)] });
+  clearTexts();
+  tick('down'); tick('a'); // DUMPLINGS
+  tick('a'); // #0 is already out
+  assert.equal(scene.mode, 'events');
+  tick();
+  assert.equal(textbox.said.at(-1), 'PLAYERMON IS ALREADY OUT!');
+  clearTexts();
+  assert.equal(scene.mode, 'party');
+  tick('b');
+  assert.equal(scene.mode, 'action');
+});
+
+test('switching in over a fainted side skips the slide-out', () => {
+  const { scene, battle, clearTexts } = setup({ party: [mon('pA', 10), mon('pA', 10)] });
+  clearTexts();
+  scene.view.player.hidden = true;
+  const m = battle.state.party[1];
+  scene.play({ type: 'switch', side: 'player', index: 1, hp: 7, maxHp: m.maxHp, level: m.level, xp: m.xp });
+  scene.update(); // first tick swaps in immediately
+  assert.equal(scene.view.player.mon, m);
+  assert.equal(scene.view.player.hpText, 7, 'the emit-time snapshot, not the live hp');
+  let ticks = 1;
+  while (scene.current?.type === 'switch' && ticks < 200) { scene.update(); ticks++; }
+  assert.equal(ticks, TIMING.SLIDE + 1);
 });

@@ -39,3 +39,13 @@ test('drawText upper-cases input and returns x + CHAR_W per glyph', () => {
   assert.equal(calls.length, litCount);
   assert.equal(endX, 10 + CHAR_W);
 });
+
+test('$ and ★ have their own glyphs (not the ? fallback)', () => {
+  for (const ch of ['$', '★']) {
+    assert.ok(GLYPHS[ch], `missing ${ch}`);
+    assert.notDeepEqual(GLYPHS[ch], GLYPHS['?']);
+    const calls = [];
+    drawText({ fillRect: (...a) => calls.push(a), fillStyle: null }, ch, 0, 0);
+    assert.equal(calls.length, GLYPHS[ch].join('').split('').filter(c => c === '#').length);
+  }
+});

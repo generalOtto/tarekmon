@@ -47,5 +47,5 @@ export function attachInput(root, state, { onAnyPress } = {}) {
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('pointerleave', up);
     el.addEventListener('contextmenu', e => e.preventDefault());
   }
-  window.addEventListener('blur', () => { for (const b of BUTTONS) state.set(b, false); });
+  window.addEventListener('blur', () => { for (const b of [...BUTTONS, 'debug1']) state.set(b, false); });
 }

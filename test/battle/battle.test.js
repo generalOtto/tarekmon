@@ -134,7 +134,8 @@ test('player faint: forced switch when someone is left, otherwise a loss', () =>
   b.switchTo(1);
   ev = b.drain();
   assert.deepEqual(texts(ev), ['GO! PLAYERMON!']); // no COME BACK for a fainted lead
-  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'player', index: 1 });
+  const m1 = b.state.party[1];
+  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'player', index: 1, hp: m1.hp, maxHp: m1.maxHp, level: 5, xp: m1.xp });
   assert.ok(!ev.some(e => e.type === 'hp')); // forced switch: the foe does not act
   assert.equal(b.phase, 'choose');
   assert.equal(b.playerIndex, 1);
@@ -157,7 +158,8 @@ test('trainer with two monsters: sends out the next, then pays out on the win', 
   ev = b.drain();
   assert.ok(texts(ev).includes('WILDY FAINTED!')); // no WILD prefix in trainer battles
   assert.ok(texts(ev).includes('T SENT OUT WILDY!'));
-  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'foe', index: 1 });
+  const f1 = b.foeParty[1];
+  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'foe', index: 1, hp: f1.maxHp, maxHp: f1.maxHp, level: 4, xp: f1.xp });
   assert.equal(ev.find(e => e.type === 'xp').amount, 37); // floor(floor(60*3/7) * 1.5)
   assert.equal(b.phase, 'choose');
   b.chooseMove(2);
@@ -244,7 +246,10 @@ test('voluntary switch: COME BACK, switch event, then the foe acts', () => {
   const t = texts(ev);
   assert.deepEqual(t.slice(0, 2), ['PLAYERMON, COME BACK!', 'GO! PLAYERMON!']);
   assert.ok(t.includes('WILD WILDY USED HIT!'));
-  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'player', index: 1 });
+  const m1 = b.state.party[1];
+  assert.ok(m1.hp < m1.maxHp, 'the foe hit the incoming monster');
+  // snapshot taken at emit time: full hp, before the foe's hit that follows in the same turn
+  assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'player', index: 1, hp: m1.maxHp, maxHp: m1.maxHp, level: 5, xp: m1.xp });
   const sw = ev.findIndex(e => e.type === 'switch');
   assert.ok(ev.slice(sw).some(e => e.type === 'hp' && e.side === 'player'));
   assert.equal(b.player, b.state.party[1]);

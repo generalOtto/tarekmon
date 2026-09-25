@@ -21,13 +21,17 @@ const placeholderScene = {
     else if (dir === 'down') this.y += 1;
     else if (dir === 'left') this.x -= 1;
     else if (dir === 'right') this.x += 1;
-    // captured before endFrame() clears the edge, so draw() (which runs after
-    // all ticks for the frame) can still see it
-    this.flash = input.justPressed('a');
+    // OR-accumulate rather than assign: the loop can run several ticks per
+    // rendered frame (catch-up after a slow frame), so a plain assignment
+    // here could be overwritten back to false by a later tick in the same
+    // frame before draw() ever sees the true from an earlier one. draw()
+    // resets this after drawing, once the frame has actually used it.
+    this.flash ||= input.justPressed('a');
   },
   draw(ctx) {
     ctx.fillStyle = this.flash ? '#ffffff' : '#1f1a33';
     ctx.fillRect(this.x, this.y, 8, 8);
+    this.flash = false;
   },
 };
 scenes.push(placeholderScene);

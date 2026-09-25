@@ -1,1 +1,6 @@
-[]
+[
+  { "id": "dumpling-ball", "name": "DUMPLINGBALL", "price": 100, "battle": "catch", "field": null, "text": "A ball for catching wild dumplings. Do not eat." },
+  { "id": "wet-wipe", "name": "WET WIPE", "price": 150, "battle": "heal", "field": "heal", "heal": 30, "text": "Restores 30 HP. Smells like lemon." },
+  { "id": "extra-sauce", "name": "EXTRA SAUCE", "price": 300, "battle": "atkUp", "field": null, "text": "Raises Attack in battle. Regret later." },
+  { "id": "napkin", "name": "NAPKIN", "price": 250, "battle": "escape", "field": "escape", "text": "Escape any wild battle, or wipe your way back to Haze Lounge." }
+]

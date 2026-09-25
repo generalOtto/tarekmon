@@ -18,6 +18,29 @@ export function validateMoves(moves, types) {
   return errs;
 }
 
+const ITEM_BATTLE_EFFECTS = new Set(['catch', 'heal', 'atkUp', 'escape', null]);
+const ITEM_FIELD_EFFECTS = new Set(['heal', 'escape', null]);
+
+export function validateItems(items) {
+  const errs = [], seen = new Set();
+  for (const it of items) {
+    if (seen.has(it.id)) errs.push(`dup item id ${it.id}`); seen.add(it.id);
+    if (!/^[a-z0-9-]+$/.test(it.id)) errs.push(`bad id ${it.id}`);
+    if (typeof it.name !== 'string' || !it.name || it.name.length > 12) errs.push(`${it.id}: name > 12 chars`);
+    if (!(Number.isInteger(it.price) && it.price > 0)) errs.push(`${it.id}: price`);
+    if (!ITEM_BATTLE_EFFECTS.has(it.battle)) errs.push(`${it.id}: battle ${it.battle}`);
+    if (!ITEM_FIELD_EFFECTS.has(it.field)) errs.push(`${it.id}: field ${it.field}`);
+    const wantsHeal = it.battle === 'heal' || it.field === 'heal';
+    if (wantsHeal) {
+      if (!(Number.isInteger(it.heal) && it.heal > 0)) errs.push(`${it.id}: heal`);
+    } else if ('heal' in it) {
+      errs.push(`${it.id}: unexpected heal`);
+    }
+    if (typeof it.text !== 'string' || !it.text) errs.push(`${it.id}: text`);
+  }
+  return errs;
+}
+
 export function validateSpecies(species, moves, types, stickers) {
   const errs = [], ids = new Set(), moveIds = new Set(moves.map(m => m.id)), stickerIds = new Set(stickers.map(s => s.id));
   for (const s of species) {

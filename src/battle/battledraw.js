@@ -1,6 +1,7 @@
 // Battle rendering: drawBattle(ctx, scene) reads the BattleScene (its `view`, mode, menu, textbox)
 // and never mutates it. All battle layout constants live here.
 import { drawHpBar } from '../ui/hpbar.js';
+import { paperBox } from '../ui/box.js';
 import { drawText, measure } from '../engine/font.js';
 import { W, H } from '../engine/canvas.js';
 import { drawFade } from '../world/doors.js';
@@ -118,13 +119,6 @@ function drawBottom(ctx, scene) {
     // bag / party: the scene draws its overlay screen over the whole battle after this
     paperBox(ctx, 0, BOX_Y, W, BOX_H);
   }
-}
-
-function paperBox(ctx, x, y, w, h) {
-  ctx.fillStyle = PAPER; ctx.fillRect(x, y, w, h);
-  ctx.fillStyle = INK;
-  ctx.fillRect(x, y, w, 2); ctx.fillRect(x, y + h - 2, w, 2);
-  ctx.fillRect(x, y, 2, h); ctx.fillRect(x + w - 2, y, 2, h);
 }
 
 /** A flat pixel ellipse (horizontal scanlines), no anti-aliasing. */

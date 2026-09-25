@@ -1,6 +1,7 @@
 // A cursor-driven list menu: pure move/select/cancel logic, plus a textbox-styled draw().
 import { drawText, LINE_H } from '../engine/font.js';
-import { PAPER, INK } from './textbox.js';
+import { INK } from './textbox.js';
+import { paperBox } from './box.js';
 
 const REPEAT_DELAY = 12; // ticks before the first auto-repeat while a direction is held
 const REPEAT_RATE = 6;   // ticks between subsequent auto-repeats
@@ -72,13 +73,7 @@ export class Menu {
     const pad = 8;
     const h = pad * 2 + rows * rowH;
 
-    ctx.fillStyle = PAPER;
-    ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = INK;
-    ctx.fillRect(x, y, w, 2);
-    ctx.fillRect(x, y + h - 2, w, 2);
-    ctx.fillRect(x, y, 2, h);
-    ctx.fillRect(x + w - 2, y, 2, h);
+    paperBox(ctx, x, y, w, h);
 
     let scroll = 0;
     if (this.items.length > rows) {

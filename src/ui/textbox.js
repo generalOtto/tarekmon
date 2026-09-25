@@ -1,5 +1,6 @@
 import { drawText, LINE_H } from '../engine/font.js';
 import { W } from '../engine/canvas.js';
+import { paperBox } from './box.js';
 
 export const PAPER = '#f8f8f0';
 export const INK = '#0f380f';
@@ -158,13 +159,7 @@ export class TextBox {
 
   draw(ctx) {
     if (!this.open || !this.typewriter) return;
-    ctx.fillStyle = PAPER;
-    ctx.fillRect(0, BOX_Y, W, BOX_H);
-    ctx.fillStyle = INK;
-    ctx.fillRect(0, BOX_Y, W, 2);
-    ctx.fillRect(0, BOX_Y + BOX_H - 2, W, 2);
-    ctx.fillRect(0, BOX_Y, 2, BOX_H);
-    ctx.fillRect(W - 2, BOX_Y, 2, BOX_H);
+    paperBox(ctx, 0, BOX_Y, W, BOX_H);
 
     this.typewriter.visibleLines().forEach((line, i) => {
       drawText(ctx, line, PAD, BOX_Y + PAD + i * (LINE_H * 2), INK);

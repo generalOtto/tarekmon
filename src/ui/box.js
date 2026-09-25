@@ -1,5 +1,5 @@
-// Tiny drawing helpers shared by the overlay screens (bag, party, shop).
-import { PAPER, INK } from './textbox.js';
+// Tiny drawing helpers shared by the overlay screens, menus, the textbox and the battle.
+import { PAPER, INK } from '../world/palette.js';
 import { drawText, measure } from '../engine/font.js';
 
 /** A paper rectangle with a 2px ink border. */

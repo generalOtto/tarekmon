@@ -257,7 +257,7 @@ export class BattleScene {
   }
 
   openParty(forced = false) {
-    this.openScreen('party', new PartyScreen({ ...this.screenOpts(), mode: 'switch', forced, battle: this.battle,
+    this.openScreen('party', new PartyScreen({ ...this.screenOpts(), mode: 'switch', forced,
       onPick: i => {
         // a rejected voluntary pick (already out / no energy) comes back to the party screen, not the action menu
         const m = this.state.party[i];

@@ -18,8 +18,8 @@ const upper = s => String(s ?? '').toUpperCase();
 
 export class PartyScreen {
   /** mode: 'manage' (Start menu) | 'pick' (heal target) | 'switch' (battle). forced: B does nothing. */
-  constructor({ state, db, textbox, mode = 'manage', onPick, onClose, forced = false, battle = null }) {
-    Object.assign(this, { state, db, textbox, mode, onPick, onClose, forced, battle });
+  constructor({ state, db, textbox, mode = 'manage', onPick, onClose, forced = false }) {
+    Object.assign(this, { state, db, textbox, mode, onPick, onClose, forced });
     this.open = true;
     this.menu = new Menu(state.party.map((_, i) => i));
     if (forced) this.menu.index = Math.max(0, state.party.findIndex(m => m.hp > 0));
@@ -44,7 +44,7 @@ export class PartyScreen {
 
   update(input) {
     if (!this.open) return;
-    if (this.textbox?.open) { this.textbox.update(input); return; }
+    if (this.textbox.open) { this.textbox.update(input); return; }
     if (this.summary != null) {
       if (input.justPressed('b') || input.justPressed('a')) this.summary = null;
       return;
@@ -71,7 +71,7 @@ export class PartyScreen {
       return;
     }
     if (!this.state.party[i]) return;
-    if (this.mode === 'pick' && !(this.state.party[i]?.hp > 0)) { this.textbox?.say(NO_EFFECT); return; }
+    if (this.mode === 'pick' && !(this.state.party[i]?.hp > 0)) { this.textbox.say(NO_EFFECT); return; }
     this.onPick?.(i);
   }
 

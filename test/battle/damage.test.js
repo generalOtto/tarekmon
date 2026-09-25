@@ -23,9 +23,9 @@ test('crit doubles the level term; rng sequence [critRoll, randomRoll]', () => {
   const r = calcDamage({ attacker: atk, attackerSpecies: atkSp, defender: def, defenderSpecies: defSp, move: { type: 'Fried', power: 50 }, types, rng });
   assert.equal(r.crit, true); assert.ok(r.damage > 33);
 });
-test('Imported defender halves everything', () => {
+test('Imported defender resists everything (×0.75)', () => {
   const r = calcDamage({ attacker: atk, attackerSpecies: atkSp, defender: def, defenderSpecies: { type: 'Imported' }, move: { type: 'Fried', power: 50 }, types, rng: fixed(0.999) });
-  assert.equal(r.typeMult, 0.5);
+  assert.equal(r.typeMult, 0.75);
 });
 test('attack/defense stages change damage', () => {
   const up = { ...atk, stages: { atk: 2, def: 0, acc: 0 } };

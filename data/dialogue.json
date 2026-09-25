@@ -31,7 +31,7 @@
   "rack-bad": "IT DOESN'T FEEL\nRIGHT TODAY.",
   "pedestal": "A DUMPLING BALL.\fIT'S STARING\nAT YOU.",
   "gate-closed": "THE GATE IS\nLOCKED.\fTHERE'S A BADGE-\nSHAPED HOLE IN IT.",
-  "napkin-nic-pre": "I'VE BEEN STANDING\nHERE SINCE 2019.\fI HAVE NAPKINS.\nYOU'LL NEED THEM.",
+  "napkin-nic-pre": "I'VE BEEN STANDING\nHERE ALL DAY.\fI HAVE NAPKINS.\nYOU'LL NEED THEM.",
   "napkin-nic-post": "NOT BAD.\nNOT GOOD EITHER.",
   "wet-will-pre": "HOLD ON.\nLET ME WIPE MY\fHANDS FIRST.\f...OK. FIGHT.",
   "wet-will-post": "I NEED ANOTHER\nWET WIPE.",
@@ -49,5 +49,6 @@
   "regular-4-post": "ONE MORE ROUND?\fNO. THAT'S HOW\nIT STARTS.",
   "haze-leader-wait": "YOU WANT THE\nBADGE?\fFIRST YOU WAIT\nFOR A TABLE.\fTALK TO THE\nREGULARS.",
   "haze-leader-pre": "YOU WANT THE\nBADGE?\fFIRST YOU WAIT\nFOR A TABLE.\f...OK. TABLE'S\nREADY.",
-  "haze-leader-post": "TAKE THE BADGE.\nAND A COAL.\fNO, NOT THAT ONE."
+  "haze-leader-post": "TAKE THE BADGE.\nAND A COAL.\fNO, NOT THAT ONE.",
+  "booth-officer-sauce": "TAKE THESE.\nYOU'LL NEED THEM.\fHE'S BEEN DRIVING\nALL MORNING."
 }

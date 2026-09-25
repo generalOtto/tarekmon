@@ -126,6 +126,7 @@ export class OverworldScene {
     if (npc.kind === 'weather') state.flags.weatherNice = rollWeather();
     await this.textbox.say(dialogueFor(npc, state, this.db.dialogue ?? {}));
     if (npc.kind === 'healer') { healParty(state); await this.say('haze-heal-2'); }
+    await this.trainerFlow.officerGift(npc);
   }
 
   draw(ctx) {

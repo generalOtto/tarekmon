@@ -11,9 +11,9 @@ test('cycle: 2x along the arrow, 0.5x against it, 1x otherwise', () => {
   assert.equal(typeMultiplier('Frozen', 'Steamed', types), 0.5);
 });
 
-test('Imported takes half from everything, including Imported and typeless', () => {
-  for (const t of types.types) assert.equal(typeMultiplier(t, 'Imported', types), 0.5, t);
-  assert.equal(typeMultiplier(null, 'Imported', types), 0.5);
+test('Imported resists everything (×0.75), including Imported and typeless', () => {
+  for (const t of types.types) assert.equal(typeMultiplier(t, 'Imported', types), 0.75, t);
+  assert.equal(typeMultiplier(null, 'Imported', types), 0.75);
 });
 
 test('typeless moves are neutral against the cycle', () => {

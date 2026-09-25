@@ -10,7 +10,7 @@ import { makeMonster } from '../battle/monster.js';
 
 const S = TILE_SIZE;
 const ALERT_TICKS = 30, STEP_TICKS = 8;
-const STRIP = { minY: 1, maxY: 3 }; // town rows north of the gate: the border strip
+const STRIP_MAX_Y = 3; // the border strip's southern row (just north of the gate); Suhaib triggers south of his tile
 const DELTA = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 
 export class TrainerFlow {
@@ -75,13 +75,15 @@ export class TrainerFlow {
   }
 
   beginBattle(tr) {
-    const s = this.scene, { db, rng } = s;
+    const { db, rng, flow } = this.scene;
     const foeParty = tr.team.map(m => makeMonster(db.speciesById[m.species], m.level, db.movesById, rng));
-    const trainer = { id: tr.id, name: tr.name, payout: tr.payout, isChampion: tr.kind === 'champion' || undefined,
-      speechAfterFaints: tr.speechAfterFaints, speech: tr.speech && db.dialogue?.[tr.speech] };
-    for (const k of Object.keys(trainer)) if (trainer[k] === undefined) delete trainer[k];
-    s.player.moving = false;
-    s.transition.start(() => s.onBattle?.({ kind: 'trainer', foeParty, trainer }));
+    const trainer = {
+      id: tr.id, name: tr.name,
+      ...(tr.payout !== undefined && { payout: tr.payout }),
+      ...(tr.kind === 'champion' && { isChampion: true }),
+      ...(tr.speech && { speechAfterFaints: tr.speechAfterFaints, speech: db.dialogue?.[tr.speech] }),
+    };
+    flow.startBattle({ kind: 'trainer', foeParty, trainer });
   }
 
   /** A pressed on an npc/trainer. Returns a promise if this flow handles it, else null (plain npc). */
@@ -114,7 +116,7 @@ export class TrainerFlow {
     if (!this.beaten(id)) state.defeatedTrainers.push(id);
     if (tr.kind === 'leader' && !state.badges.includes('haze')) {
       state.badges.push('haze');
-      lines.push(() => { audio?.playJingle('badge'); return s.textbox.say(`${name} RECEIVED THE\nHAZE BADGE!`); });
+      lines.push(() => { audio?.playJingle('badge'); return s.textbox.say(`${name} GOT THE\nHAZE BADGE!`); });
     }
     if (tr.kind === 'champion' && !state.flags.champion) {
       state.flags.champion = true;
@@ -123,11 +125,21 @@ export class TrainerFlow {
     return async () => { await s.say(tr.post); for (const line of lines) await line(); };
   }
 
+  /** After the booth officer's line: with the badge, a one-time gift of 3 Extra Sauce. */
+  async officerGift(npc) {
+    const s = this.scene, { state } = s;
+    if (npc.id !== 'officer' || !state.badges.includes('haze') || state.flags.sauceGiven) return;
+    state.flags.sauceGiven = true;
+    state.bag['extra-sauce'] = (state.bag['extra-sauce'] ?? 0) + 3;
+    await s.say('booth-officer-sauce');
+    await s.textbox.say(`${state.playerName} GOT 3\nEXTRA SAUCE!`);
+  }
+
   // ── Suhaib ────────────────────────────────────────────────────────────────────
   championDue() {
     const { map, state, player } = this.scene;
     return !!map.champion && state.badges.includes('haze') && !state.flags.champion
-      && player.y >= STRIP.minY && player.y <= STRIP.maxY && !map.npcs.some(n => n.id === 'suhaib');
+      && player.y > map.champion.y && player.y <= STRIP_MAX_Y && !map.npcs.some(n => n.id === 'suhaib');
   }
 
   spawnSuhaib(y) {

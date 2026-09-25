@@ -20,13 +20,17 @@ export function attachBattleFlow(scene) {
       if (hit) scene.startWildBattle(hit.species, hit.level);
     },
 
-    /** Jingle + flash/wipe, then hand the battle to whoever owns the scene stack (main.js). */
     startWildBattle(species, level) {
-      const { db, rng, audio } = scene;
-      const foeMonster = makeMonster(db.speciesById[species], level, db.movesById, rng);
-      audio?.playJingle('encounter');
+      const { db, rng } = scene;
+      this.startBattle({ kind: 'wild', foeParty: [makeMonster(db.speciesById[species], level, db.movesById, rng)] });
+    },
+
+    /** The one way into any battle: jingle + flash/wipe, then hand it to whoever owns the scene
+     *  stack (main.js) via scene.onBattle. */
+    startBattle({ kind, foeParty, trainer = null, jingle = 'encounter' }) {
+      scene.audio?.playJingle(jingle);
       scene.player.moving = false;
-      scene.transition.start(() => scene.onBattle?.({ kind: 'wild', foeParty: [foeMonster] }));
+      scene.transition.start(() => scene.onBattle?.({ kind, foeParty, trainer }));
     },
 
     /** Called by main.js's BattleScene onEnd once a battle is over: reset transient battle

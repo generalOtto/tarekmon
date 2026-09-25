@@ -371,7 +371,8 @@ test('LOS: stepping into a route trainer\'s sight → ! bubble, walk-up, pre lin
   const [b] = h.ctl.battles;
   assert.equal(b.kind, 'trainer');
   assert.deepEqual(teamOf(b), trainersById['napkin-nic'].team);
-  assert.equal(b.trainer.id, 'napkin-nic'); assert.equal(b.trainer.name, 'NAPKIN NIC');
+  assert.deepEqual(b.trainer, { id: 'napkin-nic', name: 'NAPKIN NIC' }, 'no undefined keys ride along');
+  assert.deepEqual(h.ctl.jingles, ['encounter']);
   for (let i = 0; i < 60; i++) await h.tick();
   assert.equal(h.ctl.battles.length, 1, 'no second trigger while the battle is pending');
 });
@@ -438,7 +439,7 @@ test('beating the leader: badge + jingle + badge text; the officer\'s line flips
   await h.flush();
   assert.deepEqual(h.state.badges, ['haze']);
   assert.ok(h.state.defeatedTrainers.includes('haze-guy'));
-  assert.deepEqual(h.ctl.said, [dialogue['haze-leader-post'], 'T RECEIVED THE\nHAZE BADGE!']);
+  assert.deepEqual(h.ctl.said, [dialogue['haze-leader-post'], 'T GOT THE\nHAZE BADGE!']);
   assert.deepEqual(h.ctl.jingles, ['badge']);
   const officer = h.scene.maps.booth.npcs.find(n => n.id === 'officer');
   assert.equal(dialogueFor(officer, h.state, dialogue), dialogue['booth-officer-open']);
@@ -474,7 +475,7 @@ test('champion: with the badge, stepping into the border strip brings Suhaib in;
   assert.equal(h.state.flags.champion, true);
   assert.ok(h.state.defeatedTrainers.includes('suhaib'));
   assert.deepEqual(h.ctl.said.slice(1), [dialogue['suhaib-lost'], 'T IS THE\nDUMPLING CHAMPION!']);
-  assert.deepEqual(h.ctl.jingles, ['victory']);
+  assert.deepEqual(h.ctl.jingles, ['encounter', 'victory'], 'trainer battles open with the encounter jingle too');
   assert.equal(h.ctl.champion, 1);
 
   h.ctl.said.length = 0;
@@ -500,4 +501,77 @@ test('champion: no badge → no Suhaib; after a reload as champion he is already
   assert.deepEqual([s.x, s.y], [25, 2]);
   for (let i = 0; i < 20; i++) await c.tick();
   assert.equal(c.scene.trainerFlow.seq, null, 'no walk-in once champion');
+});
+
+test('LOS: a full walk-up from 3 tiles away (Wet Will facing down, player steps onto (17,33))', async () => {
+  const h = trainerHarness({ map: 'town', x: 17, y: 34, facing: 'up' });
+  const will = h.npc('wet-will');
+  assert.deepEqual([will.x, will.y, will.facing, will.sight], [17, 30, 'down', 3]);
+  h.ctl.dir = 'up';
+  await h.until(() => h.scene.trainerFlow.seq);
+  h.ctl.dir = null;
+  assert.deepEqual([h.state.pos.x, h.state.pos.y], [17, 33]);
+  const ys = new Set();
+  await h.until(() => { ys.add(will.y); return h.ctl.said.length > 0; });
+  assert.deepEqual([...ys], [30, 31, 32], 'walked tile by tile, stopping beside the player');
+  assert.equal(h.scene.player.facing, 'up');
+  assert.deepEqual(h.ctl.said, [dialogue['wet-will-pre']]);
+  await h.until(() => h.ctl.battles.length);
+  assert.deepEqual(teamOf(h.ctl.battles[0]), trainersById['wet-will'].team);
+});
+
+test('LOS: an npc standing in the lane blocks the trainer\'s sight', async () => {
+  const h = trainerHarness({ map: 'town', x: 17, y: 34, facing: 'up' });
+  h.scene.map.npcs.push({ id: 'blocker', x: 17, y: 31, facing: 'down', sprite: 'npc-townie', dialogue: 'townie-1' });
+  h.ctl.dir = 'up';
+  await h.until(() => h.state.pos.y === 33, 60);
+  h.ctl.dir = null;
+  for (let i = 0; i < 40; i++) await h.tick();
+  assert.equal(h.scene.trainerFlow.seq, null);
+  assert.equal(h.ctl.battles.length, 0);
+});
+
+test('LOS: two trainers seeing the same tile → exactly one alert, and only that trainer walks up', async () => {
+  const h = trainerHarness({ map: 'town', x: 12, y: 23, facing: 'down' });
+  const will = h.npc('wet-will'); Object.assign(will, { x: 14, y: 24, facing: 'left' }); // sees (13..11, 24)
+  const nic = h.npc('napkin-nic');
+  h.ctl.dir = 'down';
+  const seqs = new Set();
+  await h.until(() => { if (h.scene.trainerFlow.seq) { seqs.add(h.scene.trainerFlow.seq); h.ctl.dir = null; } return h.ctl.battles.length > 0; });
+  assert.equal(seqs.size, 1, 'one alert sequence');
+  assert.equal([...seqs][0].npc, nic, 'the first trainer in the list wins the tie');
+  assert.deepEqual([will.x, will.y], [14, 24], 'the other trainer stayed put');
+  assert.equal(h.ctl.battles[0].trainer.id, 'napkin-nic');
+});
+
+test('champion: loading north of his tile and stepping south → he walks 0→1→2 and stops beside the player', async () => {
+  const h = trainerHarness({ map: 'town', x: 25, y: 1, facing: 'down' }, { badges: ['haze'], defeated: ['haze-guy'] });
+  for (let i = 0; i < 5; i++) await h.tick();
+  assert.equal(h.scene.trainerFlow.seq, null, 'no trigger on row 1');
+  h.ctl.dir = 'down';
+  await h.until(() => h.state.pos.y === 2, 60);
+  assert.equal(h.scene.trainerFlow.seq, null, 'no trigger on his own row');
+  await h.until(() => h.scene.trainerFlow.seq, 60);
+  h.ctl.dir = null;
+  assert.equal(h.state.pos.y, 3);
+  const suhaib = h.npc('suhaib'), ys = new Set();
+  await h.until(() => { ys.add(suhaib.y); return h.ctl.said.length > 0; });
+  assert.deepEqual([...ys], [0, 1, 2]);
+  assert.deepEqual([suhaib.x, suhaib.y], [25, 2]);
+  assert.deepEqual(h.ctl.said, [dialogue['suhaib-pre']]);
+});
+
+test('booth officer: with the badge, gives 3 Extra Sauce exactly once', async () => {
+  const t = trainerHarness({ map: 'booth', x: 3, y: 3, facing: 'up' }, { badges: ['haze'] });
+  const before = t.state.bag['extra-sauce'];
+  await t.pressA();
+  assert.deepEqual(t.ctl.said, [dialogue['booth-officer-open'], dialogue['booth-officer-sauce'], 'T GOT 3\nEXTRA SAUCE!']);
+  assert.equal(t.state.bag['extra-sauce'], before + 3);
+  assert.equal(t.state.flags.sauceGiven, true);
+  await t.pressA();
+  assert.deepEqual(t.ctl.said.slice(3), [dialogue['booth-officer-open']], 'no second gift');
+  assert.equal(t.state.bag['extra-sauce'], before + 3);
+  const n = trainerHarness({ map: 'booth', x: 3, y: 3, facing: 'up' });
+  await n.pressA();
+  assert.deepEqual(n.ctl.said, [dialogue['booth-officer-locked']], 'no badge, no sauce');
 });

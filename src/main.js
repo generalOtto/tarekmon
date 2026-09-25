@@ -3,6 +3,8 @@ import { createScreen } from './engine/canvas.js';
 import { SceneStack, startLoop } from './engine/loop.js';
 import { ButtonState, attachInput } from './engine/input.js';
 import { TextBox } from './ui/textbox.js';
+import { buildTileset } from './world/tileset.js';
+import { LEGEND } from './world/tiles.js';
 
 const db = await loadDb();
 
@@ -10,14 +12,18 @@ const screen = createScreen(document.getElementById('screen'));
 const scenes = new SceneStack();
 const input = new ButtonState();
 attachInput(document.body, input);
+const tileset = buildTileset();
+const TILE_CHARS = [...LEGEND];
 
 // Placeholder scene — replaced by TitleScene/OverworldScene in later tasks
 const placeholderScene = {
   x: 76,
   y: 68,
   flash: false,
+  ticks: 0,
   textbox: new TextBox(),
   update() {
+    this.ticks++;
     if (input.justPressed('start') && !this.textbox.open) {
       this.textbox.say("WELCOME TO THE WORLD OF TAREKMON!\fMY NAME IS OTTO. PEOPLE CALL ME THE DUMPLING PROFESSOR.");
     }
@@ -38,6 +44,9 @@ const placeholderScene = {
     this.flash ||= input.justPressed('a');
   },
   draw(ctx) {
+    // Tileset preview: every legend tile in a 10-column grid; water flips every 32 ticks
+    const frame = (this.ticks >> 5) & 1;
+    TILE_CHARS.forEach((ch, i) => tileset.draw(ctx, ch, (i % 10) * 16, Math.floor(i / 10) * 16, frame));
     ctx.fillStyle = this.flash ? '#ffffff' : '#1f1a33';
     ctx.fillRect(this.x, this.y, 8, 8);
     this.flash = false;

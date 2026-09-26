@@ -56,7 +56,7 @@ test('wild battle: a big hit KOs the foe, grants xp and ends in a win', () => {
   assert.equal(xpEv.side, 'player');
   assert.equal(xpEv.amount, 75); // floor(60 * 3 / 7) × XP_MULT 3
   assert.deepEqual(ev.at(-1), { type: 'end', result: 'win' });
-  assert.equal(p.xp, xp0 + 25);
+  assert.equal(p.xp, xp0 + 75);
   assert.equal(b.phase, 'over'); assert.equal(b.result, 'win');
   assert.equal(p.moves[2].pp, 4);
   assert.deepEqual(b.drain(), []);
@@ -298,14 +298,14 @@ test('a KO with an accDown move skips the accuracy drop', () => {
 
 test('level-up: xp event reports the new level, then levelup, then the hp bar update', () => {
   const p = mon('pA', 5); p.moves.push({ id: 'big', pp: 5, maxPp: 5 });
-  p.xp = 215; // one short of L6 (6^3 = 216); the L3 WILDY gives 25
+  p.xp = 215; // one short of L6 (6^3 = 216); the L3 WILDY gives 75 (25 × XP_MULT)
   const { b } = setup({ party: [p], foes: [mon('fW', 3)] });
   b.drain();
   b.chooseMove(2);
   const ev = b.drain();
   const xi = ev.findIndex(e => e.type === 'xp'), x = ev[xi];
   assert.equal(x.level, 6); assert.equal(p.level, 6);
-  assert.equal(x.xp, 240);
+  assert.equal(x.xp, 290);
   assert.ok(x.xp <= x.xpForNext && x.xp >= x.xpForLevel);
   assert.deepEqual([x.xpForLevel, x.xpForNext], [216, 343]);
   assert.equal(ev[xi + 1].type, 'levelup'); assert.equal(ev[xi + 1].side, 'player');

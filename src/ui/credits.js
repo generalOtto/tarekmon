@@ -1,13 +1,15 @@
 import { drawText, measure, LINE_H } from '../engine/font.js';
-import { INK, PAPER, RED, YELLOW } from '../world/palette.js';
+import { INK, PAPER, RED, YELLOW, STAR, SUNSET_1, SUNSET_2, SUNSET_3, SUNSET_4, SUNSET_5, SUNSET_6 } from '../world/palette.js';
 
 const W = 160, S = 16;
 const HORIZON = 64;            // sky 0..64, grass row 64..80, path row 80..96, water 96..144 (bottom third)
 const TEXT_BOTTOM = 48;        // credits scroll up from here (above the parading stickers)
-const GAP = 10;                // px between credit lines
-const SKY = ['#6a3a8a', '#9a4a80', '#c05070', '#d86060', '#e88058', '#f0a050']; // top → horizon
+export const GAP = 10;         // px between credit lines
+export const SCROLL_TICKS_PER_PX = 3; // credits scroll 1 px every 3 ticks
+const SKY = [SUNSET_1, SUNSET_2, SUNSET_3, SUNSET_4, SUNSET_5, SUNSET_6]; // top → horizon
 const STARS = [[12, 6], [30, 18], [47, 4], [66, 12], [83, 26], [98, 7], [115, 20], [131, 5], [146, 15], [22, 34]];
-const NIGHT_TICKS = 90, NIGHT_ALPHA = 0.8, TYPE_TICKS = 3, SPACING = 40, SIZE = 32;
+export const NIGHT_TICKS = 90, TYPE_TICKS = 3, SPACING = 40;
+const NIGHT_ALPHA = 0.8, SIZE = 32;
 
 /** Greedy word wrap at `cols` columns. */
 export function wrapWords(text, cols) {
@@ -45,7 +47,7 @@ export class CreditsScene {
       bob: Math.round(Math.sin((2 * Math.PI * (this.t + i * 7)) / 30) + 1), // 0..2 px, 30-tick period
     }));
   }
-  lineY(i) { return TEXT_BOTTOM + i * GAP - (this.scrollT >> 1); }
+  lineY(i) { return TEXT_BOTTOM + i * GAP - Math.floor(this.scrollT / SCROLL_TICKS_PER_PX); }
   get nightAlpha() {
     if (this.phase === 'scroll') return 0;
     return this.phase === 'night' ? (NIGHT_ALPHA * this.phaseT) / NIGHT_TICKS : NIGHT_ALPHA;
@@ -87,7 +89,7 @@ export class CreditsScene {
     const a = this.nightAlpha;
     if (a > 0) {
       ctx.globalAlpha = a; ctx.fillStyle = INK; ctx.fillRect(0, 0, W, 144); ctx.globalAlpha = 1;
-      ctx.fillStyle = PAPER;
+      ctx.fillStyle = STAR;
       STARS.forEach(([x, y], i) => { if (((t >> 4) + i) % 3 !== 0 && a > 0.3) ctx.fillRect(x, y, 1, 1); });
     }
     this.drawParade(ctx, a > 0 ? 0.6 : 1);

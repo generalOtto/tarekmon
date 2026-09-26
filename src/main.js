@@ -78,7 +78,7 @@ function startOverworld(s) {
 function rollCredits() {
   scenes.push(new CreditsScene({
     db, state, input, audio, textbox, tileset: buildTileset(),
-    onDone: () => { while (scenes.top) scenes.pop(); showTitle(); },
+    onDone: () => { while (scenes.top) scenes.pop(); overworld = null; showTitle(); },
   }));
 }
 /** Boot (or return to) the title screen. */

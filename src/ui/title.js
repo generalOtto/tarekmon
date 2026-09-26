@@ -40,6 +40,7 @@ export class TitleScene {
   enter() {
     this.saved = this.save.load();
     this.menu = new Menu(this.saved ? ['NEW GAME', 'CONTINUE', 'LOAD CODE'] : ['NEW GAME', 'LOAD CODE']);
+    if (this.saved) this.menu.index = 1; // a save exists: the cursor starts on CONTINUE
     const species = this.db.species ?? [];
     this.stickerId = species.length ? species[Math.floor(this.rng() * species.length)].id : null;
     this.audio?.startMusic('title');

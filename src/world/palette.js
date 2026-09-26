@@ -36,3 +36,11 @@ export const HP_RED = '#e04040';
 export const HP_TRACK = '#384838';
 export const XP_BLUE = '#4878d8';
 export const PLACEHOLDER = '#a0a0a0';
+// Credits sunset, top → horizon, and the night stars.
+export const SUNSET_1 = '#6a3a8a';
+export const SUNSET_2 = '#9a4a80';
+export const SUNSET_3 = '#c05070';
+export const SUNSET_4 = '#d86060';
+export const SUNSET_5 = '#e88058';
+export const SUNSET_6 = '#f0a050';
+export const STAR = '#f8f8f0';

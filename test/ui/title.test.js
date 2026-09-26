@@ -96,3 +96,8 @@ test('LOAD CODE: NO loads nothing; an invalid code says JUST WORDS and calls not
     assert.deepEqual(t.saves, []); assert.deepEqual(t.calls, []);
   }
 });
+
+test('the cursor starts on CONTINUE when a save exists, on NEW GAME otherwise', () => {
+  assert.equal(setup().scene.menu.selected(), 'NEW GAME');
+  assert.equal(setup({ saved: newGameState('OTTO') }).scene.menu.selected(), 'CONTINUE');
+});

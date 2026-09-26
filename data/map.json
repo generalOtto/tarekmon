@@ -119,7 +119,7 @@
         { "id": "coal-kid", "x": 26, "y": 25, "facing": "up", "sight": 3 },
         { "id": "lounge-liz", "x": 24, "y": 31, "facing": "down", "sight": 3 },
         { "id": "skater-dan", "x": 5, "y": 9, "facing": "down", "sight": 3 },
-        { "id": "driver-dee", "x": 5, "y": 31, "facing": "down", "sight": 3 }
+        { "id": "driver-dee", "x": 5, "y": 31, "facing": "down", "sight": 2 }
       ],
       "champion": { "x": 25, "y": 2, "facing": "down" },
       "signs": [

@@ -54,7 +54,7 @@ test('wild battle: a big hit KOs the foe, grants xp and ends in a win', () => {
   assert.ok(ev.some(e => e.type === 'faint' && e.side === 'foe'));
   const xpEv = ev.find(e => e.type === 'xp');
   assert.equal(xpEv.side, 'player');
-  assert.equal(xpEv.amount, 25); // floor(60 * 3 / 7)
+  assert.equal(xpEv.amount, 75); // floor(60 * 3 / 7) × XP_MULT 3
   assert.deepEqual(ev.at(-1), { type: 'end', result: 'win' });
   assert.equal(p.xp, xp0 + 25);
   assert.equal(b.phase, 'over'); assert.equal(b.result, 'win');
@@ -160,7 +160,7 @@ test('trainer with two monsters: sends out the next, then pays out on the win', 
   assert.ok(texts(ev).includes('T SENT OUT WILDY!'));
   const f1 = b.foeParty[1];
   assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'foe', index: 1, hp: f1.maxHp, maxHp: f1.maxHp, level: 4, xp: f1.xp });
-  assert.equal(ev.find(e => e.type === 'xp').amount, 75); // floor(floor(60*3/7) * 3)
+  assert.equal(ev.find(e => e.type === 'xp').amount, 225); // floor(60*3/7) × XP_MULT 3 × trainer 3
   assert.equal(b.phase, 'choose');
   b.chooseMove(2);
   ev = b.drain();

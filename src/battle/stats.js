@@ -23,9 +23,11 @@ export function levelForXp(xp) {
   return l;
 }
 
-/** XP awarded for defeating a species at foeLevel; x1.5 for trainer battles. */
+/** Global XP multiplier. Otto (2026-09-26): "increase the exp earned by a lot, I want it to be easier." */
+export const XP_MULT = 3;
+/** XP awarded for defeating a species at foeLevel: Gen 1 base (yield*level/7) × XP_MULT, and ×3 again for trainer battles. */
 export function xpGain(species, foeLevel, isTrainer) {
-  const base = Math.floor(species.xpYield * foeLevel / 7);
+  const base = Math.floor(species.xpYield * foeLevel / 7) * XP_MULT;
   return isTrainer ? Math.floor(base * 3) : base;
 }
 

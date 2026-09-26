@@ -8,9 +8,10 @@ import { BagScreen } from './bag.js';
 import { DexScreen } from './dex.js';
 import { applyFieldItem } from '../world/items.js';
 
-const X = 160 - 88;
+// 96 wide: DUMPLINGDEX (11 chars after the 20px cursor gutter) ends 85px in; at 88 it sat 1px off the border.
+const W = 96;
+const X = 160 - W;
 const Y = 0;
-const W = 88;
 
 const BASE_ITEMS = ['DUMPLINGDEX', 'DUMPLINGS', 'BAG', 'SAVE'];
 

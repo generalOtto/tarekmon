@@ -1,10 +1,11 @@
-// The pause menu: opened with Start in the overworld. Save, sound toggle, the DUMPLINGS (party)
-// and BAG overlay screens, and a placeholder for the dex. While a screen is open the menu hides
+// The pause menu: opened with Start in the overworld. Save, sound toggle, and the DUMPLINGDEX,
+// DUMPLINGS (party) and BAG overlay screens. While a screen is open the menu hides
 // its own box and forwards update/draw to it; closing the screen returns here.
 import { Menu } from './menu.js';
 import { toSaveCode } from '../engine/save.js';
 import { PartyScreen } from './party.js';
 import { BagScreen } from './bag.js';
+import { DexScreen } from './dex.js';
 import { applyFieldItem } from '../world/items.js';
 
 const X = 160 - 88;
@@ -17,7 +18,7 @@ export class StartMenu {
   /** onNapkin(): the overworld's warp back to Haze Lounge, run after a napkin is used from the BAG. */
   constructor({ state, save, textbox, audio, db = {}, onNapkin = null }) {
     Object.assign(this, { state, save, textbox, audio, db, onNapkin });
-    this.screen = null; // the open PartyScreen / BagScreen, if any
+    this.screen = null; // the open DexScreen / PartyScreen / BagScreen, if any
     this.open = false;
     this.menu = null;
     this.busy = false; // true for the whole SAVE flow, incl. the gap between say() calls, so Start can't race it
@@ -70,7 +71,7 @@ export class StartMenu {
         this._show(new BagScreen({ ...this._screenOpts(), context: 'field', onUse: (id, i) => this._useItem(id, i) }));
         break;
       case 'DUMPLINGDEX':
-        this.textbox.say('NOT YET.');
+        this._show(new DexScreen(this._screenOpts()));
         break;
     }
   }

@@ -15,6 +15,7 @@ import { ShopScreen } from '../../src/ui/shop.js';
 import { BagScreen } from '../../src/ui/bag.js';
 import { hazeEntrance } from '../../src/world/items.js';
 import { FridgeScreen } from '../../src/ui/fridge.js';
+import { DexScreen } from '../../src/ui/dex.js';
 import { TextBox } from '../../src/ui/textbox.js';
 import { pedestalGone } from '../../src/world/starters.js';
 
@@ -697,6 +698,16 @@ test('Start → DUMPLINGS opens the party screen; B returns to the Start menu', 
   });
   await t.press('start'); await t.press('down'); await t.press('a');
   assert.equal(t.scene.startMenu.screen?.mode, 'manage');
+  await t.press('b');
+  assert.equal(t.scene.startMenu.screen, null);
+  assert.equal(t.scene.startMenu.open, true);
+});
+
+test('Start → DUMPLINGDEX opens the Dex overlay; B returns to the Start menu', async () => {
+  const t = buttons({ map: 'town', x: 11, y: 12, facing: 'down' }, s => { s.dex.seen.push('d001'); });
+  await t.press('start'); await t.press('a'); // DUMPLINGDEX is the first item
+  assert.ok(t.scene.startMenu.screen instanceof DexScreen);
+  assert.equal(t.ctl.said.length, 0, 'no more NOT YET.');
   await t.press('b');
   assert.equal(t.scene.startMenu.screen, null);
   assert.equal(t.scene.startMenu.open, true);

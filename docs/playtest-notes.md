@@ -35,7 +35,7 @@ Chillbao/Suhaibro/Dumplord at level N, `&badge=1`, 9 wet wipes, 2 napkins) plus 
 | P2 | Every YES/NO question (lab TAKE IT?, title LOAD THIS SAVE? / NEW GAME over a save) | The ▶ "more text" arrow stayed frozen on the question's last page under the YES/NO menu, inviting an A press the menu then took as YES. | low | FIXED — `TextBox.question` hides the arrow on the question's last page; regression test in `test/ui/textbox.test.js`. |
 | P3 | Start menu | DUMPLINGDEX ended 1 px from the box border. | cosmetic | FIXED — menu 88 → 96 px wide. |
 | P4 | Balance, gym → border | A normal party reaches the gate well under L18 (see below). | medium | OPEN — proposal below. |
-| P5 | Title → LOAD CODE | Cancelling the paste prompt says THAT'S NOT A SAVE CODE. (same as pasting garbage). | cosmetic | OPEN — current tests (`title.test.js`) treat null as a bad code on purpose; a softer "NO CODE." line needs a decision. |
+| P5 | Title → LOAD CODE | Cancelling the paste prompt says THAT'S NOT A SAVE CODE. (same as pasting garbage). | cosmetic | OPEN — current tests (`title.test.js`) treat null as a bad code on purpose; a softer "NO CODE." line needs a decision. | — RESOLVED in 2f3e771 (`title-no-code`).
 | P6 | Overworld input | Direction taps landing while a step is in progress are dropped (no buffering), so rapid tapping moves fewer tiles than taps. Holding works as expected. | cosmetic | Not a bug (GB-like); noted only. |
 
 ## Balance (design target: ~L20 before Suhaib)
@@ -66,3 +66,5 @@ Applied: trainer XP ×3 (controller decision 2026-09-26); re-check levels at the
 - `30a46bc` test: guard against trainers parking on a map bottleneck after a walk-up
 
 Tests: 326 pass (was 324).
+
+Later round-1 commits: d1e4dba (trainer XP x3), 45f8934 (Driver Dee sight 2), 2f3e771 (title-no-code), 2ade7f1 (?credits=1 dev shortcut), 35e5024 (Dockerfile).

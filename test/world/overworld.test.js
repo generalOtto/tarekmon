@@ -941,3 +941,32 @@ test('battle start stops the skate loop; onBattleEnd restarts it if still skatin
   scene.onBattleEnd('win');
   assert.deepEqual(loop, ['stop', 'start:skate'], 'and resumes since the player is still on the board');
 });
+
+test('blackout while skating: stops the loop, lands in Haze on foot with the board parked; back outside it returns with rack-back', async () => {
+  const t = skateHarness({ map: 'town', x: 12, y: 22, facing: 'down' });
+  t.state.flags.boardOut = true;
+  t.scene.player.skating = true;
+
+  t.scene.onBattleEnd('lose', { kind: 'wild' });
+  await t.tick(5); // the blackout line resolves, the fade starts
+  for (let i = 0; i < 120 && t.scene.fader.active; i++) await t.tick();
+  await t.tick(5);
+
+  assert.equal(t.state.pos.map, 'haze', 'blacked out to the Haze Lounge');
+  assert.ok(t.ctl.loop.includes('stop'), 'the skate loop stopped');
+  assert.equal(t.scene.player.skating, false, 'on foot indoors');
+  assert.equal(t.state.flags.boardParked, true);
+
+  t.ctl.said.length = 0; t.ctl.loop.length = 0;
+  t.ctl.dir = 'down';
+  for (let i = 0; i < 60 && t.state.pos.map === 'haze'; i++) t.scene.update(1 / 60);
+  t.ctl.dir = null;
+  for (let i = 0; i < 60 && t.scene.fader.active; i++) t.scene.update(1 / 60);
+  await t.tick(5);
+
+  assert.equal(t.state.pos.map, 'town', 'walked out of the Haze Lounge');
+  assert.equal(t.scene.player.skating, true, 'the board is back');
+  assert.equal(t.state.flags.boardParked, false);
+  assert.ok(t.ctl.loop.includes('start:skate'));
+  assert.deepEqual(t.ctl.said, [dialogue['rack-back']]);
+});

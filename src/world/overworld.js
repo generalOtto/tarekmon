@@ -17,7 +17,8 @@ import { ShopScreen } from '../ui/shop.js';
 import { FridgeScreen } from '../ui/fridge.js';
 import { hazeEntrance } from './items.js';
 import { attachBattleFlow } from './battleflow.js';
-import { TrainerFlow, pickStarter, pedestalGone, drawStarterPreview } from './trainers.js';
+import { TrainerFlow } from './trainers.js';
+import { pickStarter, pedestalGone, drawStarterPreview } from './starters.js';
 import { FlashWipe } from '../battle/transition.js';
 
 const S = TILE_SIZE;

@@ -61,6 +61,9 @@ function startBattle({ kind, foeParty, trainer = null }) {
 /** Make `s` the live game and show it in the overworld (replacing the title/intro, if any). */
 function startOverworld(s) {
   state = s;
+  // Fresh copy of the maps per game: the scene mutates nested map objects (TrainerFlow fills in trainer
+  // sprites, walks spotted trainers to new tiles, pushes Suhaib into npcs), so a second game started in
+  // the same session (e.g. CONTINUE/LOAD after a game-over or reset to title) must start clean.
   overworld = new OverworldScene({
     db, maps: loadMaps(structuredClone(db.mapData)), state, tileset: buildTileset(), input, textbox, save, audio,
     onBattle: startBattle,

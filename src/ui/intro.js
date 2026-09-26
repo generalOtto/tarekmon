@@ -14,6 +14,7 @@ export class IntroScene {
     this.started = false;
   }
 
+  // No startMusic here on purpose: the intro keeps the title theme playing until the overworld takes over.
   enter() {
     if (this.started) return;
     this.started = true;

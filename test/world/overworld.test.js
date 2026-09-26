@@ -16,7 +16,7 @@ import { BagScreen } from '../../src/ui/bag.js';
 import { hazeEntrance } from '../../src/world/items.js';
 import { FridgeScreen } from '../../src/ui/fridge.js';
 import { TextBox } from '../../src/ui/textbox.js';
-import { pedestalGone } from '../../src/world/trainers.js';
+import { pedestalGone } from '../../src/world/starters.js';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 /** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */

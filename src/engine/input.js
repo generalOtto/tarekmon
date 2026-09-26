@@ -47,5 +47,10 @@ export function attachInput(root, state, { onAnyPress } = {}) {
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('pointerleave', up);
     el.addEventListener('contextmenu', e => e.preventDefault());
   }
+  // Mobile browsers (WebKit on every iOS browser, Gecko on Android Firefox) start a
+  // text-selection / callout gesture on long-press unless the touch default is cancelled.
+  // Pointer events still fire, so this only removes the selection behaviour.
+  root.addEventListener('touchstart', e => { if (e.target?.closest?.('[data-btn], canvas, .screen-frame, .controls')) e.preventDefault(); }, { passive: false });
+  root.addEventListener('selectstart', e => e.preventDefault());
   window.addEventListener('blur', () => { for (const b of BUTTONS) state.set(b, false); });
 }

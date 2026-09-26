@@ -87,11 +87,22 @@ test('LOAD CODE: NO loads nothing; an invalid code says JUST WORDS and calls not
   await good.tick('b');
   assert.deepEqual(good.saves, []); assert.deepEqual(good.calls, []);
 
-  for (const readCode of [async () => 'hello there', async () => null, async () => { throw new Error('denied'); }]) {
+  for (const readCode of [async () => 'hello there']) {
     const t = setup({ readCode });
     await t.pick('LOAD CODE');
     assert.equal(t.textbox.pages.map(p => p.join('\n')).join('\f'), dialogue['title-bad-code']);
     await t.settle(); await t.tick('a'); await t.settle(); await t.tick('a');
+    assert.equal(t.textbox.open, false);
+    assert.deepEqual(t.saves, []); assert.deepEqual(t.calls, []);
+  }
+});
+
+test('LOAD CODE: a cancelled prompt (empty/null code) says NO CODE, not the garbage message', async () => {
+  for (const readCode of [async () => null, async () => '', async () => { throw new Error('denied'); }]) {
+    const t = setup({ readCode });
+    await t.pick('LOAD CODE');
+    assert.equal(t.textbox.pages.map(p => p.join('\n')).join('\f'), dialogue['title-no-code']);
+    await t.settle(); await t.tick('a');
     assert.equal(t.textbox.open, false);
     assert.deepEqual(t.saves, []); assert.deepEqual(t.calls, []);
   }

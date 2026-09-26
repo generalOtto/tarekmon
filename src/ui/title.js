@@ -76,6 +76,7 @@ export class TitleScene {
   async loadCode() {
     let code = null;
     try { code = await this.readCode(); } catch { code = null; }
+    if (!code) { await this.textbox.say(this.line('title-no-code')); return; }
     const state = readSave(code);
     if (!state) { await this.textbox.say(this.line('title-bad-code')); return; }
     const b = state.badges.length;

@@ -97,3 +97,35 @@ export class Menu {
     }
   }
 }
+
+/** A YES/NO question: types `text` into the shared textbox and, once its last page is revealed,
+ *  pops a YES/NO menu above it (Gen-1 style, no extra A). ask() resolves true for YES; NO and B
+ *  resolve false. The owner routes input to update() while `active` and calls draw() after the textbox. */
+export class YesNo {
+  constructor(textbox) { this.textbox = textbox; this.menu = null; this._resolve = null; }
+  get active() { return !!this._resolve; }
+  get showing() { return this.active && this.textbox.pageRevealed && this.textbox.onLastPage; }
+
+  ask(text) {
+    return new Promise(resolve => {
+      this._resolve = resolve;
+      this.menu = new Menu(['YES', 'NO']);
+      this.textbox.say(text);
+    });
+  }
+
+  update(input) {
+    if (!this.active) return;
+    if (!this.showing) { this.textbox.update(input); return; }
+    this.menu.handle(input, { onSelect: label => this._answer(label === 'YES'), onCancel: () => this._answer(false) });
+  }
+
+  _answer(yes) {
+    const resolve = this._resolve;
+    this._resolve = null; this.menu = null;
+    this.textbox.dismiss();
+    resolve(yes);
+  }
+
+  draw(ctx) { if (this.showing) this.menu.draw(ctx, 160 - 56, 96 - 48, 56); }
+}

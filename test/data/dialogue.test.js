@@ -26,7 +26,9 @@ test('required dialogue ids exist', () => {
     'weather-guy-nice', 'weather-guy-bad', 'haze-heal-1', 'haze-heal-2', 'ribs-shop',
     'booth-officer-locked', 'booth-officer-open', 'suhaib-pre', 'suhaib-mid', 'suhaib-lost', 'suhaib-rematch',
     'otto-lab-intro', 'otto-lab-after', 'otto-lab-block', 'regular-1', 'regular-2', 'regular-3', 'regular-4',
-    'townie-1', 'townie-2', 'townie-3', 'fridge-open', 'fridge-last', 'fridge-full', 'fridge-deposit', 'fridge-withdraw', 'blackout', 'rack-nice', 'rack-bad', 'pedestal', 'gate-closed'];
+    'townie-1', 'townie-2', 'townie-3', 'fridge-open', 'fridge-last', 'fridge-full', 'fridge-deposit', 'fridge-withdraw', 'blackout', 'rack-nice', 'rack-bad', 'pedestal', 'gate-closed',
+    'intro-1', 'intro-2', 'intro-3', 'intro-4', 'intro-5', 'intro-6', 'intro-7', 'starter-d013', 'starter-d061', 'starter-d049',
+    'starter-confirm', 'starter-gone', 'title-overwrite', 'title-bad-code'];
   for (const id of required) assert.ok(id in dialogue, `missing ${id}`);
 });
 

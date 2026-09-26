@@ -158,7 +158,11 @@
       ],
       "trainers": [],
       "signs": [],
-      "objects": []
+      "objects": [
+        { "x": 5, "y": 3, "kind": "pedestal", "species": "d013" },
+        { "x": 6, "y": 3, "kind": "pedestal", "species": "d061" },
+        { "x": 7, "y": 3, "kind": "pedestal", "species": "d049" }
+      ]
     },
     "haze": {
       "name": "HAZE LOUNGE",

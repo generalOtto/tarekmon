@@ -12,11 +12,12 @@ import { INK } from './palette.js';
 import { healParty } from '../engine/state.js';
 import { rollWeather, defaultRng } from '../engine/rng.js';
 import { StartMenu } from '../ui/startmenu.js';
+import { YesNo } from '../ui/menu.js';
 import { ShopScreen } from '../ui/shop.js';
 import { FridgeScreen } from '../ui/fridge.js';
 import { hazeEntrance } from './items.js';
 import { attachBattleFlow } from './battleflow.js';
-import { TrainerFlow } from './trainers.js';
+import { TrainerFlow, pickStarter, pedestalGone, drawStarterPreview } from './trainers.js';
 import { FlashWipe } from '../battle/transition.js';
 
 const S = TILE_SIZE;
@@ -32,6 +33,8 @@ export class OverworldScene {
     this.busy = false; // true for the whole of an interaction, incl. gaps between chained say()s
     this.overlay = null; // one full-input screen at a time (shop, fridge); drawn above the map, below the fade
     this.afterFade = null; // run once the current warp fade has finished (napkin/blackout arrival lines)
+    this.prompt = new YesNo(textbox); // YES/NO questions (the starter pick)
+    this.preview = null; // species whose sticker card is up while its pedestal is being read
     this.startMenu = new StartMenu({ state, save, textbox, audio, db, onNapkin: () => this.useNapkin() });
     this.flow = attachBattleFlow(this);
     this.trainerFlow = new TrainerFlow(this);
@@ -52,6 +55,7 @@ export class OverworldScene {
     player.onArrive = (nx, ny) => {
       this.state.pos.x = nx; this.state.pos.y = ny;
       const w = resolveWarp(this.map, nx, ny);
+      if (w && this.map.id === 'lab' && !this.state.flags.starterPicked) { this.blockDoor(nx, ny); return; }
       if (w) { this.beginWarp(w); return; }
       this.checkEncounter(nx, ny);
     };
@@ -70,6 +74,13 @@ export class OverworldScene {
     });
   }
 
+  /** No starter yet: the lab mat doesn't warp; back up a tile and let Prof. Otto say why. */
+  blockDoor(x, y) {
+    this.player = this.makePlayer(x, y - 1, 'up');
+    this.state.pos = { map: this.map.id, x, y: y - 1, facing: 'up' };
+    this.run(() => this.say('otto-lab-block'));
+  }
+
   // Encounter/battle plumbing lives in battleflow.js; these stay as the scene's public surface.
   checkEncounter(x, y) { this.flow.checkEncounter(x, y); }
   startWildBattle(species, level) { this.flow.startWildBattle(species, level); }
@@ -85,6 +96,7 @@ export class OverworldScene {
     }
     if (this.transition?.active) { this.transition.update(); return; }
     if (this.overlay) { this.overlay.update(input); return; }
+    if (this.prompt.active) { this.prompt.update(input); return; }
     if (startMenu.open) { startMenu.update(input); return; }
     if (textbox.open) { textbox.update(input); return; }
     if (this.busy) return; // between two lines of a multi-say interaction
@@ -118,7 +130,7 @@ export class OverworldScene {
     switch (tileAt(map, fx, fy)) {
       case 'F': return this.openOverlay(FridgeScreen, () => this.save.autosave(state)); // says fridge-open itself
       case 'K': return this.run(() => this.say(rollWeather() ? 'rack-nice' : 'rack-bad'));
-      case 'E': return this.run(() => this.say('pedestal'));
+      case 'E': return this.run(() => pickStarter(this, fx, fy));
       case 'G': return !state.badges.includes('haze') && this.run(() => this.say('gate-closed'));
     }
     return false;
@@ -173,6 +185,7 @@ export class OverworldScene {
       for (let x = Math.max(0, x0); x <= Math.min(map.width - 1, x0 + 11); x++) {
         let t = tileAt(map, x, y);
         if (t === 'G' && gateOpen) t = 'g';
+        else if (t === 'E' && pedestalGone(map, state, x, y)) t = '_';
         tileset.draw(ctx, t, x * S - ox, y * S - oy, frame);
       }
     }
@@ -183,7 +196,9 @@ export class OverworldScene {
     this.trainerFlow.drawBubble(ctx, ox, oy);
     drawPlayer(ctx, Math.round(px) - ox, Math.round(py) - oy, player.facing, player.frame, player.skating);
     this.overlay?.draw(ctx);
+    if (this.preview) drawStarterPreview(ctx, this.db, this.preview);
     this.startMenu.draw(ctx); // draws the shared textbox too, whether from the menu or a plain interaction
+    this.prompt.draw(ctx);
     drawFade(ctx, fader.alpha);
     this.transition?.draw(ctx);
   }

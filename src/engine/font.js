@@ -53,6 +53,7 @@ export const GLYPHS = {
   '…': ['.....', '.....', '.....', '.....', '.....', '.....', '#.#.#'],
   '$': ['..#..', '.####', '#.#..', '.###.', '..#.#', '####.', '..#..'],
   '★': ['..#..', '..#..', '#####', '.###.', '.###.', '##.##', '#...#'],
+  '·': ['.....', '.....', '.....', '..#..', '.....', '.....', '.....'],
 };
 
 export const CHAR_W = 6; // 5px glyph + 1px spacing
@@ -65,6 +66,18 @@ export function drawText(ctx, text, x, y, color = '#0f380f') {
     const g = GLYPHS[ch] ?? GLYPHS['?'];
     for (let r = 0; r < 7; r++) for (let c = 0; c < 5; c++) if (g[r][c] === '#') ctx.fillRect(cx + c, y + r, 1, 1);
     cx += CHAR_W;
+  }
+  return cx;
+}
+
+/** drawText at `scale`×: every glyph pixel becomes a scale×scale block (the title logo). */
+export function drawTextScaled(ctx, text, x, y, scale, color = '#0f380f') {
+  ctx.fillStyle = color;
+  let cx = x;
+  for (const ch of String(text).toUpperCase()) {
+    const g = GLYPHS[ch] ?? GLYPHS['?'];
+    for (let r = 0; r < 7; r++) for (let c = 0; c < 5; c++) if (g[r][c] === '#') ctx.fillRect(cx + c * scale, y + r * scale, scale, scale);
+    cx += CHAR_W * scale;
   }
   return cx;
 }

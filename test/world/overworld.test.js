@@ -15,6 +15,8 @@ import { ShopScreen } from '../../src/ui/shop.js';
 import { BagScreen } from '../../src/ui/bag.js';
 import { hazeEntrance } from '../../src/world/items.js';
 import { FridgeScreen } from '../../src/ui/fridge.js';
+import { TextBox } from '../../src/ui/textbox.js';
+import { pedestalGone } from '../../src/world/trainers.js';
 
 const DIRS = ['up', 'down', 'left', 'right'];
 /** Minimal stand-in for engine/input.js's ButtonState, scoped to one tick's direction/justPressed/isDown. */
@@ -38,6 +40,7 @@ function headless(start = mapData.start) {
 
 test('walking onto the lab mat warps to town once, ignoring input during the fade', () => {
   const { scene, state, ctl } = headless();
+  state.flags.starterPicked = true; // the mat only lets you out with a starter
   const lab = loadMaps(mapData).lab;
   const matY = mapData.start.y + 1;
   const warp = lab.warps.find(w => w.x === mapData.start.x && w.y === matY);
@@ -704,4 +707,98 @@ test('the haze healer plays the heal jingle between heal-1 and heal-2', async ()
   t.scene.audio = { playJingle: n => t.ctl.said.push(`jingle:${n}`), playSfx() {}, startMusic() {}, stopMusic() {} };
   await t.pressA();
   assert.deepEqual(t.ctl.said, [dialogue['haze-heal-1'], 'jingle:heal', dialogue['haze-heal-2']]);
+});
+
+// ── starter pick (Task 34) ────────────────────────────────────────────────────
+/** Lab harness with the real TextBox (the YES/NO prompt reads its page state); buttons per tick. */
+function lab(pos = { map: 'lab', x: 5, y: 4, facing: 'up' }) {
+  const ctl = { pressed: new Set(), saves: [], jingles: [] };
+  const state = newGameState('TAREK', pos);
+  const input = makeInput({ direction: () => null, justPressed: b => ctl.pressed.has(b) });
+  const textbox = new TextBox();
+  const scene = new OverworldScene({
+    db: { ...fullDb, types: { colors: {} }, images: {} }, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
+    input, textbox, save: { autosave: s => ctl.saves.push(structuredClone(s)) },
+    audio: { playJingle: n => ctl.jingles.push(n), playSfx() {}, startMusic() {} }, rng: () => 0.5,
+  });
+  scene.enter();
+  const press = async (...b) => { ctl.pressed = new Set(b); scene.update(1 / 60); ctl.pressed = new Set(); for (let i = 0; i < 5; i++) await null; };
+  const settle = async () => { for (let i = 0; i < 80 && textbox.open && !textbox.pageRevealed; i++) await press(); };
+  /** Read every page of whatever is on screen (A per page) until the box closes or a YES/NO shows. */
+  const readAll = async () => { const seen = []; while (textbox.open && !scene.prompt.showing) { await settle(); if (scene.prompt.showing) break; seen.push(textbox.pages[textbox.pageIndex].join('\n')); await press('a'); } return seen; };
+  return { scene, state, ctl, textbox, press, settle, readAll };
+}
+const pages = id => dialogue[id].split('\f');
+
+test('pedestal → preview + line → TAKE IT? YES: L5 starter, flags, dex caught, jingle, autosave', async () => {
+  const t = lab({ map: 'lab', x: 6, y: 4, facing: 'up' }); // Chillbao's pedestal
+  await t.press('a');
+  assert.equal(t.scene.preview?.id, 'd061', 'sticker card is up');
+  assert.deepEqual(await t.readAll(), pages('starter-d061'));
+  await t.settle();
+  assert.ok(t.scene.prompt.showing);
+  assert.deepEqual(t.textbox.pages, [[dialogue['starter-confirm']]]);
+  await t.press('a'); // YES
+  assert.equal(t.state.party.length, 1);
+  const m = t.state.party[0];
+  assert.deepEqual([m.speciesId, m.level], ['d061', 5]);
+  assert.equal(t.state.flags.starterPicked, true);
+  assert.equal(t.state.flags.starterId, 'd061');
+  assert.ok(t.state.dex.caught.includes('d061') && t.state.dex.seen.includes('d061'));
+  assert.deepEqual(t.ctl.jingles, ['caught']);
+  assert.equal(t.ctl.saves.length, 1);
+  assert.equal(t.ctl.saves[0].party[0].speciesId, 'd061');
+  assert.deepEqual(await t.readAll(), ['TAREK RECEIVED\nCHILLBAO!']);
+  assert.equal(t.scene.preview, null);
+  assert.equal(t.scene.busy, false);
+});
+
+test('TAKE IT? NO (or B) leaves the pedestal alone', async () => {
+  for (const answer of [['down', 'a'], ['b']]) {
+    const t = lab();
+    await t.press('a'); await t.readAll(); await t.settle();
+    for (const b of answer) await t.press(b);
+    assert.equal(t.state.party.length, 0);
+    assert.equal(t.state.flags.starterPicked, undefined);
+    assert.equal(t.textbox.open, false);
+    assert.equal(t.scene.preview, null);
+    assert.deepEqual(t.ctl.saves, []);
+  }
+});
+
+test('after the pick: the other pedestals are empty (render as floor, say starter-gone)', async () => {
+  const t = lab({ map: 'lab', x: 5, y: 4, facing: 'up' });
+  Object.assign(t.state.flags, { starterPicked: true, starterId: 'd061' });
+  await t.press('a');
+  assert.deepEqual(await t.readAll(), pages('starter-gone'));
+  assert.equal(t.state.party.length, 0);
+  const map = t.scene.map;
+  assert.deepEqual([5, 6, 7].map(x => pedestalGone(map, t.state, x, 3)), [true, false, true]);
+  t.state.flags.starterPicked = false;
+  assert.deepEqual([5, 6, 7].map(x => pedestalGone(map, t.state, x, 3)), [false, false, false]);
+});
+
+test('the lab mat blocks without a starter (Otto says why, player backs up) and warps with one', async () => {
+  const t = lab({ map: 'lab', x: 5, y: 7, facing: 'down' });
+  t.scene.player.tryMove('down', t.scene.map, {});
+  for (let i = 0; i < 30 && t.scene.player.moving; i++) t.scene.player.update(1 / 60);
+  assert.equal(t.scene.fader.active, false, 'no warp');
+  assert.deepEqual(t.state.pos, { map: 'lab', x: 5, y: 7, facing: 'up' });
+  assert.deepEqual([t.scene.player.x, t.scene.player.y, t.scene.player.facing], [5, 7, 'up']);
+  for (let i = 0; i < 5; i++) await null;
+  assert.deepEqual(await t.readAll(), pages('otto-lab-block'));
+
+  t.state.flags.starterPicked = true;
+  t.scene.player.tryMove('down', t.scene.map, {});
+  for (let i = 0; i < 30 && t.scene.player.moving; i++) t.scene.player.update(1 / 60);
+  assert.equal(t.scene.fader.active, true, 'warps now');
+});
+
+test('Prof. Otto\'s line flips once a starter is picked', async () => {
+  const t = lab({ map: 'lab', x: 7, y: 2, facing: 'left' });
+  await t.press('a');
+  assert.deepEqual(await t.readAll(), pages('otto-lab-intro'));
+  t.state.flags.starterPicked = true;
+  await t.press('a');
+  assert.deepEqual(await t.readAll(), pages('otto-lab-after'));
 });

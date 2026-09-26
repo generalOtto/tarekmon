@@ -110,3 +110,20 @@ function shopDetail({ r, f }) { // red apron
   if (f !== 'up') r(5, 10, 6, 4, P.RED);
   else r(4, 10, 8, 1, P.RED);
 }
+
+/** Draw-only: the intro's 32×32 bust of Prof. Otto at (x, y) — the npc-otto look scaled up:
+ *  brown hair and beard, round glasses, white lab coat over a blue shirt. */
+export function drawOttoPortrait(ctx, x, y) {
+  const r = (rx, ry, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x + rx, y + ry, w, h); };
+  r(3, 24, 26, 8, P.WHITE); r(3, 24, 26, 1, P.PATH_D);           // lab coat shoulders
+  r(12, 24, 8, 8, P.ROOF_LAB);                                    // shirt
+  r(11, 24, 2, 8, P.PATH_D); r(19, 24, 2, 8, P.PATH_D);           // lapels
+  r(14, 22, 4, 3, P.SKIN);                                        // neck
+  r(8, 3, 16, 8, P.TRUNK); r(10, 1, 12, 3, P.TRUNK);              // hair
+  r(9, 7, 14, 15, P.SKIN); r(8, 11, 1, 5, P.SKIN); r(23, 11, 1, 5, P.SKIN); // face + ears
+  r(9, 7, 14, 2, P.TRUNK);                                        // fringe
+  r(9, 16, 14, 7, P.TRUNK); r(11, 23, 10, 1, P.TRUNK);            // beard
+  r(13, 18, 6, 1, P.INK); r(14, 19, 4, 1, P.SKIN);                // mouth in the beard
+  for (const gx of [10, 17]) { r(gx, 11, 5, 4, P.INK); r(gx + 1, 12, 3, 2, P.WATER_L); r(gx + 2, 12, 1, 2, P.INK); } // glasses + eyes
+  r(15, 12, 2, 1, P.INK);                                         // bridge
+}

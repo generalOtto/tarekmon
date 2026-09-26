@@ -59,5 +59,19 @@
   "haze-leader-wait": "YOU WANT THE\nBADGE?\fFIRST YOU WAIT\nFOR A TABLE.\fTALK TO THE\nREGULARS.",
   "haze-leader-pre": "YOU WANT THE\nBADGE?\fFIRST YOU WAIT\nFOR A TABLE.\f...OK. TABLE'S\nREADY.",
   "haze-leader-post": "TAKE THE BADGE.\nAND A COAL.\fNO, NOT THAT ONE.",
-  "booth-officer-sauce": "TAKE THESE.\nYOU'LL NEED THEM.\fHE'S BEEN DRIVING\nALL MORNING."
+  "booth-officer-sauce": "TAKE THESE.\nYOU'LL NEED THEM.\fHE'S BEEN DRIVING\nALL MORNING.",
+  "intro-1": "WELCOME TO THE\nWORLD OF TAREKMON!",
+  "intro-2": "MY NAME IS OTTO.\fPEOPLE CALL ME THE\nDUMPLING PROFESSOR",
+  "intro-3": "THIS WORLD IS FULL\nOF CREATURES WITH\fVERY SQUISHED\nFACES.",
+  "intro-4": "SOME PEOPLE KEEP\nTHEM AS PETS.\fI STUDY THEM.\nIT'S A LIVING.",
+  "intro-5": "FIRST, WHAT'S\nYOUR NAME?",
+  "intro-6": "RIGHT. {name}.\nOBVIOUSLY.",
+  "intro-7": "YOUR VERY OWN\nDUMPLING LEGEND\fIS ABOUT TO\nUNFOLD!",
+  "starter-d013": "SO! YOU WANT THE\nFRIED ONE?\fIT'S OTTO. THAT'S\nA LOT OF OTTO.",
+  "starter-d061": "...TAREK?\nPICKING YOURSELF.\fBOLD.",
+  "starter-d049": "THAT ONE'S\nIMPORTED.\fIT TAKES 3 HOURS\nTO GET HERE.",
+  "starter-confirm": "TAKE IT?",
+  "starter-gone": "EMPTY. SOMEONE\nWAS FASTER.",
+  "title-overwrite": "OVERWRITE THE\nOLD GAME?",
+  "title-bad-code": "THAT'S NOT A SAVE\nCODE.\fTHAT'S JUST\nWORDS."
 }

@@ -131,7 +131,8 @@ export class DexScreen {
     if (row.name.length > 12) drawText(ctx, row.name.slice(12, 24), 80, 27, INK);
     if (!sp) return;
     ctx.fillStyle = INK; ctx.fillRect(80, 38, 10, 10);
-    ctx.fillStyle = this.db.types?.colors?.[sp.type] ?? PLACEHOLDER; ctx.fillRect(81, 39, 8, 8);
+    ctx.fillStyle = PAPER; ctx.fillRect(81, 39, 8, 8); // 1px paper gap so light types still read as a filled chip
+    ctx.fillStyle = this.db.types?.colors?.[sp.type] ?? PLACEHOLDER; ctx.fillRect(82, 40, 6, 6);
     drawText(ctx, sp.type.toUpperCase(), 94, 40, INK);
     const [ht, wt] = SIZE[sp.type] ?? SIZE.Steamed;
     drawText(ctx, `HT ${ht}`, 80, 53, INK);

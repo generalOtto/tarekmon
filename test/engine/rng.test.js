@@ -31,3 +31,17 @@ test('chance uses rng draw against probability threshold', () => {
   assert.equal(chance(rng, 0.5), true);
   assert.equal(chance(rng, 0.2), false);
 });
+test('todayString honors a ?date=YYYY-MM-DD override, and ignores malformed values', () => {
+  const had = 'location' in globalThis, restore = globalThis.location;
+  try {
+    globalThis.location = { search: '?date=2026-01-05' };
+    assert.equal(todayString(), '2026-01-05');
+    assert.equal(todayString(new Date(2026, 8, 5)), '2026-01-05', 'the override wins over an explicit date too');
+    globalThis.location = { search: '?date=not-a-date' };
+    assert.equal(todayString(new Date(2026, 8, 5)), '2026-09-05', 'malformed value ignored, falls back to the given date');
+    globalThis.location = { search: '' };
+    assert.equal(todayString(new Date(2026, 8, 5)), '2026-09-05', 'no date param at all');
+  } finally {
+    if (had) globalThis.location = restore; else delete globalThis.location;
+  }
+});

@@ -6,6 +6,7 @@ import { healParty } from '../engine/state.js';
 import { rollEncounter } from './encounters.js';
 import { makeMonster, resetBattleState } from '../battle/monster.js';
 import { hazeEntrance } from './items.js';
+import { onWarpSkate } from './skate.js';
 
 export function attachBattleFlow(scene) {
   return {
@@ -30,6 +31,7 @@ export function attachBattleFlow(scene) {
      *  stack (main.js) via scene.onBattle. */
     startBattle({ kind, foeParty, trainer = null, jingle = 'encounter' }) {
       scene.audio?.stopMusic();
+      scene.audio?.stopLoopSfx?.(); // the skate loop shouldn't play over battle music
       scene.audio?.playJingle(jingle);
       scene.player.moving = false;
       scene.transition.start(() => scene.onBattle?.({ kind, foeParty, trainer }));
@@ -41,6 +43,7 @@ export function attachBattleFlow(scene) {
     onBattleEnd(result, { kind, trainer } = {}) {
       for (const m of scene.state.party) resetBattleState(m);
       scene.audio?.startMusic('overworld');
+      if (scene.player.skating) scene.audio?.startLoopSfx?.('skate'); // resume the board's loop if still on it
       const outro = result === 'win' && kind === 'trainer' ? scene.trainerFlow.recordWin(trainer) : null;
       scene.save.autosave(scene.state);
       if (result === 'lose') scene.blackout?.();
@@ -51,7 +54,7 @@ export function attachBattleFlow(scene) {
      *  heal, land on the Haze Lounge mat (autosaved); fade in to the shisha guy's heal-2 line and,
      *  if anything was dropped, how much. */
     blackout() {
-      const { state, textbox } = scene;
+      const { state, textbox, map: fromMap } = scene;
       scene.run(async () => {
         await textbox.say((scene.db.dialogue?.blackout ?? '{name} BLACKED OUT!').replaceAll('{name}', state.playerName));
         let lost = 0;
@@ -59,7 +62,10 @@ export function attachBattleFlow(scene) {
           await scene.say('haze-heal-2');
           if (lost > 0) await textbox.say(`${state.playerName} DROPPED $${lost}\nON THE WAY.`);
         };
-        scene.beginWarp(hazeEntrance(scene.maps), () => {
+        const w = hazeEntrance(scene.maps);
+        onWarpSkate(state, fromMap, scene.maps[w.map]); // Haze Lounge is indoors: parks the board if it was out
+        if (scene.player.skating) scene.audio?.stopLoopSfx?.(); // the old player is about to be replaced (defaults to skating=false)
+        scene.beginWarp(w, () => {
           lost = state.money - Math.floor(state.money / 2);
           state.money -= lost;
           healParty(state);

@@ -813,3 +813,131 @@ test('Prof. Otto\'s line flips once a starter is picked', async () => {
   await t.press('a');
   assert.deepEqual(await t.readAll(), pages('otto-lab-after'));
 });
+
+// ---------------------------------------------------------------- skateboard (Task 36)
+
+const NICE_DAY = '2026-01-02', BAD_DAY = '2026-01-01'; // fixed dates: one nice, one bad (see rng.test.js)
+
+/** Sets `?date=` for the duration of an async fn, restoring globalThis.location after. */
+async function withDate(dateString, fn) {
+  const had = 'location' in globalThis, restore = globalThis.location;
+  globalThis.location = { search: `?date=${dateString}` };
+  try { return await fn(); } finally { if (had) globalThis.location = restore; else delete globalThis.location; }
+}
+
+/** Headless scene for skateboard tests: A presses like `talker`, direction holds like `headless`;
+ *  a recording audio stub captures the loop sfx (start:<name> / stop) alongside dialogue. */
+function skateHarness(start) {
+  const ctl = { dir: null, a: false, said: [], loop: [] };
+  const state = newGameState('T', start);
+  const audio = {
+    playJingle() {}, playSfx() {}, startMusic() {}, stopMusic() {},
+    startLoopSfx: name => ctl.loop.push(`start:${name}`), stopLoopSfx: () => ctl.loop.push('stop'),
+  };
+  const textbox = { open: false, update() {}, draw() {}, say(t) { ctl.said.push(t); return Promise.resolve(); } };
+  const scene = new OverworldScene({
+    db: { dialogue }, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
+    input: makeInput({ direction: () => ctl.dir, justPressed: b => b === 'a' && ctl.a }),
+    textbox, save: { autosave() {} }, audio,
+  });
+  scene.enter();
+  const pressA = async () => { ctl.a = true; scene.update(1 / 60); ctl.a = false; for (let i = 0; i < 5; i++) await null; };
+  const tick = async (n = 1) => { for (let i = 0; i < n; i++) { scene.update(1 / 60); await null; } };
+  return { scene, state, ctl, pressA, tick };
+}
+const RACK = { map: 'town', x: 5, y: 34, facing: 'left' }; // faces the K tile at (4, 34)
+
+test('rack, nice day: picks the board up, starts the loop, sets boardOut', async () => {
+  await withDate(NICE_DAY, async () => {
+    const t = skateHarness(RACK);
+    await t.pressA();
+    assert.deepEqual(t.ctl.said, [dialogue['rack-nice']]);
+    assert.equal(t.scene.player.skating, true);
+    assert.deepEqual(t.ctl.loop, ['start:skate']);
+    assert.equal(t.state.flags.boardOut, true);
+  });
+});
+
+test('rack, bad day: just says so, nothing else changes', async () => {
+  await withDate(BAD_DAY, async () => {
+    const t = skateHarness(RACK);
+    await t.pressA();
+    assert.deepEqual(t.ctl.said, [dialogue['rack-bad']]);
+    assert.equal(t.scene.player.skating, false);
+    assert.deepEqual(t.ctl.loop, []);
+    assert.equal(t.state.flags.boardOut, undefined);
+  });
+});
+
+test('rack, second A while skating: parks it', async () => {
+  await withDate(NICE_DAY, async () => {
+    const t = skateHarness(RACK);
+    await t.pressA(); // picks it up
+    t.ctl.said.length = 0; t.ctl.loop.length = 0;
+    await t.pressA(); // parks it
+    assert.deepEqual(t.ctl.said, [dialogue['rack-park']]);
+    assert.equal(t.scene.player.skating, false);
+    assert.deepEqual(t.ctl.loop, ['stop']);
+    assert.equal(t.state.flags.boardOut, false);
+  });
+});
+
+test('walking into a door while skating parks the board; walking back out restores it with rack-back', async () => {
+  const t = skateHarness({ map: 'town', x: 12, y: 10, facing: 'up' });
+  t.state.flags.boardOut = true;
+  t.state.flags.starterPicked = true; // so the lab mat lets us back out again below
+  t.scene.player.skating = true;
+
+  t.ctl.dir = 'up';
+  for (let i = 0; i < 60 && t.state.pos.map === 'town'; i++) t.scene.update(1 / 60);
+  for (let i = 0; i < 30 && t.scene.fader.active; i++) t.scene.update(1 / 60);
+  await t.tick(5);
+
+  assert.equal(t.state.pos.map, 'lab', 'walked through the lab door');
+  assert.equal(t.scene.player.skating, false, 'no skating indoors');
+  assert.equal(t.state.flags.boardParked, true);
+  assert.ok(t.ctl.loop.includes('stop'));
+  assert.deepEqual(t.ctl.said, [], 'no line going in');
+
+  t.ctl.loop.length = 0;
+  t.ctl.dir = 'down';
+  for (let i = 0; i < 60 && t.state.pos.map === 'lab'; i++) t.scene.update(1 / 60);
+  for (let i = 0; i < 30 && t.scene.fader.active; i++) t.scene.update(1 / 60);
+  await t.tick(5);
+
+  assert.equal(t.state.pos.map, 'town', 'walked back out through the mat');
+  assert.equal(t.scene.player.skating, true, 'the board is back');
+  assert.equal(t.state.flags.boardParked, false);
+  assert.ok(t.ctl.loop.includes('start:skate'));
+  assert.deepEqual(t.ctl.said, [dialogue['rack-back']]);
+});
+
+test('encounter rate halves while skating: a roll that hits at full rate misses at half', () => {
+  const rng = () => 0.08; // route-1 rate is 0.12: hits at ×1 (0.08 < 0.12), misses at ×0.5 (0.08 >= 0.06)
+  const { scene: normal, ctl: normalCtl } = encounterHarness({ rng });
+  normalCtl.dir = 'right';
+  for (let i = 0; i < 20 && !normal.transition.active; i++) normal.update(1 / 60);
+  assert.equal(normal.transition.active, true, 'hits at full rate while on foot');
+
+  const { scene: skating, ctl: skateCtl } = encounterHarness({ rng });
+  skating.player.skating = true;
+  skateCtl.dir = 'right';
+  for (let i = 0; i < 20; i++) skating.update(1 / 60);
+  assert.equal(skating.transition.active, false, 'misses at half rate while skating');
+});
+
+test('battle start stops the skate loop; onBattleEnd restarts it if still skating', () => {
+  const loop = [];
+  const audio = {
+    playJingle() {}, playSfx() {}, startMusic() {}, stopMusic() {},
+    startLoopSfx: n => loop.push(`start:${n}`), stopLoopSfx: () => loop.push('stop'),
+  };
+  const { scene } = encounterHarness({ rng: () => 0.01, audio });
+  scene.player.skating = true;
+  scene.player.tryMove('right', scene.map, {});
+  for (let i = 0; i < 20 && scene.player.moving; i++) scene.player.update(1 / 60);
+  assert.deepEqual(loop, ['stop'], 'the loop stops the moment a battle starts');
+
+  scene.onBattleEnd('win');
+  assert.deepEqual(loop, ['stop', 'start:skate'], 'and resumes since the player is still on the board');
+});

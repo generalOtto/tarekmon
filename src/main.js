@@ -41,7 +41,7 @@ let state = null;
 let overworld = null;
 
 /** Dev aid, kept on purpose: `?start=map,x,y,facing` (e.g. `?start=haze,6,8,up`) drops a fresh game
- *  at that tile for play-testing. Absent or malformed → null (normal start). `?date=` will follow suit. */
+ *  at that tile for play-testing. Absent or malformed → null (normal start). Its sibling `?date=` lives in rng.js todayString(). */
 function debugStart() {
   const raw = new URLSearchParams(location.search).get('start');
   if (!raw) return null;

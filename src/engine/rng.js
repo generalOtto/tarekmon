@@ -25,7 +25,12 @@ export function dateSeed(dateString) {
   return h >>> 0;
 }
 
+/** Dev aid, kept on purpose: `?date=YYYY-MM-DD` overrides "today" everywhere weather is rolled,
+ *  for play-testing both branches on demand (mirrors main.js's `?start=`). Node has no `location`,
+ *  so this is guarded; a malformed value is ignored and falls back to the real date. */
 export function todayString(d = new Date()) {
+  const override = globalThis.location?.search ? new URLSearchParams(globalThis.location.search).get('date') : null;
+  if (override && /^\d{4}-\d{2}-\d{2}$/.test(override)) return override;
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 

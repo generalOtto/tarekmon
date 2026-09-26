@@ -20,6 +20,7 @@ import { attachBattleFlow } from './battleflow.js';
 import { TrainerFlow } from './trainers.js';
 import { pickStarter, pedestalGone, drawStarterPreview } from './starters.js';
 import { FlashWipe } from '../battle/transition.js';
+import { onRackInteract, onWarpSkate, shouldAutoSkateOnEnter } from './skate.js';
 
 const S = TILE_SIZE;
 const BUMP_TICKS = 20;
@@ -45,9 +46,13 @@ export class OverworldScene {
     const { state } = this;
     this.map = this.maps[state.pos.map];
     this.player = this.makePlayer(state.pos.x, state.pos.y, state.pos.facing);
+    if (shouldAutoSkateOnEnter(state, this.map)) this.setSkating(true); // a board left out survives save/load
     this.trainerFlow.placeChampion();
     this.audio?.startMusic('overworld'); // interiors share the track at full volume, by design (no attenuation)
   }
+
+  setSkating(on) { if (on !== this.player.skating) { this.player.skating = on; this.skateSfx(on); } } // sprite + loop together
+  skateSfx(on) { on ? this.audio?.startLoopSfx?.('skate') : this.audio?.stopLoopSfx?.(); }
 
   /** Build a Player wired for this scene: onArrive syncs state.pos, checks for a warp underfoot,
    *  and — only when there's no warp — rolls for a tall-grass encounter. */
@@ -57,10 +62,18 @@ export class OverworldScene {
       this.state.pos.x = nx; this.state.pos.y = ny;
       const w = resolveWarp(this.map, nx, ny);
       if (w && this.map.id === 'lab' && !this.state.flags.starterPicked) { this.blockDoor(nx, ny); return; }
-      if (w) { this.beginWarp(w); return; }
+      if (w) { this.warpDoor(w); return; }
       this.checkEncounter(nx, ny);
     };
     return player;
+  }
+
+  /** Door/mat warp: skate.js decides the board's fate; sfx compares against the OLD player (the new one starts unskated). */
+  warpDoor(w) {
+    const r = onWarpSkate(this.state, this.map, this.maps[w.map]);
+    if (r.skating !== this.player.skating) this.skateSfx(r.skating);
+    if (r.say) this.afterFade = () => this.say(r.say);
+    this.beginWarp(w, () => { this.player.skating = r.skating; });
   }
 
   /** Fade out, swap map/player/state at full black, run `onDark` (blackout), autosave, then fade back in. */
@@ -130,12 +143,14 @@ export class OverworldScene {
     if (sign) return this.run(() => this.say(sign.dialogue));
     switch (tileAt(map, fx, fy)) {
       case 'F': return this.openOverlay(FridgeScreen, () => this.save.autosave(state)); // says fridge-open itself
-      case 'K': return this.run(() => this.say(rollWeather() ? 'rack-nice' : 'rack-bad'));
+      case 'K': return this.run(() => this.rack());
       case 'E': return this.run(() => pickStarter(this, fx, fy));
       case 'G': return !state.badges.includes('haze') && this.run(() => this.say('gate-closed'));
     }
     return false;
   }
+
+  rack() { const r = onRackInteract(this.state, this.player.skating); this.setSkating(r.skating); return this.say(r.say); } // skate.js decides
 
   /** Run an async interaction with input locked until it settles. */
   run(fn) {

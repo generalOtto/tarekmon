@@ -698,3 +698,10 @@ test('Start → DUMPLINGS opens the party screen; B returns to the Start menu', 
   assert.equal(t.scene.startMenu.screen, null);
   assert.equal(t.scene.startMenu.open, true);
 });
+
+test('the haze healer plays the heal jingle between heal-1 and heal-2', async () => {
+  const t = talker({ map: 'haze', x: 7, y: 3, facing: 'up' });
+  t.scene.audio = { playJingle: n => t.ctl.said.push(`jingle:${n}`), playSfx() {}, startMusic() {}, stopMusic() {} };
+  await t.pressA();
+  assert.deepEqual(t.ctl.said, [dialogue['haze-heal-1'], 'jingle:heal', dialogue['haze-heal-2']]);
+});

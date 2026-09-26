@@ -25,3 +25,13 @@ test('handle moves once per press with a repeat delay while held', () => {
   m.handle(stillHeld, {}); assert.equal(m.index, 2, 'repeats after the delay'); for (let i = 0; i < 5; i++) m.handle(stillHeld, {}); assert.equal(m.index, 3, 'then every 6 ticks');
 });
 test('items can be updated in place (labels re-rendered)', () => { const m = new Menu(['SOUND ON']); m.items[0] = 'SOUND OFF'; assert.equal(m.selected(), 'SOUND OFF'); });
+
+test('with audio, a cursor move and an A press each blip select', () => {
+  const calls = [];
+  const audio = { playSfx: n => calls.push(n), playJingle: n => calls.push(`jingle:${n}`) };
+  const m = new Menu(['A', 'B', 'C'], { audio });
+  m.handle(inputWith({ justPressed: b => b === 'down', direction: () => null }));
+  m.handle(inputWith({ justPressed: () => false, direction: () => null })); // nothing pressed: silent
+  m.handle(inputWith({ justPressed: b => b === 'a', direction: () => null }), { onSelect: () => {} });
+  assert.deepEqual(calls, ['select', 'select']);
+});

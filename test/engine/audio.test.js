@@ -201,3 +201,17 @@ test('unknown names are ignored', () => {
   assert.equal(ctx().oscillators.length, 0);
   assert.equal(timers.live.size, 0);
 });
+
+test('without an AudioContext (unsupported browser), unlock and every call are silent no-ops', () => {
+  for (const AudioContextCtor of [undefined, null]) {
+    const timers = fakeTimers();
+    const audio = createAudio({ AudioContextCtor, storage: memStorage(), timers });
+    assert.doesNotThrow(() => {
+      audio.unlock();
+      audio.playJingle('heal'); audio.playSfx('select'); audio.startMusic('overworld'); audio.startLoopSfx('skate');
+      audio.stopLoopSfx(); audio.stopMusic(); audio.setMuted(true); audio.unlock();
+    });
+    assert.equal(audio.muted, true);
+    assert.equal(timers.live.size, 0);
+  }
+});

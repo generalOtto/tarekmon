@@ -42,7 +42,7 @@ export class OverworldScene {
     this.map = this.maps[state.pos.map];
     this.player = this.makePlayer(state.pos.x, state.pos.y, state.pos.facing);
     this.trainerFlow.placeChampion();
-    this.audio?.startMusic('overworld'); // interiors share the track
+    this.audio?.startMusic('overworld'); // interiors share the track at full volume, by design (no attenuation)
   }
 
   /** Build a Player wired for this scene: onArrive syncs state.pos, checks for a warp underfoot,

@@ -46,12 +46,12 @@ function stubTextbox() {
   return tb;
 }
 
-function setup({ party = [mon('pA', 10)], foes = [mon('fW', 3)], rng = high, onEnd = () => {}, textbox = stubTextbox() } = {}) {
+function setup({ party = [mon('pA', 10)], foes = [mon('fW', 3)], rng = high, onEnd = () => {}, textbox = stubTextbox(), audio = null } = {}) {
   const state = newGameState();
   state.party.push(...party);
   const battle = new Battle({ db, state, rng, kind: 'wild', foeParty: foes });
   const input = stubInput();
-  const scene = new BattleScene({ db, state, battle, input, textbox, images: {}, onEnd });
+  const scene = new BattleScene({ db, state, battle, input, textbox, images: {}, onEnd, audio });
   const tick = (...btns) => { input.pressed = new Set(btns.filter(Boolean)); scene.update(1 / 60); input.pressed = new Set(); };
   /** Presses A through texts until the scene is idle (a menu is showing) or the battle ended. */
   const clearTexts = (max = 2000) => { for (let i = 0; i < max && scene.mode === 'events' && !scene.ended; i++) tick(textbox.open ? 'a' : null); };
@@ -360,4 +360,36 @@ test('switching in over a fainted side skips the slide-out', () => {
   let ticks = 1;
   while (scene.current?.type === 'switch' && ticks < 200) { scene.update(); ticks++; }
   assert.equal(ticks, TIMING.SLIDE + 1);
+});
+
+/** A fake audio that records calls as 'sfx:name' / 'jingle:name' / 'music:name'. */
+function fakeAudio() {
+  const calls = [];
+  return { calls, playSfx: n => calls.push(`sfx:${n}`), playJingle: n => calls.push(`jingle:${n}`),
+    startMusic: n => calls.push(`music:${n}`), stopMusic: () => calls.push('stop') };
+}
+
+test('audio: battle music on enter; a ball plays throw, one wobble each, then click + caught (or pop)', () => {
+  for (const [success, tail] of [[true, ['sfx:click', 'jingle:caught']], [false, ['sfx:pop']]]) {
+    const audio = fakeAudio();
+    const { scene, clearTexts } = setup({ audio });
+    assert.deepEqual(audio.calls, ['music:battle']);
+    clearTexts();
+    audio.calls.length = 0;
+    scene.play({ type: 'ball', wobbles: 2, success });
+    for (let i = 0; i < 400 && scene.current; i++) scene.update();
+    assert.deepEqual(audio.calls, ['sfx:ballThrow', 'sfx:wobble', 'sfx:wobble', ...tail]);
+  }
+});
+
+test('audio: a wild win plays the victory fanfare exactly once, before onEnd', () => {
+  const audio = fakeAudio();
+  let atEnd = null;
+  const { battle, tick, clearTexts, textbox } = setup({ party: [mon('pA', 30)], audio, onEnd: () => { atEnd = [...audio.calls]; } });
+  clearTexts();
+  tick('a'); tick('a'); // FIGHT → HIT KOs the L3 foe
+  assert.equal(battle.phase, 'over');
+  for (let i = 0; i < 2000 && !atEnd; i++) tick(textbox.open ? 'a' : null);
+  assert.equal(audio.calls.filter(c => c === 'jingle:victory').length, 1);
+  assert.equal(atEnd.filter(c => c === 'jingle:victory').length, 1, 'played before onEnd');
 });

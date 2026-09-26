@@ -117,8 +117,7 @@ export class BattleScene {
         const forgot = ev.forgot ? `\n... AND FORGOT ${name(ev.forgot)}!` : '';
         return this.play({ type: 'text', text: `${p.mon.nickname} LEARNED ${name(ev.move)}!${forgot}` });
       }
-      case 'money': // only trainers pay out: the victory fanfare, then the prize line
-        this.audio?.playJingle('victory');
+      case 'money':
         return this.play({ type: 'text', text: `${this.state.playerName} GOT $${ev.amount} FOR WINNING!` });
     }
     const cur = { ...ev, t: 0 };
@@ -150,6 +149,7 @@ export class BattleScene {
       case 'flee': this.audio?.playSfx('flee'); break;
       case 'end':
         if (ev.result === 'ran') this.audio?.playSfx('flee');
+        if (ev.result === 'win') this.audio?.playJingle('victory'); // every win, wild or trainer
         this.ended = true;
         this.current = null;
         this.onEnd?.(ev.result);

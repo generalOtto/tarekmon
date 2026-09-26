@@ -149,3 +149,13 @@ test('TextBox: advance() does what A does (next page, then close)', () => {
   tb.advance();
   assert.equal(tb.open, false);
 });
+
+test('typing a 16-char page plays exactly 2 textTicks (one per 8 chars)', async () => {
+  const calls = [];
+  const tb = new TextBox({ audio: { playSfx: n => calls.push(n) } });
+  tb.say('ABCDEFGHIJKLMNOP');
+  const idle = { isDown: () => false, justPressed: () => false };
+  for (let i = 0; i < 30; i++) tb.update(idle);
+  assert.equal(tb.pageRevealed, true);
+  assert.deepEqual(calls, ['textTick', 'textTick']);
+});

@@ -77,9 +77,11 @@ const BOX_Y = 96;
 const BOX_H = 48;
 const PAD = 8;
 
+const TICK_CHARS = 8; // one textTick per 8 revealed chars: ~15/s typing, ~30/s fast-forwarded — blips, not a buzz
+
 /** A Gen-1-style dialog box: paginates text, types it out, and waits for A to advance/dismiss. */
 export class TextBox {
-  /** audio (optional): plays a textTick every 2 revealed characters while a page types out. */
+  /** audio (optional): plays a textTick every TICK_CHARS revealed characters while a page types out. */
   constructor({ audio = null } = {}) {
     this.audio = audio;
     this.open = false;
@@ -127,7 +129,7 @@ export class TextBox {
       this.typewriter.charsPerTick = fast ? FAST_SPEED : BASE_SPEED;
       const before = this.typewriter.revealed;
       this.typewriter.tick();
-      if ((this.typewriter.revealed >> 1) > (before >> 1)) this.audio?.playSfx('textTick');
+      if (Math.floor(this.typewriter.revealed / TICK_CHARS) > Math.floor(before / TICK_CHARS)) this.audio?.playSfx('textTick');
       return;
     }
 

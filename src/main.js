@@ -98,7 +98,16 @@ function showTitle() {
 }
 
 const devStart = debugStart();
-if (devStart) {
+if (new URLSearchParams(location.search).get('credits') === '1') {
+  // DEV: ?credits=1 jumps straight to the credits for screenshots
+  const s = newGameState('TAREK', db.mapData.start);
+  s.party.push(makeMonster(db.speciesById['d061'], 8, db.movesById));
+  markCaught(s, 'd061');
+  Object.assign(s.flags, { starterPicked: true, starterId: 'd061', champion: true });
+  for (const id of ['d030', 'd049', 'd060', 'd024']) markCaught(s, id); // suhaibabe, suhaibro, jetlaggo, orange boy
+  state = s;
+  rollCredits();
+} else if (devStart) {
   // DEV: ?start= skips title/intro — a fresh game at that tile with Tarek's starter at L8.
   const s = newGameState('TAREK', devStart);
   s.party.push(makeMonster(db.speciesById['d061'], 8, db.movesById));

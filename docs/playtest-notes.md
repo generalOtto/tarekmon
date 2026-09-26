@@ -57,6 +57,8 @@ of ×1.5), which puts a single carry at ~L20 at the gate (two dumplings sharing:
 one-time level-up item to the booth officer's Extra Sauce gift. Lowering HAZE GUY to L14–16 would
 fix the gym spike but not the gate level.
 
+Applied: trainer XP ×3 (controller decision 2026-09-26); re-check levels at the gate in round 2.
+
 ## Commits
 
 - `8ab11a3` fix: hide the textbox's more-text arrow under a YES/NO menu

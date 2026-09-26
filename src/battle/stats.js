@@ -26,7 +26,7 @@ export function levelForXp(xp) {
 /** XP awarded for defeating a species at foeLevel; x1.5 for trainer battles. */
 export function xpGain(species, foeLevel, isTrainer) {
   const base = Math.floor(species.xpYield * foeLevel / 7);
-  return isTrainer ? Math.floor(base * 1.5) : base;
+  return isTrainer ? Math.floor(base * 3) : base;
 }
 
 /** Multiplier applied to atk/def/spd for a given stat stage. */

@@ -160,7 +160,7 @@ test('trainer with two monsters: sends out the next, then pays out on the win', 
   assert.ok(texts(ev).includes('T SENT OUT WILDY!'));
   const f1 = b.foeParty[1];
   assert.deepEqual(ev.find(e => e.type === 'switch'), { type: 'switch', side: 'foe', index: 1, hp: f1.maxHp, maxHp: f1.maxHp, level: 4, xp: f1.xp });
-  assert.equal(ev.find(e => e.type === 'xp').amount, 37); // floor(floor(60*3/7) * 1.5)
+  assert.equal(ev.find(e => e.type === 'xp').amount, 75); // floor(floor(60*3/7) * 3)
   assert.equal(b.phase, 'choose');
   b.chooseMove(2);
   ev = b.drain();

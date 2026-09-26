@@ -66,3 +66,35 @@ test('the town is connected: every walkable tile is reachable from the lab door 
   let walkable = 0; for (let y = 0; y < t.height; y++) for (let x = 0; x < t.width; x++) if (walk(x, y)) walkable++;
   assert.equal(seen.size, walkable, 'unreachable walkable tiles exist');
 });
+
+// Playtest guard: a spotted trainer walks up and then stays on the tile beside the player. If that tile
+// were a one-tile bottleneck, the part of the map behind it would be cut off for good (Driver Dee parks
+// on the gap north of the skate rack, but the skate route is also reachable from town at row 18). For
+// every tile a trainer can spot the player from, everything reachable before must stay reachable.
+test('no sighted trainer can end its walk-up on a bottleneck that cuts off part of the map', () => {
+  for (const m of Object.values(maps)) {
+    const reach = (sx, sy, blocked) => {
+      const seen = new Set([`${sx},${sy}`]), q = [[sx, sy]];
+      while (q.length) {
+        const [x, y] = q.pop();
+        for (const f of ['up', 'down', 'left', 'right']) {
+          const [nx, ny] = step(x, y, f), k = `${nx},${ny}`;
+          if (seen.has(k) || !isWalkable(m, nx, ny) || blocked.has(k)) continue;
+          seen.add(k); q.push([nx, ny]);
+        }
+      }
+      return seen;
+    };
+    const statics = m.npcs.map(n => `${n.x},${n.y}`);
+    for (const t of m.trainers.filter(tr => tr.sight > 0)) {
+      const others = new Set([...statics, ...m.trainers.filter(o => o !== t).map(o => `${o.x},${o.y}`)]);
+      for (let d = 2, [px, py] = step(...step(t.x, t.y, t.facing), t.facing); d <= t.sight; d++, [px, py] = step(px, py, t.facing)) {
+        if (!isWalkable(m, px, py)) break;
+        const [sx, sy] = step(px, py, t.facing === 'up' ? 'down' : t.facing === 'down' ? 'up' : t.facing === 'left' ? 'right' : 'left'); // trainer's stop tile
+        const before = reach(px, py, new Set([...others, `${t.x},${t.y}`]));
+        const after = reach(px, py, new Set([...others, `${sx},${sy}`]));
+        for (const k of before) assert.ok(k === `${sx},${sy}` || after.has(k), `${m.id}: ${t.id} stopping at ${sx},${sy} (player at ${px},${py}) cuts off ${k}`);
+      }
+    }
+  }
+});

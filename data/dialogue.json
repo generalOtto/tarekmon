@@ -75,5 +75,7 @@
   "starter-confirm": "TAKE IT?",
   "starter-gone": "EMPTY. SOMEONE\nWAS FASTER.",
   "title-overwrite": "OVERWRITE THE\nOLD GAME?",
-  "title-bad-code": "THAT'S NOT A SAVE\nCODE.\fTHAT'S JUST\nWORDS."
+  "title-bad-code": "THAT'S NOT A SAVE\nCODE.\fTHAT'S JUST\nWORDS.",
+  "birthday": "Happy Birt-d'ay Pine-Apple, Looking Werry Goor Werry Naaaice!",
+  "credits": ["TAREKMON","","A GAME FOR TAREK","BY OTTO","","STARRING","TAREK","OTTO","SUHAIB (IMPORTED)","","DUMPLINGS CAUGHT","{n} / 74","","HAZE LOUNGE","FOR THE COALS","","THAT RIBS PLACE","SORRY ABOUT THE NAME","","THE WEATHER","FOR THE GOOD DAYS","","THANKS FOR PLAYING"]
 }

@@ -349,7 +349,7 @@ const fullDb = { dialogue, speciesById, movesById, trainers: trainersList, train
 /** Headless scene with every db table, a recording textbox (say resolves at once), an onBattle /
  *  onChampion spy, a jingle recorder and a never-hit rng (no wild encounters get in the way). */
 function trainerHarness(start, { badges = [], defeated = [] } = {}) {
-  const ctl = { dir: null, a: false, said: [], battles: [], jingles: [], champion: 0 };
+  const ctl = { dir: null, a: false, said: [], battles: [], jingles: [], champion: 0, saves: 0, championSeen: null };
   const state = newGameState('T', start);
   state.party = [makeMonster(speciesById['d002'], 20, movesById)];
   state.badges.push(...badges); state.defeatedTrainers.push(...defeated);
@@ -357,8 +357,8 @@ function trainerHarness(start, { badges = [], defeated = [] } = {}) {
     db: fullDb, maps: loadMaps(structuredClone(mapData)), state, tileset: { draw() {} },
     input: makeInput({ direction: () => ctl.dir, justPressed: b => b === 'a' && ctl.a }),
     textbox: { open: false, update() {}, draw() {}, say(t) { ctl.said.push(t); return Promise.resolve(); } },
-    save: { autosave() {} }, rng: () => 0.99, audio: { playJingle: n => ctl.jingles.push(n), playSfx() {}, startMusic() {}, stopMusic() {} },
-    onBattle: b => ctl.battles.push(b), onChampion: () => ctl.champion++,
+    save: { autosave() { ctl.saves++; } }, rng: () => 0.99, audio: { playJingle: n => ctl.jingles.push(n), playSfx() {}, startMusic() {}, stopMusic() {} },
+    onBattle: b => ctl.battles.push(b), onChampion: () => { ctl.champion++; ctl.championSeen = { said: [...ctl.said], jingles: [...ctl.jingles], saves: ctl.saves, champion: state.flags.champion }; },
   });
   scene.enter();
   const flush = async () => { for (let i = 0; i < 8; i++) await null; };
@@ -536,6 +536,7 @@ test('champion: with the badge, stepping into the border strip brings Suhaib in;
   assert.deepEqual(trainer, { id: 'suhaib', name: 'SUHAIB', payout: trainersById.suhaib.payout, isChampion: true, speechAfterFaints: 3, speech: dialogue['suhaib-mid'] });
   assert.equal(h.ctl.battles[0].foeParty.length, 6);
 
+  const savesBefore = h.ctl.saves;
   h.scene.onBattleEnd('win', { kind: 'trainer', trainer });
   await h.flush();
   assert.equal(h.state.flags.champion, true);
@@ -543,6 +544,11 @@ test('champion: with the badge, stepping into the border strip brings Suhaib in;
   assert.deepEqual(h.ctl.said.slice(1), [dialogue['suhaib-lost'], 'T IS THE\nDUMPLING CHAMPION!']);
   assert.deepEqual(h.ctl.jingles, ['encounter', 'victory'], 'trainer battles open with the encounter jingle too');
   assert.equal(h.ctl.champion, 1);
+  const seen = h.ctl.championSeen; // the credits roll only after the whole win sequence, autosaved as champion
+  assert.equal(seen.said.at(-1), 'T IS THE\nDUMPLING CHAMPION!');
+  assert.equal(seen.said.at(-2), dialogue['suhaib-lost']);
+  assert.equal(seen.jingles.at(-1), 'victory');
+  assert.ok(seen.saves > savesBefore && seen.champion, 'autosaved (with the champion flag) before onChampion');
 
   h.ctl.said.length = 0;
   h.scene.player.facing = 'up';

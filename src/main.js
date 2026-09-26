@@ -9,6 +9,7 @@ import { TextBox } from './ui/textbox.js';
 import { Menu } from './ui/menu.js';
 import { TitleScene } from './ui/title.js';
 import { IntroScene } from './ui/intro.js';
+import { CreditsScene } from './ui/credits.js';
 import { buildTileset } from './world/tileset.js';
 import { loadMaps } from './world/map.js';
 import { OverworldScene } from './world/overworld.js';
@@ -67,20 +68,21 @@ function startOverworld(s) {
   overworld = new OverworldScene({
     db, maps: loadMaps(structuredClone(db.mapData)), state, tileset: buildTileset(), input, textbox, save, audio,
     onBattle: startBattle,
-    onChampion: () => {}, // TODO Task 37: roll the credits
+    onChampion: rollCredits,
   });
   if (scenes.top) scenes.replace(overworld); else scenes.push(overworld);
 }
 
-const devStart = debugStart();
-if (devStart) {
-  // DEV: ?start= skips title/intro — a fresh game at that tile with Tarek's starter at L8.
-  const s = newGameState('TAREK', devStart);
-  s.party.push(makeMonster(db.speciesById['d061'], 8, db.movesById));
-  markCaught(s, 'd061');
-  Object.assign(s.flags, { starterPicked: true, starterId: 'd061' });
-  startOverworld(s);
-} else {
+/** Champion: roll the credits over the overworld; when done, back to the title (the autosave already has
+ *  flags.champion, so CONTINUE resumes in the border strip with Suhaib waiting for rematches). */
+function rollCredits() {
+  scenes.push(new CreditsScene({
+    db, state, input, audio, textbox, tileset: buildTileset(),
+    onDone: () => { while (scenes.top) scenes.pop(); showTitle(); },
+  }));
+}
+/** Boot (or return to) the title screen. */
+function showTitle() {
   scenes.push(new TitleScene({
     db, save, textbox, input, audio,
     onNewGame: () => {
@@ -94,6 +96,16 @@ if (devStart) {
     onLoadCode: saved => startOverworld(saved),
   }));
 }
+
+const devStart = debugStart();
+if (devStart) {
+  // DEV: ?start= skips title/intro — a fresh game at that tile with Tarek's starter at L8.
+  const s = newGameState('TAREK', devStart);
+  s.party.push(makeMonster(db.speciesById['d061'], 8, db.movesById));
+  markCaught(s, 'd061');
+  Object.assign(s.flags, { starterPicked: true, starterId: 'd061' });
+  startOverworld(s);
+} else showTitle();
 
 startLoop({
   tick: dt => { scenes.update(dt); input.endFrame(); },

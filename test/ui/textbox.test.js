@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { paginate, Typewriter, TextBox } from '../../src/ui/textbox.js';
+import { YesNo } from '../../src/ui/menu.js';
 
 test('paginate wraps at 18 chars per line, 2 lines per page, on word boundaries', () => {
   const pages = paginate('WELCOME TO THE WORLD OF TAREKMON! MY NAME IS OTTO.', 18, 2);
@@ -158,4 +159,26 @@ test('typing a 16-char page plays exactly 2 textTicks (one per 8 chars)', async 
   for (let i = 0; i < 30; i++) tb.update(idle);
   assert.equal(tb.pageRevealed, true);
   assert.deepEqual(calls, ['textTick', 'textTick']);
+});
+
+// Playtest P2: the ▶ "more text" arrow stayed on screen under a YES/NO menu (e.g. the lab's TAKE IT?).
+test('TextBox: no ▶ on the last page of a YES/NO question; earlier pages and plain lines keep it', () => {
+  const tb = new TextBox();
+  tb.say('HI');
+  tb.update(inputWith());
+  assert.equal(tb.showArrow, true); // plain line, typed: arrow shows
+
+  const yn = new YesNo(tb);
+  yn.ask('ONE\fTWO?');
+  tb.update(inputWith()); tb.update(inputWith());
+  assert.equal(tb.showArrow, true); // first page of the question: still "press A for more"
+  tb.update(inputWith({ justPressed: ['a'] }));
+  tb.update(inputWith()); tb.update(inputWith());
+  assert.equal(yn.showing, true);
+  assert.equal(tb.showArrow, false); // last page: the YES/NO menu is up instead
+
+  yn.update({ ...inputWith({ justPressed: ['a'] }), pressedDirection: () => null }); // YES
+  tb.say('OK');
+  tb.update(inputWith());
+  assert.equal(tb.showArrow, true); // the next line is a plain line again
 });

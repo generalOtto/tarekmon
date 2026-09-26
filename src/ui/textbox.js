@@ -102,6 +102,7 @@ export class TextBox {
         this._resolve = null;
         prevResolve();
       }
+      this.question = false; // YesNo.ask sets it after say(): its YES/NO menu replaces the ▶ on the last page
       this.pages = paginate(text, COLS, ROWS);
       this.pageIndex = 0;
       this._resolve = resolve;
@@ -138,6 +139,9 @@ export class TextBox {
     if (input.justPressed('a')) this.advance();
   }
 
+  /** The blinking ▶ (press A for more): on a typed page, except the last page of a YES/NO question. */
+  get showArrow() { return this.pageRevealed && this.blinkTimer < BLINK_FRAMES && !(this.question && this.onLastPage); }
+
   /** True once the current page is fully typed out. */
   get pageRevealed() { return this.open && !!this.typewriter?.done; }
   get onLastPage() { return this.pageIndex >= this.pages.length - 1; }
@@ -171,7 +175,7 @@ export class TextBox {
       drawText(ctx, line, PAD, BOX_Y + PAD + i * (LINE_H * 2), INK);
     });
 
-    if (this.typewriter.done && this.blinkTimer < BLINK_FRAMES) {
+    if (this.showArrow) {
       drawText(ctx, '▶', W - 12, BOX_Y + BOX_H - 12, INK);
     }
   }

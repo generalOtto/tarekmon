@@ -111,6 +111,7 @@ export class YesNo {
       this._resolve = resolve;
       this.menu = new Menu(['YES', 'NO']);
       this.textbox.say(text);
+      this.textbox.question = true; // no ▶ under the YES/NO menu
     });
   }
 
@@ -123,6 +124,7 @@ export class YesNo {
   _answer(yes) {
     const resolve = this._resolve;
     this._resolve = null; this.menu = null;
+    this.textbox.question = false;
     this.textbox.dismiss();
     resolve(yes);
   }
